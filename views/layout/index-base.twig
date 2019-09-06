@@ -1,0 +1,60 @@
+{% extends "layout/base.twig" %}
+
+{% block base %}
+
+<body class="bg-white text-lg">
+
+    {# main container #}
+    <div class="flex flex-col w-full bg-white text-white max-w-4xl mx-auto shadow-xl">
+
+        {# navbar #}
+        <div class="flex flex-row justify-between items-center p-4 mb-4 bg-carolina">
+            <span class="my-1 mx-2 text-2xl sm:mr-8"><a href={{ url_for('home') }}>Tar Heel Tailgate </a></span>
+            {% if session.email is defined %}
+                <a href={{ url_for('sign-out') }}>Sign out {{ session.email }}</a>
+            {% else %}
+                <span class="hover:underline my-1 mx-2"><a href={{ url_for('sign-in') }}>Sign In</a></span>
+            {% endif %}
+        </div>
+        {# end navbar #}
+
+        {# error #}
+        {% if flash('error') %}
+            <div class="flex justify-center" role="alert">
+                <div class="border border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                    {% for message in flash('error') %}
+                        <p>{{ message|e }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        {# end error #}
+
+        {# success #}
+        {% if flash('success') %}
+            <div class="flex justify-center" role="alert">
+                <div class="border border-green-400 rounded-b bg-green-100 px-4 py-3 text-green-700">
+                    {% for message in flash('success') %}
+                        <p>{{ message|e }}</p>
+                    {% endfor %}
+                </div>
+            </div>
+        {% endif %}
+        {# end success #}
+
+        {# main content #}
+        {% block content %}{% endblock %}
+        {# end main content #}
+
+        {# footer #}
+        <div class="p-4 text-right bg-carolina">
+            <span class="text-xl">Arriving 2019</span>
+        </div>
+        {# end footer #}
+
+    </div>
+    {# end main container #}
+
+</body>
+
+{% endblock %}

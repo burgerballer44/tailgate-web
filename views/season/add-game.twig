@@ -1,0 +1,44 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# add-game form #}
+<form action="{{ url_for('add-game') }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.season_id is defined %}
+        {% for error in errors.season_id %}
+            <p class="text-sm text-red-600">{{ error|e }}</p>
+        {% endfor %}
+    {% endif %}
+    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="season_id" placeholder="where is this season_id" value="{% if old.season_id is defined %}{{ old.season_id }}{% endif %} " />
+
+    {% if errors.home_team_id is defined %}
+        {% for error in errors.home_team_id %}
+            <p class="text-sm text-red-600">{{ error|e }}</p>
+        {% endfor %}
+    {% endif %}
+    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="home_team_id" placeholder="what is the home_team_id" value="{% if old.home_team_id is defined %}{{ old.home_team_id }}{% endif %}" />
+
+    {% if errors.away_team_id is defined %}
+        {% for error in errors.away_team_id %}
+            <p class="text-sm text-red-600">{{ error|e }}</p>
+        {% endfor %}
+    {% endif %}
+    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="away_team_id" placeholder="what is the away_team_id" value="{% if old.away_team_id is defined %}{{ old.away_team_id }}{% endif %}" />
+
+    {% if errors.start_date is defined %}
+        {% for error in errors.start_date %}
+            <p class="text-sm text-red-600">{{ error|e }}</p>
+        {% endfor %}
+    {% endif %}
+    <input type="date" required class="block border border-gray-light w-full p-3 rounded mb-4" name="start_date" placeholder="what is the start_date" value="{% if old.start_date is defined %}{{ old.start_date }}{% endif %}" />
+
+    <button type="submit" class="w-full text-center py-3 rounded bg-green-500 text-white hover:bg-green-700 focus:outline-none my-1"
+    >Add Game</button>
+</form>
+{# end add-game form #}
+
+{% endblock %}

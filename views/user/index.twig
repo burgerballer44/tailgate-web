@@ -1,0 +1,19 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1 class="py-4">all users</h1>
+
+    {% if users is defined %}
+        {% for user in users %}
+            <div>
+                <a href={{ url_for('user', { 'id': user.userId }) }}> <u>{{ user.userId }}</u> </a> |
+                {{ user.username }} |
+                {{ user.email }} |
+                {{ user.status }} |
+                {{ user.role }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

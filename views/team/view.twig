@@ -1,0 +1,15 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1>viewing team</h1>
+
+    {% if team is defined %}
+        <div>
+            {{ team.teamId }} <br>
+            {{ team.designation }} <br>
+            {{ team.mascot }} <br>
+        </div>
+    {% endif %}
+
+{% endblock %}

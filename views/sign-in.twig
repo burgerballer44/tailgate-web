@@ -1,0 +1,29 @@
+{% extends "layout/index-base.twig" %}
+
+{% block content %}
+
+{# sign in form #}
+<div class="mx-auto my-8 w-full max-w-xs bg-white px-6 py-8 rounded shadow-md text-black">
+    <form action="{{ url_for('sign-in') }}" method="POST">
+
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+
+        <h1 class="mb-8 text-3xl text-center">Sign in</h1>
+
+        {# we only want to show that it is an invalid username and password #}
+        {# do not show the actual message since it could anything #}
+        {% if errors is defined %}
+            <p class="text-sm text-red-600 italic">Invalid username or password</p>
+        {% endif %}
+        <input type="text" required class="block border border-gray-light w-full p-3 rounded mt-4" name="username" placeholder="Username" value="{% if old.username is defined %}{{ old.username }}{% endif %}" />
+
+        <input type="password" required class="block border border-gray-light w-full p-3 rounded mt-4" name="password" placeholder="***********" />
+
+        <button type="submit" class="w-full text-center py-3 rounded bg-carolina text-white hover:bg-navy focus:outline-none mt-4"
+        >Go</button>
+    </form>
+</div>
+{# end sign in form #}
+    
+{% endblock %}

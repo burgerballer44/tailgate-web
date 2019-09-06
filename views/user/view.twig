@@ -1,0 +1,17 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1>viewing user</h1>
+
+    {% if user is defined %}
+        <div>
+            {{ user.userId }} <br>
+            {{ user.username }} <br>
+            {{ user.email }} <br>
+            {{ user.status }} <br>
+            {{ user.role }} <br>
+        </div>
+    {% endif %}
+
+{% endblock %}

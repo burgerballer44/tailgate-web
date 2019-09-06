@@ -1,0 +1,14 @@
+{
+    "devDependencies": {
+        "postcss-cli": "^6.1.2",
+        "cssnano": "^4.1.10",
+        "autoprefixer": "^9.6.0",
+        "@fullhuman/postcss-purgecss": "^1.2.0",
+        "tailwindcss": "^1.0.3"
+    },
+    "scripts": {
+        "create:js": "./node_modules/.bin/tailwind init tailwind.config.js",
+        "dev:css": "./node_modules/.bin/tailwind build tailwind.config.css -c tailwind.config.js -o public/css/tailwind.css",
+        "build:css": "postcss tailwind.config.css -o public/css/tailwind.min.css"
+    }
+}

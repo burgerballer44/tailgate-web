@@ -1,0 +1,27 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1 class="py-4">viewing group</h1>
+
+    {% if group is defined %}
+        <div>
+            {{ group.groupId }} <br>
+            {{ group.name }} <br>
+        </div>
+        
+        {% if group.members is defined %}
+            {% for member in group.members %}
+                <div>
+                    {{ member.memberId }} <br>
+                    {{ member.groupId }} <br>
+                    {{ member.userId }} <br>
+                    {{ member.role }} <br>
+                </div>
+            {% endfor %}
+        {% endif %}
+
+        <a href={{ url_for('add-member', { 'id': group.groupId }) }}> <u>Add Member</u> </a>
+    {% endif %}
+
+{% endblock %}

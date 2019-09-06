@@ -1,0 +1,98 @@
+{% extends "layout/base.twig" %}
+
+{% block base %}
+
+<body class="bg-carolina mt-8 text-lg">
+
+    {# nav header #}
+    <nav class="bg-carolina text-white py-2 px-4 fixed w-full z-20 top-0 md:pt-1">
+
+        <div class="flex justify-between">
+            <a href={{ url_for('home') }}>Tar Heel Tailgate</a>
+            {% if session.email is defined %}
+                <a href={{ url_for('sign-out') }}>Sign out {{ session.email }}</a>
+            {% else %}
+                <a href={{ url_for('sign-out') }}>Sign In</a>
+            {% endif %}
+        </div>
+
+    </nav>
+    {# end nav header #}
+
+    {# main container #}
+    <div class="flex flex-col bg-gray-100 md:flex-row">
+
+        {# nav sidebar #}
+        <div class="bg-navy fixed bottom-0 w-full z-10 md:relative md:w-48">
+
+            <div class="md:mt-8 md:w-48 md:fixed md:left-0 md:top-0">
+                <ul class="flex flex-row py-0 px-1 text-center md:flex-col md:py-3 md:px-2 md:text-left">
+                    <li class="mr-3 flex-1">
+                        <a href="{{ url_for('dashboard') }}" class="text-white py-1 pl-1 align-middle no-underline hover:text-white border-b-2 border-gray-800 block md:py-3 hover:border-carolina">
+                            <span class="pb-1 text-xs text-gray-600 block md:pb-0 md:text-base md:text-gray-400 md:inline-block">Dashboard</span>
+                        </a>
+                    </li>
+                    <li class="mr-3 flex-1">
+                        <a href="{{ url_for('users') }}" class="text-white py-1 pl-1 align-middle no-underline hover:text-white border-b-2 border-gray-800 block md:py-3 hover:border-carolina">
+                            <span class="pb-1 text-xs text-gray-600 block md:pb-0 md:text-base md:text-gray-400 md:inline-block">Users</span>
+                        </a>
+                    </li>
+                    <li class="mr-3 flex-1">
+                        <a href="{{ url_for('groups') }}" class="text-white py-1 pl-1 align-middle no-underline hover:text-white border-b-2 border-gray-800 block md:py-3 hover:border-carolina">
+                            <span class="pb-1 text-xs text-gray-600 block md:pb-0 md:text-base md:text-gray-400 md:inline-block">Groups</span>
+                        </a>
+                    </li>
+                    <li class="mr-3 flex-1">
+                        <a href="{{ url_for('teams') }}" class="text-white py-1 pl-1 align-middle no-underline hover:text-white border-b-2 border-gray-800 block md:py-3 hover:border-carolina">
+                            <span class="pb-1 text-xs text-gray-600 block md:pb-0 md:text-base md:text-gray-400 md:inline-block">Teams</span>
+                        </a>
+                    </li>
+                    <li class="mr-3 flex-1">
+                        <a href="{{ url_for('seasons') }}" class="ext-white py-1 pl-1 align-middle no-underline hover:text-white border-b-2 border-gray-800 block md:py-3 hover:border-carolina">
+                            <span class="pb-1 text-xs text-gray-600 block md:pb-0 md:text-base md:text-gray-400 md:inline-block">Seasons</span>
+                        </a>
+                    </li>
+                </ul>
+            </div>
+
+        </div>
+        {# end nav sidebar #}
+
+        {# main content #}
+        <div class="flex-1 bg-gray-100 mt-4 px-4 pb-24 md:mt-4 md:h-screen">
+
+            {# error #}
+            {% if flash('error') %}
+                <div class="flex justify-center" role="alert">
+                    <div class="border border-red-400 rounded-b bg-red-100 px-4 py-3 text-red-700">
+                        {% for message in flash('error') %}
+                            <p>{{ message|e }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {# end error #}
+
+            {# success #}
+            {% if flash('success') %}
+                <div class="flex justify-center" role="alert">
+                    <div class="border border-green-400 rounded-b bg-green-100 px-4 py-3 text-green-700">
+                        {% for message in flash('success') %}
+                            <p>{{ message|e }}</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            {% endif %}
+            {# end success #}
+
+            {% block content %}{% endblock %}
+
+        </div>
+        {# end main content #}
+
+    </div>
+    {# end main container #}
+
+</body>
+
+{% endblock %}

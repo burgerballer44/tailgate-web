@@ -1,0 +1,31 @@
+{
+    "minimum-stability": "dev",
+    "prefer-stable": true,
+    "require": {
+        "slim/slim": "^4.0",
+        "slim/psr7": "^0.3.0",
+        "slim/twig-view": "3.0.0-alpha",
+        "php-di/php-di": "^6.0",
+        "respect/validation": "^1.1",
+        "vlucas/phpdotenv": "^3.4",
+        "guzzlehttp/guzzle": "^6.3",
+        "monolog/monolog": "^1.24",
+        "middlewares/honeypot": "^1.2",
+        "slim/flash": "^0.4.0",
+        "kanellov/slim-twig-flash": "^0.2.0",
+        "mailgun/mailgun-php": "^2.8",
+        "php-http/httplug": "v1.1.0",
+        "php-http/guzzle6-adapter": "@dev"
+    },
+    "autoload": {
+        "psr-4": {
+            "TailgateWeb\\": "src/"
+        }
+    },
+    "repositories": [
+        {
+            "type": "vcs",
+            "url": "https://github.com/burgerballer44/tailgate"
+        }
+    ]
+}
