@@ -66,13 +66,13 @@ abstract class AbstractController
      * @param  array  $data [description]
      * @return [type]       [description]
      */
-    public function apiPut(string $path, array $queryStringArray)
+    public function apiPut(string $path, array $data)
     {        
         return $this->send('PUT', $path, [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
             ],
-            'query' => $queryStringArray
+            'json' => $data,
         ]);
     }
 
@@ -82,13 +82,28 @@ abstract class AbstractController
      * @param  array  $data [description]
      * @return [type]       [description]
      */
-    public function apiPatch(string $path, array $queryStringArray)
+    public function apiPatch(string $path, array $data)
     {        
         return $this->send('PATCH', $path, [
             'headers' => [
                 'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
             ],
-            'query' => $queryStringArray
+            'json' => $data,
+        ]);
+    }
+
+    /**
+     * [apiDelete description]
+     * @param  string $path [description]
+     * @param  array  $data [description]
+     * @return [type]       [description]
+     */
+    public function apiDelete(string $path)
+    {        
+        return $this->send('DELETE', $path, [
+            'headers' => [
+                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+            ]
         ]);
     }
 
@@ -106,6 +121,9 @@ abstract class AbstractController
             return $this->client->request($verb, $path, $data);
 
         } catch (TransferException $e) {
+
+            // var_dump($e->getResponse()->getStatusCode());
+            // die();
 
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
@@ -128,8 +146,12 @@ abstract class AbstractController
                 }
 
                 // /token on api will return ['error' => foo, 'error_description' => bar]
+                // or bad client credentials
                 // let's make it consistent
-                if ($response->getStatusCode() == 401 && isset($jsonBody['error'])) {
+                if (
+                    ($response->getStatusCode() == 401 && isset($jsonBody['error']))
+                    || ($response->getStatusCode() == 400 && isset($jsonBody['error']))
+                ) {
                     
                     $newBody->write(json_encode([
                         'code' => $response->getStatusCode(),

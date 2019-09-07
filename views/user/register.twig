@@ -13,7 +13,7 @@
 
                 <h1 class="mb-8 text-3xl text-center">Register</h1>
 
-                <input type="text" required class="block border border-gray-light w-full p-3 rounded mt-4" name="email" placeholder="Email" value="{% if old.email is defined %}{{ old.email }}{% endif %}" />
+                <input type="email" required class="block border border-gray-light w-full p-3 rounded mt-4" name="email" placeholder="Email" value="{% if old.email is defined %}{{ old.email }}{% endif %}" />
                 {% if errors.email is defined %}
                     {% for error in errors.email %}
                         <p class="text-sm text-red-600 italic">{{ error|e }}</p>

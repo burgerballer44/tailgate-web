@@ -26,6 +26,13 @@ return function (App $app) use ($request) {
     $app->group('/user', function (Group $group) {
         $group->get('', \TailgateWeb\Controllers\UserController::class . ':all')->setName('users');
         $group->get('/{userId}', \TailgateWeb\Controllers\UserController::class . ':view')->setName('user');
+        $group->get('/{userId}/update', \TailgateWeb\Controllers\UserController::class . ':update')->setName('update-user');
+        $group->post('/{userId}/update', \TailgateWeb\Controllers\UserController::class . ':updatePost');
+        $group->get('/{userId}/delete', \TailgateWeb\Controllers\UserController::class . ':deletePost')->setName('delete-user');
+        $group->get('/{userId}/email', \TailgateWeb\Controllers\UserController::class . ':email')->setName('update-email');
+        $group->post('/{userId}/email', \TailgateWeb\Controllers\UserController::class . ':emailPost');
+        $group->get('/{userId}/password', \TailgateWeb\Controllers\UserController::class . ':password')->setName('update-password');
+        $group->post('/{userId}/password', \TailgateWeb\Controllers\UserController::class . ':passwordPost');
     })->add(MustBeSignedInMiddleware::class);
 
     // group

@@ -7,8 +7,7 @@
     {% if users is defined %}
         {% for user in users %}
             <div>
-                <a href={{ url_for('user', { 'id': user.userId }) }}> <u>{{ user.userId }}</u> </a> |
-                {{ user.username }} |
+                <a href={{ url_for('user', { 'userId': user.userId }) }}> <u>{{ user.userId }}</u> </a> |
                 {{ user.email }} |
                 {{ user.status }} |
                 {{ user.role }}

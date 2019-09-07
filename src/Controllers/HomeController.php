@@ -46,7 +46,7 @@ class HomeController extends AbstractController
             'expires' => strtotime('+' . $data['expires_in'] . ' seconds'),
             'refresh_token' => $data['refresh_token']
         ];
-        $this->flash->addMessage('success', 'Hello!');
+
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }
 

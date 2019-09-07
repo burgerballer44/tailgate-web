@@ -22,6 +22,9 @@ class UserController extends AbstractController
         $data = json_decode($clientResponse->getBody(), true);
         $users = $data['data'];
 
+        // var_dump($users);
+        // die();
+
         return $this->view->render($response, 'user/index.twig', compact('users'));
     }
 
@@ -107,5 +110,119 @@ class UserController extends AbstractController
         }
 
         return $response->withHeader('Location', '/sign-in')->withStatus(302);
+    }
+
+    public function update(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $args['userId'];
+
+        $clientResponse = $this->apiGet('/v1/users/' . $userId);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+            
+            return $this->view->render($response, 'user/view.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        $data = json_decode($clientResponse->getBody(), true);
+        $user = $data['data'];
+
+        return $this->view->render($response, 'user/update.twig', compact('user'));
+    }
+
+    public function updatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        $userId = $args['userId'];
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiPatch("/v1/users/{$userId}", [
+            'email' => $parsedBody['email'],
+            'status' => $parsedBody['status'],
+            'role' => $parsedBody['role'],
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'user/update.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);
+    }
+
+    public function deletePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        $userId = $args['userId'];
+
+        $clientResponse = $this->apiDelete("/v1/users/{$userId}");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'user/update.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        return $response->withHeader('Location', "/user")->withStatus(302);
+    }
+
+    public function email(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $args['userId'];
+        return $this->view->render($response, 'user/email.twig', compact('userId'));
+    }
+
+    public function emailPost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        $userId = $args['userId'];
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiPatch("/v1/users/{$userId}/email", [
+            'email' => $parsedBody['email']
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'user/email.twig', [
+                'errors' => $data['errors'],
+                'userId' => $userId,
+            ]);
+        }
+
+        return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);
+    }
+
+    public function password(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $userId = $args['userId'];
+        return $this->view->render($response, 'user/password.twig', compact('userId'));
+    }
+
+    public function passwordPost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        $userId = $args['userId'];
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiPatch("/v1/users/{$userId}/password", [
+            'password' => $parsedBody['password'],
+            'confirm_password' => $parsedBody['confirm_password']
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'user/password.twig', [
+                'errors' => $data['errors'],
+                'userId' => $userId,
+            ]);
+        }
+
+        return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);
     }
 }

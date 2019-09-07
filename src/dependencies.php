@@ -10,12 +10,13 @@ use Slim\App;
 use Slim\Flash\Messages;
 use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
+use TailgateWeb\Extensions\CsrfExtension;
+use TailgateWeb\Extensions\FormBuilderExtension;
+use TailgateWeb\Extensions\HoneypotExtension;
+use TailgateWeb\Middleware\CsrfMiddleware;
 use TailgateWeb\Middleware\MustBeSignedInMiddleware;
 use TailgateWeb\Middleware\MustBeSignedOutMiddleware;
 use TailgateWeb\Middleware\ViewGlobalMiddleware;
-use TailgateWeb\Middleware\CsrfMiddleware;
-use TailgateWeb\Extensions\HoneypotExtension;
-use TailgateWeb\Extensions\CsrfExtension;
 
 return function (App $app) use ($request) {
 
@@ -72,6 +73,7 @@ return function (App $app) use ($request) {
         $twig->addExtension(new HoneypotExtension());
         $twig->addExtension(new CsrfExtension($container->get('csrf')));
         $twig->addExtension(new TwigMessages($container->get('flash')));
+        $twig->addExtension(new FormBuilderExtension());
 
         return $twig;
     });
