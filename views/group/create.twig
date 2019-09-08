@@ -8,22 +8,11 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
-    {% if errors.name is defined %}
-        {% for error in errors.name %}
-            <p class="text-sm text-red-600">{{ error|e }}</p>
-        {% endfor %}
-    {% endif %}
-    {% if errors.owner_id is defined %}
-        {% for error in errors.owner_id %}
-            <p class="text-sm text-red-600">{{ error|e }}</p>
-        {% endfor %}
-    {% endif %}
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="name" placeholder="name of group" value="{% if old.name is defined %}{{ old.name }}{% endif %}" />
+    {{ textField('name', 'Group Name', 'text', 'name of group', 'required')|raw }}
+    {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
+    {% if errors.owner_id is defined %} {{ displayErrors('owner_id', errors)|raw }} {% endif %}
 
-    {# <input type="text" class="block border border-gray-light w-full p-3 rounded mb-4" name="owner_id" value="{% if old.owner_id is defined %}{{ old.owner_id }}{% endif %}" /> #}
-
-    <button type="submit" class="w-full text-center py-3 rounded bg-green-500 text-white hover:bg-green-700 focus:outline-none my-1"
-    >Create Group</button>
+    {{ submitButton('Create Group')|raw }}
 </form>
 {# end create-group form #}
 

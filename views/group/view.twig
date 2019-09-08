@@ -21,7 +21,7 @@
             {% endfor %}
         {% endif %}
 
-        <a href={{ url_for('add-member', { 'id': group.groupId }) }}> <u>Add Member</u> </a>
+        <a href={{ url_for('add-member', { 'groupId': group.groupId }) }}> <u>Add Member</u> </a>
     {% endif %}
 
 {% endblock %}

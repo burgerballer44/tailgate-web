@@ -13,7 +13,10 @@ class TeamController extends AbstractController
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'team/index.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);
@@ -24,13 +27,16 @@ class TeamController extends AbstractController
 
     public function view(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['id'];
+        $teamId = $args['teamId'];
 
         $clientResponse = $this->apiGet('/v1/teams/' . $teamId);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'team/view.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);

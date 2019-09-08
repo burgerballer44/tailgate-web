@@ -13,7 +13,10 @@ class GroupController extends AbstractController
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'group/index.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);
@@ -24,13 +27,16 @@ class GroupController extends AbstractController
 
     public function view(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $groupId = $args['id'];
+        $groupId = $args['groupId'];
 
         $clientResponse = $this->apiGet('/v1/groups/' . $groupId);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'group/view.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);
@@ -65,15 +71,17 @@ class GroupController extends AbstractController
 
     public function addMember(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        return $this->view->render($response, 'group/add-member.twig');
+        $groupId = $args['groupId'];
+        return $this->view->render($response, 'group/add-member.twig', compact('groupId'));
     }
 
     public function addMemberPost(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
+    {   
+        $groupId = $args['groupId'];
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiPost('/v1/groups/member', [
-            'group_id' => $parsedBody['group_id'],
+            'group_id' => $groupId,
             'user_id' => $parsedBody['user_id']
         ]);
 
@@ -82,6 +90,7 @@ class GroupController extends AbstractController
 
             return $this->view->render($response, 'group/add-member.twig', [
                 'errors' => $data['errors'],
+                'group_id' => $groupId,
             ]);
         }
 
@@ -89,17 +98,21 @@ class GroupController extends AbstractController
     }
 
     public function submitScore(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        return $this->view->render($response, 'group/submit-score.twig');
+    {   
+        $groupId = $args['groupId'];
+        $playerId = $args['playerId'];
+        return $this->view->render($response, 'group/submit-score.twig', compact('groupId', 'playerId'));
     }
 
     public function submitScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $groupId = $args['groupId'];
+        $playerId = $args['playerId'];
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiPost('/v1/groups/member', [
-            'group_id' => $parsedBody['group_id'],
-            'user_id' => $parsedBody['user_id'],
+            'group_id' => $groupId,
+            'playerId' => $playerId,
             'game_id' => $parsedBody['game_id'],
             'home_team_prediction' => $parsedBody['home_team_prediction'],
             'away_team_prediction' => $parsedBody['away_team_prediction']
@@ -110,6 +123,8 @@ class GroupController extends AbstractController
 
             return $this->view->render($response, 'group/submit-score.twig', [
                 'errors' => $data['errors'],
+                'groupId' => $groupId,
+                'playerId' => $playerId,
             ]);
         }
 

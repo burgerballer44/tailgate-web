@@ -13,7 +13,7 @@
             {{ season.seasonEnd }} <br>
         </div>
 
-        <a href={{ url_for('add-game', { 'id': season.seasonId }) }}> <u>Add Game</u> </a>
+        <a href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> <u>Add Game</u> </a>
     {% endif %}
 
 {% endblock %}

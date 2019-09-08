@@ -73,7 +73,7 @@ return function (App $app) use ($request) {
         $twig->addExtension(new HoneypotExtension());
         $twig->addExtension(new CsrfExtension($container->get('csrf')));
         $twig->addExtension(new TwigMessages($container->get('flash')));
-        $twig->addExtension(new FormBuilderExtension());
+        $twig->addExtension(new FormBuilderExtension($request->getParsedBody()));
 
         return $twig;
     });

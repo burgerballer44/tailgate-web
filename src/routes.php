@@ -40,11 +40,11 @@ return function (App $app) use ($request) {
         $group->get('', \TailgateWeb\Controllers\GroupController::class . ':all')->setName('groups');
         $group->get('/create', \TailgateWeb\Controllers\GroupController::class . ':create')->setName('create-group');
         $group->post('/create', \TailgateWeb\Controllers\GroupController::class . ':createPost');
-        $group->get('/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMember')->setName('add-member');
-        $group->post('/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMemberPost');
-        $group->get('/submit-score', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
-        $group->post('/submit-score', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
-        $group->get('/{id}', \TailgateWeb\Controllers\GroupController::class . ':view')->setName('group');
+        $group->get('/{groupId}', \TailgateWeb\Controllers\GroupController::class . ':view')->setName('group');
+        $group->get('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMember')->setName('add-member');
+        $group->post('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMemberPost');
+        $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
+        $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
     })->add(MustBeSignedInMiddleware::class);
 
     // team
@@ -52,9 +52,9 @@ return function (App $app) use ($request) {
         $group->get('', \TailgateWeb\Controllers\TeamController::class . ':all')->setName('teams');
         $group->get('/add', \TailgateWeb\Controllers\TeamController::class . ':add')->setName('add-team');
         $group->post('/add', \TailgateWeb\Controllers\TeamController::class . ':addPost');
-        $group->get('/follow', \TailgateWeb\Controllers\TeamController::class . ':follow')->setName('follow-team');
-        $group->post('/follow', \TailgateWeb\Controllers\TeamController::class . ':followPost');
-        $group->get('/{id}', \TailgateWeb\Controllers\TeamController::class . ':view')->setName('team');
+        $group->get('/{teamId}', \TailgateWeb\Controllers\TeamController::class . ':view')->setName('team');
+        $group->get('/{teamId}/follow', \TailgateWeb\Controllers\TeamController::class . ':follow')->setName('follow-team');
+        $group->post('/{teamId}/follow', \TailgateWeb\Controllers\TeamController::class . ':followPost');
     })->add(MustBeSignedInMiddleware::class);
 
     // season
@@ -62,11 +62,11 @@ return function (App $app) use ($request) {
         $group->get('', \TailgateWeb\Controllers\SeasonController::class . ':all')->setName('seasons');
         $group->get('/create', \TailgateWeb\Controllers\SeasonController::class . ':create')->setName('create-season');
         $group->post('/create', \TailgateWeb\Controllers\SeasonController::class . ':createPost');
-        $group->get('/add-game', \TailgateWeb\Controllers\SeasonController::class . ':addGame')->setName('add-game');
-        $group->post('/add-game', \TailgateWeb\Controllers\SeasonController::class . ':addGamePost');
-        $group->get('/add-game-score', \TailgateWeb\Controllers\SeasonController::class . ':addGameScore')->setName('add-game-score');
-        $group->post('/add-game-score', \TailgateWeb\Controllers\SeasonController::class . ':addGameScorePost');
-        $group->get('/{id}', \TailgateWeb\Controllers\SeasonController::class . ':view')->setName('season');
+        $group->get('/{seasonId}', \TailgateWeb\Controllers\SeasonController::class . ':view')->setName('season');
+        $group->get('/{seasonId}/add-game', \TailgateWeb\Controllers\SeasonController::class . ':addGame')->setName('add-game');
+        $group->post('/{seasonId}/add-game', \TailgateWeb\Controllers\SeasonController::class . ':addGamePost');
+        $group->get('/{seasonId}/add-game-score', \TailgateWeb\Controllers\SeasonController::class . ':addGameScore')->setName('add-game-score');
+        $group->post('/{seasonId}/add-game-score', \TailgateWeb\Controllers\SeasonController::class . ':addGameScorePost');
     })->add(MustBeSignedInMiddleware::class);
 
 };

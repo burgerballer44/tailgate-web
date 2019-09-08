@@ -8,7 +8,7 @@
 {% if groups is defined %}
     {% for group in groups %}
         <div>
-            <a href={{ url_for('group', { 'id': group.groupId }) }}> <u>{{ group.groupId }}</u> </a> |
+            <a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.groupId }}</u> </a> |
             {{ group.name }} |
             {{ group.ownerId }} |
         </div>

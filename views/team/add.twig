@@ -8,22 +8,13 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
-    {% if errors.designation is defined %}
-        {% for error in errors.designation %}
-            <p class="text-sm text-red-600">{{ error|e }}</p>
-        {% endfor %}
-    {% endif %}
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="designation" placeholder="where is this team" value="{% if old.designation is defined %}{{ old.designation }}{% endif %}" />
+    {{ textField('designation', 'Designation', 'text', 'where is this team', 'required')|raw }}
+    {% if errors.designation is defined %} {{ displayErrors('designation', errors)|raw }} {% endif %}
 
-    {% if errors.mascot is defined %}
-        {% for error in errors.mascot %}
-            <p class="text-sm text-red-600">{{ error|e }}</p>
-        {% endfor %}
-    {% endif %}
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="mascot" placeholder="what is the mascot" value="{% if old.mascot is defined %}{{ old.mascot }}{% endif %}" />
+    {{ textField('mascot', 'Mascot', 'text', 'what is mascot', 'required')|raw }}
+    {% if errors.mascot is defined %} {{ displayErrors('mascot', errors)|raw }} {% endif %}
 
-    <button type="submit" class="w-full text-center py-3 rounded bg-green-500 text-white hover:bg-green-700 focus:outline-none my-1"
-    >Add Team</button>
+    {{ submitButton('Add Team')|raw }}
 </form>
 {# end add-team form #}
 

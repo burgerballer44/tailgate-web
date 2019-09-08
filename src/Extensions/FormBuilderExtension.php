@@ -7,6 +7,27 @@ use Twig\TwigFunction;
 
 class FormBuilderExtension extends AbstractExtension
 {
+    private $parsedBody;
+    private $fieldsToIgnore = [
+        'password',
+        'confirm_password',
+    ];
+
+    public function __construct($parsedBody)
+    {
+        $fieldsToIgnore = $this->fieldsToIgnore;
+
+        if (!is_array($parsedBody)) {
+            $parsedBody = [];
+        }
+
+        $parsedBodyWithIgnoredFieldsRemoved = array_filter($parsedBody, function($value) use ($fieldsToIgnore) {
+            return !in_array($value, $fieldsToIgnore);
+        }, ARRAY_FILTER_USE_KEY);
+
+        $this->parsedBody = $parsedBodyWithIgnoredFieldsRemoved;
+    }
+
     /**
      * @return TwigFunction[]
      */
@@ -14,25 +35,36 @@ class FormBuilderExtension extends AbstractExtension
     {
         return [
             new TwigFunction('textField', [$this, 'textField']),
+            new TwigFunction('submitButton', [$this, 'submitButton']),
+            new TwigFunction('displayErrors', [$this, 'displayErrors']),
         ];
     }
 
-    public function textField($fieldName, $label, $value, $type = 'text', $placeholder = '')
+    public function textField($fieldName, $label, $type = 'text', $placeholder = '', $required = '', $value = '')
     {
+        $value = $this->parsedBody[$fieldName] ?? $value;
         $value = htmlspecialchars($value);
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><input class='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500' placeholder='{$placeholder}' autocomplete='off' type='{$type}' name={$fieldName} value='{$value}'>";
 
-        return $output;
+        $label = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label>";
+        $input = "<input class='block border border-gray-light w-full p-3 rounded mb-4' placeholder='{$placeholder}' autocomplete='off' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
+
+        return $label . $input;
     }
 
-    public function displayErrors($key, $field, $errors)
+    public function submitButton($text = 'Go')
+    {
+        return "<button type='submit' class='w-full text-center py-3 rounded bg-carolina text-white hover:bg-navy focus:outline-none mt-4'
+        >{$text}</button>";
+    }
+
+    public function displayErrors($field, $errors)
     {
         $output = '';
 
-        if (isset($errors[$key][$field])) {
-            $output .= "<div>";
-            foreach ($errors[$key][$field] as $error) {
-                $output .= "<p class='text-red-500 text-xs italic'>" . $error . ".</p>";
+        if (isset($errors[$field])) {
+            $output .= "<div class='mb-4'>";
+            foreach ($errors[$field] as $error) {
+                $output .= "<p class='text-sm text-red-600 italic'>{$error}</p>";
             }
             $output .= "</div>";
         }

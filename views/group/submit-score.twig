@@ -3,28 +3,18 @@
 {% block content %}
 
 {# add-member form #}
-<form action="{{ url_for('add-member') }}" method="POST">
+<form action="{{ url_for('submit-score', { 'groupId': groupId, 'playerId': playerId })) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
-    {% if errors.name is defined %}
-        {% for error in errors.name %}
-            <p class="text-sm text-red-600">{{ error|e }}</p>
-        {% endfor %}
-    {% endif %}
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="group_id" placeholder="name of group" value="{% if old.group_id is defined %}{{ old.group_id }}{% endif %}" />
+    {{ textField('home_team_prediction', 'Home Team Score', 'number', '', 'required')|raw }}
+    {% if errors.home_team_prediction is defined %} {{ displayErrors('home_team_prediction', errors)|raw }} {% endif %}
 
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="user_id" value="{% if old.user_id is defined %}{{ old.user_id }}{% endif %}" />
+    {{ textField('away_team_prediction', 'AwayTeam Score', 'number', '', 'required')|raw }}
+    {% if errors.away_team_prediction is defined %} {{ displayErrors('away_team_prediction', errors)|raw }} {% endif %}
 
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="game_id" value="{% if old.game_id is defined %}{{ old.game_id }}{% endif %}" />
-
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="home_team_prediction" value="{% if old.home_team_prediction is defined %}{{ old.home_team_prediction }}{% endif %}" />
-
-    <input type="text" required class="block border border-gray-light w-full p-3 rounded mb-4" name="away_team_prediction" value="{% if old.away_team_prediction is defined %}{{ old.away_team_prediction }}{% endif %}" />
-
-    <button type="submit" class="w-full text-center py-3 rounded bg-green-500 text-white hover:bg-green-700 focus:outline-none my-1"
-    >Submit Score</button>
+    {{ submitButton('Submit Score')|raw }}
 </form>
 {# end add-member form #}
 

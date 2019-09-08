@@ -22,9 +22,6 @@ class UserController extends AbstractController
         $data = json_decode($clientResponse->getBody(), true);
         $users = $data['data'];
 
-        // var_dump($users);
-        // die();
-
         return $this->view->render($response, 'user/index.twig', compact('users'));
     }
 

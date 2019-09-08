@@ -13,7 +13,10 @@ class SeasonController extends AbstractController
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'season/index.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);
@@ -24,13 +27,16 @@ class SeasonController extends AbstractController
 
     public function view(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $seasonId = $args['id'];
+        $seasonId = $args['seasonId'];
 
         $clientResponse = $this->apiGet('/v1/seasons/' . $seasonId);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            var_dump($data);die();
+            
+            return $this->view->render($response, 'season/view.twig', [
+                'errors' => $data['errors'],
+            ]);
         }
 
         $data = json_decode($clientResponse->getBody(), true);
@@ -68,16 +74,18 @@ class SeasonController extends AbstractController
     }
 
     public function addGame(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        return $this->view->render($response, 'season/add-game.twig');
+    {   
+        $seasonId = $args['seasonId'];
+        return $this->view->render($response, 'season/add-game.twig', compact('seasonId'));
     }
 
     public function addGamePost(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
+    {   
+        $seasonId = $args['seasonId'];
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiPost('/v1/seasons/game', [
-            'season_id' => $parsedBody['season_id'],
+            'season_id' => $seasonId,
             'home_team_id' => $parsedBody['home_team_id'],
             'away_team_id' => $parsedBody['away_team_id'],
             'start_date' => $parsedBody['start_date']
@@ -88,6 +96,7 @@ class SeasonController extends AbstractController
 
             return $this->view->render($response, 'season/add-game.twig', [
                 'errors' => $data['errors'],
+                'seasonId' => $seasonId,
             ]);
         }
 
@@ -96,11 +105,15 @@ class SeasonController extends AbstractController
 
     public function addGameScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        return $this->view->render($response, 'season/add-game-score.twig');
+        $seasonId = $args['seasonId'];
+        $gameId = $args['gameId'];
+        return $this->view->render($response, 'season/add-game-score.twig', compact('seasonId', 'gameId'));
     }
 
     public function addGameScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
+    {   
+        $seasonId = $args['seasonId'];
+        $gameId = $args['gameId'];
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiPost('/v1/seasons/game-score', [
@@ -115,6 +128,8 @@ class SeasonController extends AbstractController
 
             return $this->view->render($response, 'season/add-game-score.twig', [
                 'errors' => $data['errors'],
+                'seasonId' => $seasonId,
+                'gameId' => $gameId,
             ]);
         }
 

@@ -16,12 +16,11 @@
         {% if errors is defined %}
             <p class="text-sm text-red-600 italic">Invalid email or password</p>
         {% endif %}
-        <input type="text" required class="block border border-gray-light w-full p-3 rounded mt-4" name="email" placeholder="your email address" value="{% if old.email is defined %}{{ old.email }}{% endif %}" />
+        
+        {{ textField('email', 'Email', 'email', 'your email address')|raw }}
+        {{ textField('password', 'Password', 'password', '************')|raw }}
+        {{ submitButton()|raw }}
 
-        <input type="password" required class="block border border-gray-light w-full p-3 rounded mt-4" name="password" placeholder="***********" />
-
-        <button type="submit" class="w-full text-center py-3 rounded bg-carolina text-white hover:bg-navy focus:outline-none mt-4"
-        >Go</button>
     </form>
 </div>
 {# end sign in form #}
