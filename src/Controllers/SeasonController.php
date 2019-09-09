@@ -29,7 +29,7 @@ class SeasonController extends AbstractController
     {
         $seasonId = $args['seasonId'];
 
-        $clientResponse = $this->apiGet('/v1/seasons/' . $seasonId);
+        $clientResponse = $this->apiGet("/v1/seasons/{$seasonId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -70,7 +70,68 @@ class SeasonController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/season')->withStatus(302);
+    }
+
+    public function update(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $seasonId = $args['seasonId'];
+
+        $clientResponse = $this->apiGet("/v1/seasons/{$seasonId}");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+            
+            return $this->view->render($response, 'season/index.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        $data = json_decode($clientResponse->getBody(), true);
+        $season = $data['data'];
+
+        return $this->view->render($response, 'season/update.twig', compact('season', 'seasonId'));
+    }
+
+    public function updatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $seasonId = $args['seasonId'];
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiPatch("/v1/seasons/{$seasonId}", [
+            'sport' => $parsedBody['sport'],
+            'season_type' => $parsedBody['season_type'],
+            'name' => $parsedBody['name'],
+            'season_start' => $parsedBody['season_start'],
+            'season_end' => $parsedBody['season_end']
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'season/create.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        return $response->withHeader('Location', '/season')->withStatus(302);
+    }
+
+    public function delete(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $seasonId = $args['seasonId'];
+
+        $clientResponse = $this->apiDelete("/v1/seasons/{$seasonId}");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'season/create.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        return $response->withHeader('Location', '/season')->withStatus(302);
     }
 
     public function addGame(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -84,7 +145,7 @@ class SeasonController extends AbstractController
         $seasonId = $args['seasonId'];
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/v1/seasons/game', [
+        $clientResponse = $this->apiPost("/v1/seasons/{$seasonId}/game", [
             'season_id' => $seasonId,
             'home_team_id' => $parsedBody['home_team_id'],
             'away_team_id' => $parsedBody['away_team_id'],
@@ -94,31 +155,34 @@ class SeasonController extends AbstractController
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
 
+            var_dump($data);
+            die();
+
             return $this->view->render($response, 'season/add-game.twig', [
                 'errors' => $data['errors'],
                 'seasonId' => $seasonId,
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/season')->withStatus(302);
     }
 
-    public function addGameScore(ServerRequestInterface $request, ResponseInterface $response, $args)
+    public function updateGameScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $seasonId = $args['seasonId'];
         $gameId = $args['gameId'];
-        return $this->view->render($response, 'season/add-game-score.twig', compact('seasonId', 'gameId'));
+        return $this->view->render($response, 'season/update-game-score.twig', compact('seasonId', 'gameId'));
     }
 
-    public function addGameScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    public function updateGameScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
         $seasonId = $args['seasonId'];
         $gameId = $args['gameId'];
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/v1/seasons/game-score', [
-            'season_id' => $parsedBody['season_id'],
-            'game_id' => $parsedBody['game_id'],
+        $clientResponse = $this->apiPost("/v1/seasons/{$seasonId}/game/{$gameId}", [
+            'season_id' => $seasonId,
+            'game_id' => $gameId,
             'home_team_score' => $parsedBody['home_team_score'],
             'away_team_score' => $parsedBody['away_team_score']
         ]);
@@ -126,7 +190,7 @@ class SeasonController extends AbstractController
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
 
-            return $this->view->render($response, 'season/add-game-score.twig', [
+            return $this->view->render($response, 'season/update-game-score.twig', [
                 'errors' => $data['errors'],
                 'seasonId' => $seasonId,
                 'gameId' => $gameId,
@@ -134,5 +198,23 @@ class SeasonController extends AbstractController
         }
 
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
+    }
+
+    public function deleteGame(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $seasonId = $args['seasonId'];
+        $gameId = $args['gameId'];
+
+        $clientResponse = $this->apiDelete("/v1/seasons/{$seasonId}/game/{$gameId}");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'season/create.twig', [
+                'errors' => $data['errors'],
+            ]);
+        }
+
+        return $response->withHeader('Location', '/season')->withStatus(302);
     }
 }

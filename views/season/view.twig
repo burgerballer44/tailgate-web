@@ -4,6 +4,10 @@
 
     <h1 class="py-4">viewing season</h1>
 
+    <a href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> <u>Update Season</u> </a>
+    <a href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> <u>Delete Season</u> </a>
+    <a href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> <u>Add Game</u> </a>
+
     {% if season is defined %}
         <div>
             {{ season.seasonId }} <br>
@@ -13,7 +17,6 @@
             {{ season.seasonEnd }} <br>
         </div>
 
-        <a href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> <u>Add Game</u> </a>
     {% endif %}
 
 {% endblock %}

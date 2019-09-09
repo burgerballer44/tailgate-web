@@ -9,7 +9,13 @@
             {{ team.teamId }} <br>
             {{ team.designation }} <br>
             {{ team.mascot }} <br>
+            <a href={{ url_for('update-team', { 'teamId': team.teamId }) }}> <u>Update Team</u> </a>
+            <a href={{ url_for('delete-team', { 'teamId': team.teamId }) }}> <u>Delete Team</u> </a>
+            <a href={{ url_for('follow-team', { 'teamId': team.teamId }) }}> <u>Follow Team</u> </a>
         </div>
+
+            <a href={{ url_for('delete-follow', { 'teamId': team.teamId, 'followId': 'blahblah' }) }}> <u>Deelte Follow</u> </a>
+
     {% endif %}
 
 {% endblock %}

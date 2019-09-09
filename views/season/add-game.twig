@@ -14,7 +14,7 @@
     {{ textField('away_team_id', 'Away Team', 'text', 'what is away team', 'required')|raw }}
     {% if errors.away_team_id is defined %} {{ displayErrors('away_team_id', errors)|raw }} {% endif %}
 
-    {{ textField('start_date', 'Season Start', 'date', 'when does the game_start', 'required')|raw }}
+    {{ textField('start_date', 'Game Start', 'date', 'when does the game_start', 'required')|raw }}
     {% if errors.start_date is defined %} {{ displayErrors('start_date', errors)|raw }} {% endif %}
 
     {{ submitButton('Add Game')|raw }}

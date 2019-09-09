@@ -5,23 +5,54 @@
     <h1 class="py-4">viewing group</h1>
 
     {% if group is defined %}
+
+        <a href={{ url_for('update-group', { 'groupId': group.groupId }) }}> <u>Update Group</u> </a>
+        <a href={{ url_for('delete-group', { 'groupId': group.groupId }) }}> <u>Delete Group</u> </a>
+        <a href={{ url_for('add-member', { 'groupId': group.groupId }) }}> <u>Add Member</u> </a>
+
+        <h1 class="text-xl underline">Group</h1>
+
         <div>
             {{ group.groupId }} <br>
             {{ group.name }} <br>
         </div>
         
+        <h1 class="text-xl underline">Members</h1>
+
         {% if group.members is defined %}
             {% for member in group.members %}
                 <div>
-                    {{ member.memberId }} <br>
-                    {{ member.groupId }} <br>
-                    {{ member.userId }} <br>
-                    {{ member.role }} <br>
+                    <a href={{ url_for('add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a>
+                    <a href={{ url_for('update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a>
+                    <a href={{ url_for('delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a>
+                    {{ member.role }} {{ member.allowMultiplePlayers }}
+                </div>
+            {% endfor %}
+        {% endif %}
+        
+        <h1 class="text-xl underline">Players</h1>
+        
+        {% if group.players is defined %}
+            {% for player in group.players %}
+                <div>
+                    <a href={{ url_for('submit-score', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Submit Score</u> </a>
+                    {{ player.username }}  
                 </div>
             {% endfor %}
         {% endif %}
 
-        <a href={{ url_for('add-member', { 'groupId': group.groupId }) }}> <u>Add Member</u> </a>
+        <h1 class="text-xl underline">Scores</h1>
+        
+        {% if group.scores is defined %}
+            {% for score in group.scores %}
+                <div>
+                    <a href={{ url_for('update-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> <u>Update Score</u> </a>
+                    <a href={{ url_for('delete-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> <u>Delete Score</u> </a>
+                    {{ score.homeTeamPrediction }}  {{ score.awayTeamPrediction }}  
+                </div>
+            {% endfor %}
+        {% endif %}
+
     {% endif %}
 
 {% endblock %}

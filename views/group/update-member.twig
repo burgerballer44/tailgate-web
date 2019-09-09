@@ -1,0 +1,24 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# add-member form #}
+<form action="{{ url_for('update-member', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {{ textField('group_role', 'Role', 'text', 'role', 'required')|raw }}
+    {% if errors.group_role is defined %} {{ displayErrors('group_role', errors)|raw }} {% endif %}
+
+    {{ textField('allow_multiple', 'Allow Multiple', 'text', 'allow multiple players?', 'required')|raw }}
+    {% if errors.allow_multiple is defined %} {{ displayErrors('allow_multiple', errors)|raw }} {% endif %}
+
+    {% if errors.user_id is defined %} {{ displayErrors('user_id', errors)|raw }} {% endif %}
+    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
+
+    {{ submitButton('Update Member')|raw }}
+</form>
+{# end add-member form #}
+
+{% endblock %}

@@ -1,0 +1,21 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# update-team form #}
+<form action="{{ url_for('update-team', { 'teamId': team.teamId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {{ textField('designation', 'Designation', 'text', 'where is this team', 'required', team.designation)|raw }}
+    {% if errors.designation is defined %} {{ displayErrors('designation', errors)|raw }} {% endif %}
+
+    {{ textField('mascot', 'Mascot', 'text', 'what is mascot', 'required', team.mascot)|raw }}
+    {% if errors.mascot is defined %} {{ displayErrors('mascot', errors)|raw }} {% endif %}
+
+    {{ submitButton('Update Team')|raw }}
+</form>
+{# end update-team form #}
+
+{% endblock %}

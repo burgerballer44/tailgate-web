@@ -151,7 +151,7 @@ class UserController extends AbstractController
         return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);
     }
 
-    public function deletePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    public function delete(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
         $userId = $args['userId'];
 

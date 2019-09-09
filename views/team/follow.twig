@@ -1,0 +1,18 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# follow-team form #}
+<form action="{{ url_for('follow-team', { 'teamId': teamId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {{ textField('group_id', 'Group', 'text', 'what is the group', 'required')|raw }}
+    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
+
+    {{ submitButton('Follow Team')|raw }}
+</form>
+{# end follow-team form #}
+
+{% endblock %}
