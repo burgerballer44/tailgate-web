@@ -9,7 +9,7 @@ class SeasonController extends AbstractController
 {
     public function all(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $clientResponse = $this->apiGet('/v1/seasons');
+        $clientResponse = $this->apiGet("/v1/seasons");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -54,7 +54,7 @@ class SeasonController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/v1/seasons', [
+        $clientResponse = $this->apiPost("/v1/seasons", [
             'sport' => $parsedBody['sport'],
             'season_type' => $parsedBody['season_type'],
             'name' => $parsedBody['name'],
@@ -180,7 +180,7 @@ class SeasonController extends AbstractController
         $gameId = $args['gameId'];
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/seasons/{$seasonId}/game/{$gameId}", [
+        $clientResponse = $this->apiPatch("/v1/seasons/{$seasonId}/game/{$gameId}/score", [
             'season_id' => $seasonId,
             'game_id' => $gameId,
             'home_team_score' => $parsedBody['home_team_score'],
@@ -197,7 +197,7 @@ class SeasonController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/season')->withStatus(302);
     }
 
     public function deleteGame(ServerRequestInterface $request, ResponseInterface $response, $args)

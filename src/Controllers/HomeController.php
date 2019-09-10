@@ -21,7 +21,7 @@ class HomeController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/token', [
+        $clientResponse = $this->apiPost("/token", [
             'grant_type' => 'password',
             'client_id' => $this->settings['client_id'],
             'client_secret' => $this->settings['client_secret'],

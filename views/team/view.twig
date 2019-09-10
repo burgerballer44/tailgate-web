@@ -14,7 +14,18 @@
             <a href={{ url_for('follow-team', { 'teamId': team.teamId }) }}> <u>Follow Team</u> </a>
         </div>
 
-            <a href={{ url_for('delete-follow', { 'teamId': team.teamId, 'followId': 'blahblah' }) }}> <u>Deelte Follow</u> </a>
+
+        <h1 class="py-4">Follows</h1>
+
+        {% if team.follows is defined %}
+            {% for follow in team.follows %}
+                <div>
+                    {{ follow.groupId }}
+                    <a href={{ url_for('delete-follow', { 'teamId': follow.teamId, 'followId': follow.followId }) }}> <u>Delete Follow</u> </a>
+                </div>
+            {% endfor %}
+        {% endif %}
+
 
     {% endif %}
 

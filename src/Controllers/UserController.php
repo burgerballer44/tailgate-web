@@ -9,7 +9,7 @@ class UserController extends AbstractController
 {
     public function all(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $clientResponse = $this->apiGet('/v1/users');
+        $clientResponse = $this->apiGet("/v1/users");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -30,7 +30,7 @@ class UserController extends AbstractController
     {
         $userId = $args['userId'];
 
-        $clientResponse = $this->apiGet('/v1/users/' . $userId);
+        $clientResponse = $this->apiGet("/v1/users/{$userId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -76,7 +76,7 @@ class UserController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/register', [
+        $clientResponse = $this->apiPost("/register", [
             'email' => $parsedBody['email'],
             'password' => $parsedBody['password'],
             'confirm_password' => $parsedBody['confirm_password'],
@@ -113,7 +113,7 @@ class UserController extends AbstractController
     {
         $userId = $args['userId'];
 
-        $clientResponse = $this->apiGet('/v1/users/' . $userId);
+        $clientResponse = $this->apiGet("/v1/users/{$userId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);

@@ -9,7 +9,7 @@ class GroupController extends AbstractController
 {
     public function all(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $clientResponse = $this->apiGet('/v1/groups');
+        $clientResponse = $this->apiGet("/v1/groups");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -54,7 +54,7 @@ class GroupController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost('/v1/groups', [
+        $clientResponse = $this->apiPost("/v1/groups", [
             'name' => $parsedBody['name'],
         ]);
 
@@ -66,7 +66,7 @@ class GroupController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/group')->withStatus(302);
     }
 
     public function update(ServerRequestInterface $request, ResponseInterface $response, $args)

@@ -17,6 +17,17 @@
             {{ season.seasonEnd }} <br>
         </div>
 
+        <h1 class="py-4">Games</h1>
+
+        {% if season.games is defined %}
+            {% for game in season.games %}
+                <div>
+                    <a href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Update Score</u> </a>
+                    {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
     {% endif %}
 
 {% endblock %}

@@ -67,7 +67,7 @@ class TeamController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/team')->withStatus(302);
     }
 
     public function update(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -162,7 +162,7 @@ class TeamController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/team')->withStatus(302);
     }
 
     public function deleteFollow(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -171,7 +171,7 @@ class TeamController extends AbstractController
         $followId = $args['followId'];
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/teams/{$teamId}/follow/{followId}");
+        $clientResponse = $this->apiDelete("/v1/teams/{$teamId}/follow/{$followId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -182,6 +182,6 @@ class TeamController extends AbstractController
             ]);
         }
 
-        return $response->withHeader('Location', '/dashboard')->withStatus(302);
+        return $response->withHeader('Location', '/team')->withStatus(302);
     }
 }
