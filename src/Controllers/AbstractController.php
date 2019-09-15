@@ -133,7 +133,7 @@ abstract class AbstractController
 
                 // if this is a server error then we need to translate
                 // the uglier response into the consistent one
-                if ($response->getStatusCode() >= 500) {
+                if ($response->getStatusCode() >= 404) {
 
                     $newBody->write(json_encode([
                         'code' => $response->getStatusCode(),

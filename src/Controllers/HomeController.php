@@ -12,10 +12,12 @@ class HomeController extends AbstractController
         return $this->view->render($response, 'index.twig');
     }
 
+
     public function signIn(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         return $this->view->render($response, 'sign-in.twig');
     }
+
 
     public function signInPost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
@@ -37,6 +39,8 @@ class HomeController extends AbstractController
 
         $data = json_decode($clientResponse->getBody(), true);
 
+        $this->logger->info("{$parsedBody['email']} logged in.");
+
         $session = $this->session;
         $session->user = [
             'email' => $parsedBody['email']
@@ -49,6 +53,7 @@ class HomeController extends AbstractController
 
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }
+
 
     public function signOut(ServerRequestInterface $request, ResponseInterface $response, $args)
     {

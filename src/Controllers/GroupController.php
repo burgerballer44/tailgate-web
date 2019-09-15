@@ -237,6 +237,25 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', '/group')->withStatus(302);
     }
 
+    public function deletePlayer(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        $groupId = $args['groupId'];
+        $playerId = $args['playerId'];
+
+        $clientResponse = $this->apiDelete("/v1/groups/{$groupId}/player/{$player}");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'group/view.twig', [
+                'errors' => $data['errors'],
+                'group_id' => $groupId,
+            ]);
+        }
+
+        return $response->withHeader('Location', '/group')->withStatus(302);
+    }
+
     public function submitScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
         $groupId = $args['groupId'];

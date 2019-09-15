@@ -2,24 +2,32 @@
 
 {% block content %}
 
-{# update-user form #}
-<form action="{{ url_for('update-user', { 'userId': user.userId }) }}" method="POST">
+{% if user is defined %}
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+    {# update-user form #}
+    <form action="{{ url_for('update-user', { 'userId': userId }) }}" method="POST">
 
-    {{ textField('email', 'Email', 'email', 'email address', 'required', user.email)|raw }}
-    {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
 
-    {{ textField('status', 'Status', 'text', 'status', 'required', user.status)|raw }}
-    {% if errors.status is defined %} {{ displayErrors('status', errors)|raw }} {% endif %}
+        {{ textField('email', 'Email', 'email', 'email address', 'required', user.email)|raw }}
+        {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
 
-    {{ textField('role', 'Role', 'text', 'role', 'required', user.role)|raw }}
-    {% if errors.role is defined %} {{ displayErrors('role', errors)|raw }} {% endif %}
+        {{ dropdownField('status', 'Status', user.status, 'Select a status...', ['Active', 'Pending', 'Deleted'])|raw }}
+        {% if errors.status is defined %} {{ displayErrors('status', errors)|raw }} {% endif %}
 
-    {{ submitButton('Update User')|raw }}
+        {{ dropdownField('role', 'Role', user.role, 'Select a role...', ['Normal', 'Admin'])|raw }}
+        {% if errors.role is defined %} {{ displayErrors('role', errors)|raw }} {% endif %}
 
-</form>
-{# end update-user form #}
+        {{ submitButton('Update User')|raw }}
+
+    </form>
+    {# end update-user form #}
+
+{% else %}
+
+    <p>User is not defined.</p>
+
+{% endif %}
 
 {% endblock %}

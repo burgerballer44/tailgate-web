@@ -31,16 +31,16 @@ class MustBeSignedInMiddleware
             return $response->withHeader('Location', '/sign-in')->withStatus(302);
         }
 
-        // if they were trying to access a page prior to being redirected
-        if (isset($this->session->referrer)) {
+        // // if they were trying to access a page prior to being redirected
+        // if (isset($this->session->referrer)) {
 
-            $uri = $this->session->referrer;
-            unset($this->session->referrer);
+        //     $uri = $this->session->referrer;
+        //     unset($this->session->referrer);
             
-            $response = $this->responseFactory->createResponse();
-            return $response->withHeader('Location', $uri->getPath() . "?" . $uri->getQuery())->withStatus(302);
+        //     $response = $this->responseFactory->createResponse();
+        //     return $response->withHeader('Location', $uri->getPath() . "?" . $uri->getQuery())->withStatus(302);
 
-        }
+        // }
        
         return $handler->handle($request);
     }

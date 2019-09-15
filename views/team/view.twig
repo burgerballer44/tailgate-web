@@ -26,6 +26,14 @@
             {% endfor %}
         {% endif %}
 
+        {% if team.games is defined %}
+            {% for game in team.games %}
+                <div>
+                    <a href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Update Score</u> </a>
+                    {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
+                </div>
+            {% endfor %}
+        {% endif %}
 
     {% endif %}
 

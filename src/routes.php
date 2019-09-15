@@ -51,6 +51,7 @@ return function (App $app) use ($request) {
         $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deleteMember')->setName('delete-member');
         $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayer')->setName('add-player');
         $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayerPost');
+        $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deletePlayer')->setName('delete-player');
         $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
         $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
         $group->get('/{groupId}/update-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':updateScore')->setName('update-score');

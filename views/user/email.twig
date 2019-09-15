@@ -2,18 +2,27 @@
 
 {% block content %}
 
-{# update-email form #}
-<form action="{{ url_for('update-email', { 'userId': userId }) }}" method="POST">
+{% if user is defined %}
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+    {# update-email form #}
+    <form action="{{ url_for('update-email', { 'userId': userId }) }}" method="POST">
 
-    {{ textField('email', 'Email', 'email', 'email address', 'required')|raw }}
-    {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
 
-    {{ submitButton('Update Email')|raw }}
-    
-</form>
-{# end update-email form #}
+        {{ textField('email', 'Email', 'email', 'email address', 'required', user.email)|raw }}
+        {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
+
+        {{ submitButton('Update Email')|raw }}
+        
+    </form>
+    {# end update-email form #}
+
+{% else %}
+
+    <p>User is not defined.</p>
+
+{% endif %}
+
 
 {% endblock %}

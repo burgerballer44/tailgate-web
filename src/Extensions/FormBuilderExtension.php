@@ -35,6 +35,7 @@ class FormBuilderExtension extends AbstractExtension
     {
         return [
             new TwigFunction('textField', [$this, 'textField']),
+            new TwigFunction('dropdownField', [$this, 'dropdownField']),
             new TwigFunction('submitButton', [$this, 'submitButton']),
             new TwigFunction('displayErrors', [$this, 'displayErrors']),
         ];
@@ -49,6 +50,26 @@ class FormBuilderExtension extends AbstractExtension
         $input = "<input class='block border border-gray-light w-full p-3 rounded mb-4' placeholder='{$placeholder}' autocomplete='off' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
 
         return $label . $input;
+    }
+
+    public function dropdownField($fieldName, $label, $selectedValue, $placeholder, array $options, $disabled = 'disabled')
+    {
+        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select name='{$fieldName}' class='appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500'>";
+
+        if (!$selectedValue) {
+            $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";
+        }
+
+        foreach ($options as $value) {
+            if ($value == $selectedValue) {
+                $output .= "<option selected value='{$value}'>{$value}</option>";
+            } else {
+                $output .= "<option value='{$value}'>{$value}</option>";                                     
+            } 
+        }
+        $output .= "</select>";
+
+        return $output;
     }
 
     public function submitButton($text = 'Go')
@@ -72,35 +93,10 @@ class FormBuilderExtension extends AbstractExtension
         return $output;
     }
 
-    public function createDropdown($fieldName, $label, $selectedValue, $placeholder, array $options, $disabled = 'disabled')
-    {
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select name='{$fieldName}' class='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500'>";
 
 
 
-        if (!$selectedValue) {
-            $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";
-        }
 
-        foreach ($options as $key => $value) {
-            if ($key == $selectedValue) {
-                $output .= "<option selected value='{$key}'>{$value}</option>";
-            } else {
-                $output .= "<option value='{$key}'>{$value}</option>";                                     
-            } 
-        }
-        $output .= "</select>";
-
-        return $output;
-    }
-
-    public function createTextField($fieldName, $label, $value, $type = 'text', $placeholder = '')
-    {
-        $value = htmlspecialchars($value);
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><input class='appearance-none block w-full bg-gray-200 text-gray-700 border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:bg-white focus:border-gray-500' placeholder='{$placeholder}' autocomplete='off' type='{$type}' name={$fieldName} value='{$value}'>";
-
-        return $output;
-    }
 
     public function createRadioButtons($fieldName, $label, $selectedValue, array $options)
     {
