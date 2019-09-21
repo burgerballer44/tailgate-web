@@ -15,7 +15,8 @@
         "kanellov/slim-twig-flash": "^0.2.0",
         "mailgun/mailgun-php": "^2.8",
         "php-http/httplug": "v1.1.0",
-        "php-http/guzzle6-adapter": "@dev"
+        "php-http/guzzle6-adapter": "@dev",
+        "tightenco/collect": "^6.0"
     },
     "autoload": {
         "psr-4": {

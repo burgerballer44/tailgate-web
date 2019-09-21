@@ -8,14 +8,17 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.playerId is defined %} {{ displayErrors('playerId', errors)|raw }} {% endif %}
+
     {{ textField('game_id', 'Game', 'text', 'what game id', 'required')|raw }}
-    {% if errors.game_id is defined %} {{ displayErrors('game_id', errors)|raw }} {% endif %}
+    {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
 
-    {{ textField('home_team_prediction', 'Home Team Score', 'number', '', 'required')|raw }}
-    {% if errors.home_team_prediction is defined %} {{ displayErrors('home_team_prediction', errors)|raw }} {% endif %}
+    {{ textField('home_team_prediction', 'Home Team Prediction', 'number', '', 'required')|raw }}
+    {% if errors.homeTeamPrediction is defined %} {{ displayErrors('homeTeamPrediction', errors)|raw }} {% endif %}
 
-    {{ textField('away_team_prediction', 'AwayTeam Score', 'number', '', 'required')|raw }}
-    {% if errors.away_team_prediction is defined %} {{ displayErrors('away_team_prediction', errors)|raw }} {% endif %}
+    {{ textField('away_team_prediction', 'AwayTeam Prediction', 'number', '', 'required')|raw }}
+    {% if errors.awayTeamPrediction is defined %} {{ displayErrors('awayTeamPrediction', errors)|raw }} {% endif %}
 
     {{ submitButton('Submit Score')|raw }}
 </form>

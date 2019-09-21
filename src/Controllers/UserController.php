@@ -73,7 +73,7 @@ class UserController extends AbstractController
         $clientResponse = $this->apiPost("/register", [
             'email' => $parsedBody['email'],
             'password' => $parsedBody['password'],
-            'confirm_password' => $parsedBody['confirm_password'],
+            'confirmPassword' => $parsedBody['confirm_password'],
         ]);
         $data = json_decode($clientResponse->getBody(), true);
 
@@ -111,7 +111,6 @@ class UserController extends AbstractController
             return $this->view->render($response, 'user/update.twig', ['errors' => $data['errors'], 'userId' => $userId]);
         }
 
-        $data = json_decode($clientResponse->getBody(), true);
         $user = $data['data'];
 
         return $this->view->render($response, 'user/update.twig', compact('userId', 'user'));
@@ -212,7 +211,7 @@ class UserController extends AbstractController
 
         $clientResponse = $this->apiPatch("/v1/users/{$userId}/password", [
             'password' => $parsedBody['password'],
-            'confirm_password' => $parsedBody['confirm_password']
+            'confirmPassword' => $parsedBody['confirm_password']
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {

@@ -52,9 +52,12 @@ class FormBuilderExtension extends AbstractExtension
         return $label . $input;
     }
 
-    public function dropdownField($fieldName, $label, $selectedValue, $placeholder, array $options, $disabled = 'disabled')
+    public function dropdownField($fieldName, $label, $selectedValue, array $options, $placeholder = '', $disabled = 'disabled')
     {
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select name='{$fieldName}' class='appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500'>";
+        $selectedValue = $this->parsedBody[$fieldName] ?? $selectedValue;
+        $selectedValue = htmlspecialchars($selectedValue);
+        
+        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select required name='{$fieldName}' class='appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500'>";
 
         if (!$selectedValue) {
             $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";

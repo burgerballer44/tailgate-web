@@ -8,10 +8,11 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
-    {{ textField('username', 'Username', 'text', 'what is the name of yor player?', 'required')|raw }}
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.memberId is defined %} {{ displayErrors('memberId', errors)|raw }} {% endif %}
+
+    {{ textField('username', 'Username', 'text', 'what is the name of your player?', 'required')|raw }}
     {% if errors.username is defined %} {{ displayErrors('username', errors)|raw }} {% endif %}
-    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
-    {% if errors.member_id is defined %} {{ displayErrors('member_id', errors)|raw }} {% endif %}
 
     {{ submitButton('Add Player')|raw }}
 </form>

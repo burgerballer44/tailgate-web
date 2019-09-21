@@ -2,20 +2,30 @@
 
 {% block content %}
 
-{# update-team form #}
-<form action="{{ url_for('update-team', { 'teamId': team.teamId }) }}" method="POST">
+{% if team is defined %}
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+    {# update-team form #}
+    <form action="{{ url_for('update-team', { 'teamId': team.teamId }) }}" method="POST">
 
-    {{ textField('designation', 'Designation', 'text', 'where is this team', 'required', team.designation)|raw }}
-    {% if errors.designation is defined %} {{ displayErrors('designation', errors)|raw }} {% endif %}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+        
+        {% if errors.teamId is defined %} {{ displayErrors('teamId', errors)|raw }} {% endif %}
 
-    {{ textField('mascot', 'Mascot', 'text', 'what is mascot', 'required', team.mascot)|raw }}
-    {% if errors.mascot is defined %} {{ displayErrors('mascot', errors)|raw }} {% endif %}
+        {{ textField('designation', 'Designation', 'text', 'where is this team', 'required', team.designation)|raw }}
+        {% if errors.designation is defined %} {{ displayErrors('designation', errors)|raw }} {% endif %}
 
-    {{ submitButton('Update Team')|raw }}
-</form>
-{# end update-team form #}
+        {{ textField('mascot', 'Mascot', 'text', 'what is mascot', 'required', team.mascot)|raw }}
+        {% if errors.mascot is defined %} {{ displayErrors('mascot', errors)|raw }} {% endif %}
+
+        {{ submitButton('Update Team')|raw }}
+    </form>
+    {# end update-team form #}
+
+{% else %}
+
+<p>Team is not defined</p>
+
+{% endif %}
 
 {% endblock %}

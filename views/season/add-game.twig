@@ -8,14 +8,16 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+
     {{ textField('home_team_id', 'Home Team', 'text', 'what is home team', 'required')|raw }}
-    {% if errors.home_team_id is defined %} {{ displayErrors('home_team_id', errors)|raw }} {% endif %}
+    {% if errors.homeTeamId is defined %} {{ displayErrors('homeTeamId', errors)|raw }} {% endif %}
 
     {{ textField('away_team_id', 'Away Team', 'text', 'what is away team', 'required')|raw }}
-    {% if errors.away_team_id is defined %} {{ displayErrors('away_team_id', errors)|raw }} {% endif %}
+    {% if errors.awayTeamId is defined %} {{ displayErrors('awayTeamId', errors)|raw }} {% endif %}
 
-    {{ textField('start_date', 'Game Start', 'date', 'when does the game_start', 'required')|raw }}
-    {% if errors.start_date is defined %} {{ displayErrors('start_date', errors)|raw }} {% endif %}
+    {{ textField('start_date', 'Game Start', 'text', 'when does the game start', 'required')|raw }}
+    {% if errors.startDate is defined %} {{ displayErrors('startDate', errors)|raw }} {% endif %}
 
     {{ submitButton('Add Game')|raw }}
 </form>

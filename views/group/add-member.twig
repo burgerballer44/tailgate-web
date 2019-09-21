@@ -8,9 +8,10 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+
     {{ textField('user_id', 'User', 'text', 'what user', 'required')|raw }}
-    {% if errors.user_id is defined %} {{ displayErrors('user_id', errors)|raw }} {% endif %}
-    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
+    {% if errors.userId is defined %} {{ displayErrors('userId', errors)|raw }} {% endif %}
 
     {{ submitButton('Add Member')|raw }}
 </form>

@@ -2,23 +2,32 @@
 
 {% block content %}
 
-{# add-member form #}
-<form action="{{ url_for('update-member', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
+{% if member is defined %}
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+    {# update-member form #}
+    <form action="{{ url_for('update-member', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
 
-    {{ textField('group_role', 'Role', 'text', 'role', 'required')|raw }}
-    {% if errors.group_role is defined %} {{ displayErrors('group_role', errors)|raw }} {% endif %}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+        
+        {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+        {% if errors.memberId is defined %} {{ displayErrors('memberId', errors)|raw }} {% endif %}
 
-    {{ textField('allow_multiple', 'Allow Multiple', 'text', 'allow multiple players?', 'required')|raw }}
-    {% if errors.allow_multiple is defined %} {{ displayErrors('allow_multiple', errors)|raw }} {% endif %}
+        {{ dropdownField('group_role', 'Role', member.role, ['Group-Admin', 'Group-Member'], 'Select role')|raw }}
+        {% if errors.groupRole is defined %} {{ displayErrors('groupRole', errors)|raw }} {% endif %}
 
-    {% if errors.user_id is defined %} {{ displayErrors('user_id', errors)|raw }} {% endif %}
-    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
+        {{ dropdownField('allow_multiple', 'Allow Multiple Players', member.allowMultiplePlayers, [0, 1], 'Allow multiple players')|raw }}
+        {% if errors.allowMultiplePlayers is defined %} {{ displayErrors('allowMultiplePlayers', errors)|raw }} {% endif %}
 
-    {{ submitButton('Update Member')|raw }}
-</form>
-{# end add-member form #}
+
+        {{ submitButton('Update Member')|raw }}
+    </form>
+    {# end update-member form #}
+
+{% else %}
+
+<p>Member is not defined</p>
+
+{% endif %}
 
 {% endblock %}

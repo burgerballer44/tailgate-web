@@ -2,18 +2,28 @@
 
 {% block content %}
 
-{# update-group form #}
-<form action="{{ url_for('update-group', { 'groupId': group.groupId }) }}" method="POST">
+{% if group is defined %}
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+    {# update-group form #}
+    <form action="{{ url_for('update-group', { 'groupId':groupId }) }}" method="POST">
 
-    {{ textField('name', 'Group Name', 'text', 'name of group', 'required', group.name)|raw }}
-    {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
-    {% if errors.owner_id is defined %} {{ displayErrors('owner_id', errors)|raw }} {% endif %}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
 
-    {{ submitButton('Update Group')|raw }}
-</form>
+        {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+        {% if errors.ownerId is defined %} {{ displayErrors('ownerId', errors)|raw }} {% endif %}
+
+        {{ textField('name', 'Group Name', 'text', 'name of group', 'required', group.name)|raw }}
+        {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
+
+        {{ submitButton('Update Group')|raw }}
+    </form>
 {# end update-group form #}
+
+{% else %}
+
+    <p>Group is not defined.</p>
+
+{% endif %}
 
 {% endblock %}

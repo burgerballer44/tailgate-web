@@ -9,7 +9,8 @@
     {{ getCsrfFields()|raw }}
 
     {{ textField('group_id', 'Group', 'text', 'what is the group', 'required')|raw }}
-    {% if errors.group_id is defined %} {{ displayErrors('group_id', errors)|raw }} {% endif %}
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.teamId is defined %} {{ displayErrors('teamId', errors)|raw }} {% endif %}
 
     {{ submitButton('Follow Team')|raw }}
 </form>

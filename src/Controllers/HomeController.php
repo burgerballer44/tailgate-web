@@ -39,6 +39,10 @@ class HomeController extends AbstractController
 
         $data = json_decode($clientResponse->getBody(), true);
 
+        if (!isset($data['access_token'])) {
+            return $response->withHeader('Location', '/')->withStatus(302);
+        }
+
         $this->logger->info("{$parsedBody['email']} logged in.");
 
         $session = $this->session;

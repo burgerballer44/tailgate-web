@@ -8,11 +8,14 @@
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
-    {{ textField('home_team_score', 'Home Team Score', 'number', '', 'required')|raw }}
-    {% if errors.home_team_score is defined %} {{ displayErrors('home_team_score', errors)|raw }} {% endif %}
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+    {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
 
-    {{ textField('away_team_score', 'AwayTeam Score', 'number', '', 'required')|raw }}
-    {% if errors.away_team_score is defined %} {{ displayErrors('away_team_score', errors)|raw }} {% endif %}
+    {{ textField('home_team_score', 'Home Team Score', 'number', '', 'required', game.homeTeamScore)|raw }}
+    {% if errors.homeTeamScore is defined %} {{ displayErrors('homeTeamScore', errors)|raw }} {% endif %}
+
+    {{ textField('away_team_score', 'AwayTeam Score', 'number', '', 'required', game.awayTeamScore)|raw }}
+    {% if errors.awayTeamScore is defined %} {{ displayErrors('awayTeamScore', errors)|raw }} {% endif %}
 
     {{ submitButton('Submit Score')|raw }}
 </form>

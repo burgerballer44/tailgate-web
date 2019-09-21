@@ -10,6 +10,8 @@
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}
 
+        {% if errors.userId is defined %} {{ displayErrors('userId', errors)|raw }} {% endif %}
+
         {{ textField('email', 'Email', 'email', 'email address', 'required', user.email)|raw }}
         {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
 

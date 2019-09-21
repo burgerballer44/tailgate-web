@@ -10,13 +10,15 @@
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}
 
+        {% if errors.userId is defined %} {{ displayErrors('userId', errors)|raw }} {% endif %}
+
         {{ textField('email', 'Email', 'email', 'email address', 'required', user.email)|raw }}
         {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
 
-        {{ dropdownField('status', 'Status', user.status, 'Select a status...', ['Active', 'Pending', 'Deleted'])|raw }}
+        {{ dropdownField('status', 'Status', user.status, ['Active', 'Pending', 'Deleted'], 'Select a status...')|raw }}
         {% if errors.status is defined %} {{ displayErrors('status', errors)|raw }} {% endif %}
 
-        {{ dropdownField('role', 'Role', user.role, 'Select a role...', ['Normal', 'Admin'])|raw }}
+        {{ dropdownField('role', 'Role', user.role, ['Normal', 'Admin'], 'Select a role...')|raw }}
         {% if errors.role is defined %} {{ displayErrors('role', errors)|raw }} {% endif %}
 
         {{ submitButton('Update User')|raw }}

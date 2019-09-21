@@ -12,7 +12,7 @@
         <div>
             {{ season.seasonId }} <br>
             {{ season.sport }} <br>
-            {{ season.type }} <br>
+            {{ season.seasonType }} <br>
             {{ season.seasonStart }} <br>
             {{ season.seasonEnd }} <br>
         </div>
@@ -23,6 +23,7 @@
             {% for game in season.games %}
                 <div>
                     <a href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Update Score</u> </a>
+                    <a href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Delete Game</u> </a>
                     {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
                 </div>
             {% endfor %}

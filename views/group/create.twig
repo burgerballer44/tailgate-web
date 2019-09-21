@@ -7,10 +7,11 @@
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
+    
+    {% if errors.ownerId is defined %} {{ displayErrors('ownerId', errors)|raw }} {% endif %}
 
     {{ textField('name', 'Group Name', 'text', 'name of group', 'required')|raw }}
     {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
-    {% if errors.owner_id is defined %} {{ displayErrors('owner_id', errors)|raw }} {% endif %}
 
     {{ submitButton('Create Group')|raw }}
 </form>

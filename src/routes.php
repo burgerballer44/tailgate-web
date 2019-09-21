@@ -86,6 +86,7 @@ return function (App $app) use ($request) {
         $group->post('/{seasonId}/add-game', \TailgateWeb\Controllers\SeasonController::class . ':addGamePost');
         $group->get('/{seasonId}/game/{gameId}/score', \TailgateWeb\Controllers\SeasonController::class . ':updateGameScore')->setName('update-game-score');
         $group->post('/{seasonId}/game/{gameId}/score', \TailgateWeb\Controllers\SeasonController::class . ':updateGameScorePost');
+        $group->get('/{seasonId}/game/{gameId}/delete', \TailgateWeb\Controllers\SeasonController::class . ':deleteGame')->setName('delete-game');
     })->add(MustBeSignedInMiddleware::class);
 
 };
