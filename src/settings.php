@@ -53,7 +53,7 @@ return function (App $app) {
         // monolog logger 
         'logger' => [
             'name' => 'tailgate-web',
-            'path' => __DIR__ . "/../logs/app-{$today}.log",
+            'path' => __DIR__ . "/../var/logs/app-{$today}.log",
             'level' => Logger::DEBUG,
         ],
 
