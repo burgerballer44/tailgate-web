@@ -43,7 +43,7 @@ return function (App $app) {
         // mailgun for mail
         'mailgun_api_key' => getenv('MAILGUN_API_KEY'),
         'mailgun_domain' => getenv('MAILGUN_DOMAIN'),
-        'mailgun_test_mode' => true, // true means the mail gets sent to mailgun but NOT sent to user
+        'mailgun_test_mode' => DEV_MODE, // true means the mail gets sent to mailgun but NOT sent to user
 
     ]);
 };

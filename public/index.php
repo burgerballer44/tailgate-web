@@ -14,7 +14,9 @@ require __DIR__ . '/../src/environment.php';
 
 // instantiate PHP-DI Container
 $containerBuilder = new \DI\ContainerBuilder();
-// $containerBuilder->enableCompilation(__DIR__ . '/var/cache/');
+if (PROD_MODE) {
+    $containerBuilder->enableCompilation(__DIR__ . '/../var/cache/');
+}
 $container = $containerBuilder->build();
 
 // set the container we want to use and instantiate the app
