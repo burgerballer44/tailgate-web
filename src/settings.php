@@ -33,7 +33,7 @@ return function (App $app) {
         'displayErrorDetails' => filter_var(getenv('DISPLAY_ERROR_DETAILS'), FILTER_VALIDATE_BOOLEAN),
 
         // how long the sessions lasts in seconds
-        'lifetime' => 10800, // 3 hours
+        'lifetime' => 28800, // 8 hours
 
         // pdo connection to database
         'pdo' => [
