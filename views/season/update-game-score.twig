@@ -17,6 +17,9 @@
     {{ textField('away_team_score', 'AwayTeam Score', 'number', '', 'required', game.awayTeamScore)|raw }}
     {% if errors.awayTeamScore is defined %} {{ displayErrors('awayTeamScore', errors)|raw }} {% endif %}
 
+    {{ textField('start_date', 'Game Start', 'text', 'when does the game start', 'required', game.startDate)|raw }}
+    {% if errors.startDate is defined %} {{ displayErrors('startDate', errors)|raw }} {% endif %}
+
     {{ submitButton('Submit Score')|raw }}
 </form>
 {# end update-game-score form #}
