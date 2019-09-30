@@ -2,13 +2,13 @@
 
 namespace TailgateWeb\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 // add session stuff to view
-class AddGlobalsToTwigMiddleware
+class AddGlobalsToTwigMiddleware implements MiddlewareInterface
 {
     protected $session;
     protected $view;
@@ -19,10 +19,10 @@ class AddGlobalsToTwigMiddleware
         $this->view = $view;
     }
 
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
-        if (isset($this->session->user)) {
-            $this->view->getEnvironment()->addGlobal('session', $this->session->user); 
+        if ($this->session->exists('user')) {
+            $this->view->getEnvironment()->addGlobal('session', $this->session->get('user')); 
         }
         
         return $handler->handle($request);

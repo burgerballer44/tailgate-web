@@ -7,11 +7,12 @@ use Countable;
 use Traversable;
 use IteratorAggregate;
 use RuntimeException;
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class CsrfMiddleware
+class CsrfMiddleware implements MiddlewareInterface
 {
     protected $responseFactory;
 
@@ -115,13 +116,7 @@ class CsrfMiddleware
         return $this->prefix . '_value';
     }
 
-    /**
-     * [__invoke description]
-     * @param  ServerRequestInterface  $request [description]
-     * @param  RequestHandlerInterface $handler [description]
-     * @return [type]                           [description]
-     */
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
         $this->validateStorage();
 

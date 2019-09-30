@@ -10,6 +10,7 @@ return function (App $app) {
     $container = $app->getContainer();
 
     // Remember LIFO!
+    // last in this list is the first touched
 
     // variables to see in the view 
     $app->add(new AddGlobalsToTwigMiddleware($container->get('session'), $container->get('view')));
@@ -22,5 +23,4 @@ return function (App $app) {
 
     // for forms
     $app->add(new Honeypot());
-
 };

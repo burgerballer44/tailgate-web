@@ -45,15 +45,13 @@ class HomeController extends AbstractController
 
         $this->logger->info("{$parsedBody['email']} logged in.");
 
-        $session = $this->session;
-        $session->user = [
-            'email' => $parsedBody['email']
-        ];
-        $session->tokens = [
+        $this->session->set('user', ['email' => $parsedBody['email']]);
+
+        $this->session->set('tokens', [
             'access_token' => $data['access_token'],
             'expires' => strtotime('+' . $data['expires_in'] . ' seconds'),
             'refresh_token' => $data['refresh_token']
-        ];
+        ]);
 
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }

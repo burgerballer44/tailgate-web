@@ -5,7 +5,7 @@ use Slim\Factory\AppFactory;
 use Slim\Factory\ServerRequestCreatorFactory;
 use Slim\Middleware\ErrorMiddleware;
 use Slim\ResponseEmitter;
-use TailgateWeb\Session\Session;
+use TailgateWeb\Session\SessionStarter;
 
 require __DIR__ . '/../vendor/autoload.php';
 
@@ -23,11 +23,13 @@ $app = AppFactory::create();
 $settings = require __DIR__ . '/../src/settings.php';
 $settings($app);
 
-// session initialized
-$session = Session::startSession(['lifetime' => $container->get('settings')['lifetime']]);
-$container->set('session', function () use ($session) {
-    return $session;
-});
+// initialize session
+$session = new SessionStarter([
+    'name' => 'tailgate_session',
+    'secure' => PROD_MODE,
+    'lifetime' => $container->get('settings')['lifetime'],
+    'session_path' => realpath($container->get('settings')['session_path']),
+]);
 
 // create the request
 $serverRequestCreator = ServerRequestCreatorFactory::create();

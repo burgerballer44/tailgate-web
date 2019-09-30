@@ -2,13 +2,14 @@
 
 namespace TailgateWeb\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 // must be signed in
-class MustBeSignedInMiddleware
+class MustBeSignedInMiddleware implements MiddlewareInterface
 {
     protected $session;
     protected $responseFactory;
@@ -19,23 +20,23 @@ class MustBeSignedInMiddleware
         $this->responseFactory = $responseFactory;
     }
 
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
         // if there is no signed in user
-        if (!isset($this->session->user)) {
+        if (!$this->session->exists('user')) {
             
             // store the uri they were trying to access
-            $this->session->referrer = $request->getUri();  
+            $this->session->set('referrer', $request->getUri());  
 
             $response = $this->responseFactory->createResponse();
             return $response->withHeader('Location', '/sign-in')->withStatus(302);
         }
 
         // // if they were trying to access a page prior to being redirected
-        // if (isset($this->session->referrer)) {
+        // if ($this->session->exists(referrer)) {
 
-        //     $uri = $this->session->referrer;
-        //     unset($this->session->referrer);
+        //     $uri = $this->session->get('referrer');
+        //     $this->session->delete('referrer');
             
         //     $response = $this->responseFactory->createResponse();
         //     return $response->withHeader('Location', $uri->getPath() . "?" . $uri->getQuery())->withStatus(302);

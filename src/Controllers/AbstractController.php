@@ -38,7 +38,7 @@ abstract class AbstractController
     {
         return $this->send('GET', $path, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
             ],
             'query' => $queryStringArray
         ]);
@@ -54,7 +54,7 @@ abstract class AbstractController
     {        
         return $this->send('POST', $path, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
             ],
             'json' => $data,
         ]);
@@ -70,7 +70,7 @@ abstract class AbstractController
     {        
         return $this->send('PUT', $path, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
             ],
             'json' => $data,
         ]);
@@ -86,7 +86,7 @@ abstract class AbstractController
     {        
         return $this->send('PATCH', $path, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
             ],
             'json' => $data,
         ]);
@@ -102,7 +102,7 @@ abstract class AbstractController
     {        
         return $this->send('DELETE', $path, [
             'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->tokens['access_token']
+                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
             ]
         ]);
     }

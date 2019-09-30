@@ -18,6 +18,9 @@ return function (App $app) {
         // how long the sessions lasts in seconds
         'lifetime' => 28800, // 8 hours
 
+        // where the session data saves
+        'session_path' => __DIR__ . '/../var/sessions/', 
+
         // pdo connection to database
         'pdo' => [
             'connection' => getenv('DB_CONNECTION'),

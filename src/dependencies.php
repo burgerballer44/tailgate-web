@@ -17,10 +17,16 @@ use TailgateWeb\Middleware\CsrfMiddleware;
 use TailgateWeb\Middleware\MustBeSignedInMiddleware;
 use TailgateWeb\Middleware\MustBeSignedOutMiddleware;
 use TailgateWeb\Middleware\ViewGlobalMiddleware;
+use TailgateWeb\Session\Helper;
 
 return function (App $app) use ($request) {
 
     $container = $app->getContainer();
+
+    // wrapper for handling $_SESSION
+    $container->set('session', function () {
+        return new Helper;
+    });
 
     // pdo connection to database
     $connection = $container->get('settings')['pdo']['connection'];

@@ -2,12 +2,12 @@
 
 namespace TailgateWeb\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
 use Psr\Http\Message\ResponseInterface;
-use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
-class CleanStringsMiddleware
+class CleanStringsMiddleware implements MiddlewareInterface
 {
     private $fieldsToIgnore = [
         'password',
@@ -15,7 +15,7 @@ class CleanStringsMiddleware
     ];
 
     // trim strings and set empty to null
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
         $method = strtoupper($request->getMethod());
 

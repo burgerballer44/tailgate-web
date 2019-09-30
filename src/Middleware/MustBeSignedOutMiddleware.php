@@ -2,13 +2,14 @@
 
 namespace TailgateWeb\Middleware;
 
-use Psr\Http\Message\ServerRequestInterface;
-use Psr\Http\Server\RequestHandlerInterface;
-use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ResponseFactoryInterface;
+use Psr\Http\Message\ResponseInterface;
+use Psr\Http\Message\ServerRequestInterface;
+use Psr\Http\Server\MiddlewareInterface;
+use Psr\Http\Server\RequestHandlerInterface;
 
 // must be signed out
-class MustBeSignedOutMiddleware
+class MustBeSignedOutMiddleware implements MiddlewareInterface
 {
     protected $session;
     protected $responseFactory;
@@ -19,9 +20,9 @@ class MustBeSignedOutMiddleware
         $this->responseFactory = $responseFactory;
     }
 
-    public function __invoke(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
+    public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if (isset($this->session->user)) {
+        if ($this->session->exists('user')) {
             $response = $this->responseFactory->createResponse();
             return $response->withHeader('Location', '/dashboard')->withStatus(302);
         }
