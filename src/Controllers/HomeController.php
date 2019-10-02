@@ -33,25 +33,33 @@ class HomeController extends AbstractController
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-
             return $this->view->render($response, 'sign-in.twig', ['errors' => $data['errors']]);
         }
 
+        // set token data
         $data = json_decode($clientResponse->getBody(), true);
 
         if (!isset($data['access_token'])) {
             return $response->withHeader('Location', '/')->withStatus(302);
         }
 
-        $this->logger->info("{$parsedBody['email']} logged in.");
-
-        $this->session->set('user', ['email' => $parsedBody['email']]);
-
         $this->session->set('tokens', [
             'access_token' => $data['access_token'],
             'expires' => strtotime('+' . $data['expires_in'] . ' seconds'),
             'refresh_token' => $data['refresh_token']
         ]);
+
+        // now set user data
+        $clientResponse = $this->apiGet("/v1/me");
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+            return $this->view->render($response, 'sign-in.twig', ['errors' => $data['errors']]);
+        }
+        
+        $data = json_decode($clientResponse->getBody(), true);
+
+        $this->session->set('user', $data['data']);
 
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }

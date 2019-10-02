@@ -21,7 +21,7 @@ class AddGlobalsToTwigMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
-        if ($this->session->exists('user')) {
+        if ($this->session->has('user')) {
             $this->view->getEnvironment()->addGlobal('session', $this->session->get('user')); 
         }
         

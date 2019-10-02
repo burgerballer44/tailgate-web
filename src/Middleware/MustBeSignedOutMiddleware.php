@@ -22,7 +22,7 @@ class MustBeSignedOutMiddleware implements MiddlewareInterface
 
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {
-        if ($this->session->exists('user')) {
+        if ($this->session->has('user')) {
             $response = $this->responseFactory->createResponse();
             return $response->withHeader('Location', '/dashboard')->withStatus(302);
         }

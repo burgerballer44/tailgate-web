@@ -122,8 +122,7 @@ abstract class AbstractController
 
         } catch (TransferException $e) {
 
-            // var_dump($e->getResponse()->getStatusCode());
-            // die();
+            // dd($e->getResponse()->getStatusCode());
 
             if ($e->hasResponse()) {
                 $response = $e->getResponse();
@@ -135,14 +134,17 @@ abstract class AbstractController
                 // the uglier response into the consistent one
                 if ($response->getStatusCode() >= 404) {
 
+                    $statusCode = $jsonBody['exception'][0]['code'] ?? $response->getStatusCode();
+                    $statusCode = $statusCode >= 100 ? $statusCode : $response->getStatusCode();
+
                     $newBody->write(json_encode([
-                        'code' => $response->getStatusCode(),
+                        'code' => $statusCode,
                         'type' => $jsonBody['exception'][0]['type'],
                         'errors' => $jsonBody['message'],
                     ]));
                     $newBody->rewind();
                     $this->flash->addMessageNow('error', $jsonBody['message']);
-                    $response = $response->withBody($newBody);
+                    $response = $response->withBody($newBody)->withStatus($statusCode);
                 }
 
                 // /token on api will return ['error' => foo, 'error_description' => bar]
@@ -166,6 +168,7 @@ abstract class AbstractController
                 return $response;
             }
 
+            // if the api server is down or soemthing else fails we need to create a response ourself
             $response = new Response;
 
             $newBody = (new \Slim\Psr7\Factory\StreamFactory())->createStream();

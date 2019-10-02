@@ -19,7 +19,7 @@ class Helper implements ArrayAccess, Countable, IteratorAggregate
      */
     public function get($key, $default = null)
     {
-        return $this->exists($key) ? $_SESSION[$key] : $default;
+        return $this->has($key) ? $_SESSION[$key] : $default;
     }
 
     /**
@@ -59,7 +59,7 @@ class Helper implements ArrayAccess, Countable, IteratorAggregate
      */
     public function delete($key)
     {
-        if ($this->exists($key)) {
+        if ($this->has($key)) {
             unset($_SESSION[$key]);
         }
         return $this;
@@ -81,7 +81,7 @@ class Helper implements ArrayAccess, Countable, IteratorAggregate
      *
      * @return bool
      */
-    public function exists($key)
+    public function has($key)
     {
         return array_key_exists($key, $_SESSION);
     }
@@ -165,7 +165,7 @@ class Helper implements ArrayAccess, Countable, IteratorAggregate
      */
     public function __isset($key)
     {
-        return $this->exists($key);
+        return $this->has($key);
     }
     /**
      * Count elements of an object.
@@ -194,7 +194,7 @@ class Helper implements ArrayAccess, Countable, IteratorAggregate
      */
     public function offsetExists($offset)
     {
-        return $this->exists($offset);
+        return $this->has($offset);
     }
     /**
      * Retrieve value by offset.

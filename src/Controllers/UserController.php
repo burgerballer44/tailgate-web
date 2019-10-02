@@ -142,6 +142,16 @@ class UserController extends AbstractController
             ]);
         }
 
+        $sessionUser = $this->session->get('user');
+
+        // if it's the logged in user, update the session info
+        if ($sessionUser['userId'] == $user['userId']) {
+            $sessionUser['email'] = $parsedBody['email'];
+            $sessionUser['status'] = $parsedBody['status'];
+            $sessionUser['role'] = $parsedBody['role'];
+            $this->session->set('user', $sessionUser);
+        }
+
         return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);
     }
 
@@ -191,6 +201,14 @@ class UserController extends AbstractController
                 'userId' => $userId,
                 'user' => $user,
             ]);
+        }
+
+        $sessionUser = $this->session->get('user');
+
+        // if it's the logged in user, update the session info
+        if ($sessionUser['userId'] == $user['userId']) {
+            $sessionUser['email'] = $parsedBody['email'];
+            $this->session->set('user', $sessionUser);
         }
 
         return $response->withHeader('Location', "/user/{$userId}")->withStatus(302);

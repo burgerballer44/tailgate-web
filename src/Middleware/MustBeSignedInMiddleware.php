@@ -23,7 +23,7 @@ class MustBeSignedInMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
         // if there is no signed in user
-        if (!$this->session->exists('user')) {
+        if (!$this->session->has('user')) {
             
             // store the uri they were trying to access
             $this->session->set('referrer', $request->getUri());  
@@ -33,7 +33,7 @@ class MustBeSignedInMiddleware implements MiddlewareInterface
         }
 
         // // if they were trying to access a page prior to being redirected
-        // if ($this->session->exists(referrer)) {
+        // if ($this->session->has(referrer)) {
 
         //     $uri = $this->session->get('referrer');
         //     $this->session->delete('referrer');

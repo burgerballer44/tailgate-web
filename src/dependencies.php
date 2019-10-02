@@ -69,7 +69,7 @@ return function (App $app) use ($request) {
     // view
     $container->set('view', function ($container) use ($app, $request) {
         $twig = new Twig(__DIR__ . '/../views/', [
-            'cache' => false,
+            'cache' => PROD_MODE ?  __DIR__ . '/../var/cache/twig/' : false,
             'auto_reload' => true,
             'debug' => $container->get('settings')['displayErrorDetails'],
             'strict_variables' => $container->get('settings')['displayErrorDetails'],
