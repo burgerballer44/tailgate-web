@@ -1,4 +1,4 @@
-# Tailgate API
+# Tailgate Web
 
 #### Composer
 
