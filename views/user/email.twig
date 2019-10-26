@@ -5,7 +5,7 @@
 {% if user is defined %}
 
     {# update-email form #}
-    <form action="{{ url_for('update-email', { 'userId': userId }) }}" method="POST">
+    <form action="{{ url_for('update-email') }}" method="POST">
 
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}

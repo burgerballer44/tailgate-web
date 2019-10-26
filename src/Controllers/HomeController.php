@@ -6,19 +6,38 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 
 class HomeController extends AbstractController
-{
+{   
+    /**
+     * go to home page
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function home(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         return $this->view->render($response, 'index.twig');
     }
 
-
+    /**
+     * sign in form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function signIn(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         return $this->view->render($response, 'sign-in.twig');
     }
 
-
+    /**
+     * submit sign in form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function signInPost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $parsedBody = $request->getParsedBody();
@@ -50,7 +69,7 @@ class HomeController extends AbstractController
         ]);
 
         // now set user data
-        $clientResponse = $this->apiGet("/v1/me");
+        $clientResponse = $this->apiGet("/v1/users/me");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -64,7 +83,13 @@ class HomeController extends AbstractController
         return $response->withHeader('Location', '/dashboard')->withStatus(302);
     }
 
-
+    /**
+     * sign out
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function signOut(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $this->session->destroy();

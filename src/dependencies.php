@@ -12,8 +12,10 @@ use Slim\Views\Twig;
 use Slim\Views\TwigExtension;
 use TailgateWeb\Extensions\CsrfExtension;
 use TailgateWeb\Extensions\FormBuilderExtension;
+use TailgateWeb\Extensions\HelperExtension;
 use TailgateWeb\Extensions\HoneypotExtension;
 use TailgateWeb\Middleware\CsrfMiddleware;
+use TailgateWeb\Middleware\AdminMiddleware;
 use TailgateWeb\Middleware\MustBeSignedInMiddleware;
 use TailgateWeb\Middleware\MustBeSignedOutMiddleware;
 use TailgateWeb\Middleware\ViewGlobalMiddleware;
@@ -80,11 +82,19 @@ return function (App $app) use ($request) {
         $twig->addExtension(new CsrfExtension($container->get('csrf')));
         $twig->addExtension(new TwigMessages($container->get('flash')));
         $twig->addExtension(new FormBuilderExtension($request->getParsedBody()));
+        $twig->addExtension(new HelperExtension($container->get('session')));
 
         return $twig;
     });
 
     // other middleware that are set to individual routes
+    $container->set(AdminMiddleware::class, function ($container) use ($app) {
+        return new AdminMiddleware(
+            $container->get('session'),
+            $container->get('flash'),
+            $app->getResponseFactory()
+        );
+    });
     $container->set(MustBeSignedInMiddleware::class, function ($container) use ($app) {
         return new MustBeSignedInMiddleware(
             $container->get('session'),

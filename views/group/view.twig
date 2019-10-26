@@ -2,51 +2,53 @@
 
 {% block content %}
 
-    <h1 class="py-4">viewing group</h1>
-
     {% if group is defined %}
 
-        <a href={{ url_for('update-group', { 'groupId': group.groupId }) }}> <u>Update Group</u> </a>
-        <a href={{ url_for('delete-group', { 'groupId': group.groupId }) }}> <u>Delete Group</u> </a>
-        <a href={{ url_for('add-member', { 'groupId': group.groupId }) }}> <u>Add Member</u> </a>
+        <h1 class="text-2xl my-4">{{ group.name }}</h1>
 
-        <h1 class="text-xl underline">Group</h1>
-
-        <div>
-            {{ group.groupId }} <br>
-            {{ group.name }} <br>
-        </div>
+        {% if isGroupAdmin(member) %}
+            <div class="my-4">
+                <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('add-member', { 'groupId': group.groupId }) }}>Add Member</a>
+                <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('delete-group', { 'groupId': group.groupId }) }}>Delete Group</a>
+            </div>
+        {% endif %}
         
-        <h1 class="text-xl underline">Members</h1>
+        {% if isGroupAdmin(member) %}
+                <div class="my-4">
+                <h1 class="text-xl underline">Members</h1>
 
-        {% if group.members is defined %}
+                {% if group.members is defined %}
 
-            {{ tableStart()|raw }}
+                    {{ tableStart()|raw }}
 
-            <tr class="border-b border-black">
-                {{ tableHeader('Email')|raw }}
-                {{ tableHeader('Role')|raw }}
-                {{ tableHeader('Allow Multiple')|raw }}
-                {{ tableHeader('')|raw }}
-                {{ tableHeader('')|raw }}
-                {{ tableHeader('')|raw }}
-            </tr>
+                    <tr class="border-b border-black">
+                        {{ tableHeader('Email')|raw }}
+                        {{ tableHeader('Role')|raw }}
+                        {{ tableHeader('Allow Multiple')|raw }}
+                        {{ tableHeader('')|raw }}
+                        {{ tableHeader('')|raw }}
+                        {{ tableHeader('')|raw }}
+                    </tr>
 
-            {% for member in group.members %}
+                    {% for member in group.members %}
 
-                <tr class="border-b hover:bg-orange-100 bg-gray-100">
-                    {{ tableHeader(member.email)|raw }}
-                    {{ tableHeader(member.role)|raw }}
-                    {{ tableHeader(member.allowMultiplePlayers ? 'Yes':'No')|raw }}
-                    <td class='p-1 py-2'><a href={{ url_for('add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
-                    <td class='p-1 py-2'><a href={{ url_for('update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
-                    <td class='p-1 py-2'><a href={{ url_for('delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
-                </tr>
+                        <tr class="border-b hover:bg-orange-100 bg-gray-100">
+                            {{ tableHeader(member.email)|raw }}
+                            {{ tableHeader(member.role)|raw }}
+                            {{ tableHeader(member.allowMultiplePlayers ? 'Yes':'No')|raw }}
+                            <td class='p-1 py-2'><a href={{ url_for('add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
+                            <td class='p-1 py-2'><a href={{ url_for('update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
+                            <td class='p-1 py-2'><a href={{ url_for('delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
+                        </tr>
 
-            {% endfor %}
+                    {% endfor %}
 
-            {{ tableEnd()|raw }}
+                    {{ tableEnd()|raw }}
 
+                {% endif %}
+
+            </div>
+            
         {% endif %}
         
         <h1 class="text-xl underline">Players</h1>

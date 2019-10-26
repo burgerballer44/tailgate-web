@@ -1,0 +1,27 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# update-game-score form #}
+<form action="{{ url_for('update-game-score', { 'seasonId': seasonId, 'gameId': gameId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+    {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
+
+    {{ textField('home_team_score', 'Home Team Score', 'number', '', 'required', game.homeTeamScore)|raw }}
+    {% if errors.homeTeamScore is defined %} {{ displayErrors('homeTeamScore', errors)|raw }} {% endif %}
+
+    {{ textField('away_team_score', 'AwayTeam Score', 'number', '', 'required', game.awayTeamScore)|raw }}
+    {% if errors.awayTeamScore is defined %} {{ displayErrors('awayTeamScore', errors)|raw }} {% endif %}
+
+    {{ textField('start_date', 'Game Start', 'text', 'when does the game start', 'required', game.startDate)|raw }}
+    {% if errors.startDate is defined %} {{ displayErrors('startDate', errors)|raw }} {% endif %}
+
+    {{ submitButton('Submit Score')|raw }}
+</form>
+{# end update-game-score form #}
+
+{% endblock %}

@@ -8,8 +8,6 @@
 
         <h1><a href={{ url_for('update-user', { 'userId': user.userId }) }}> <u>Update User</u> </a></h1>
         <h1><a href={{ url_for('delete-user', { 'userId': user.userId }) }}> <u>Delete User</u> </a></h1>
-        <h1><a href={{ url_for('update-email', { 'userId': user.userId }) }}> <u>Update Email</u> </a></h1>
-        <h1><a href={{ url_for('update-password', { 'userId': user.userId }) }}> <u>Update Password</u> </a></h1>
 
         <div>
             {{ user.userId }} <br>

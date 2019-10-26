@@ -1,0 +1,34 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1 class="py-4">viewing season</h1>
+
+    <a href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> <u>Update Season</u> </a>
+    <a href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> <u>Delete Season</u> </a>
+    <a href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> <u>Add Game</u> </a>
+
+    {% if season is defined %}
+        <div>
+            {{ season.seasonId }} <br>
+            {{ season.sport }} <br>
+            {{ season.seasonType }} <br>
+            {{ season.seasonStart }} <br>
+            {{ season.seasonEnd }} <br>
+        </div>
+
+        <h1 class="py-4">Games</h1>
+
+        {% if season.games is defined %}
+            {% for game in season.games %}
+                <div>
+                    <a href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Update Score</u> </a>
+                    <a href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Delete Game</u> </a>
+                    {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
+                </div>
+            {% endfor %}
+        {% endif %}
+
+    {% endif %}
+
+{% endblock %}

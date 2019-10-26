@@ -1,0 +1,21 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# add-player form #}
+<form action="{{ url_for('add-player', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.memberId is defined %} {{ displayErrors('memberId', errors)|raw }} {% endif %}
+
+    {{ textField('username', 'Username', 'text', 'what is the name of your player?', 'required')|raw }}
+    {% if errors.username is defined %} {{ displayErrors('username', errors)|raw }} {% endif %}
+
+    {{ submitButton('Add Player')|raw }}
+</form>
+{# end add-player form #}
+
+{% endblock %}

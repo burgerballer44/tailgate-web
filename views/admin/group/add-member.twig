@@ -2,10 +2,6 @@
 
 {% block content %}
 
-<h1 class="text-2xl my-4">{{ group.name }} - Add Member</h1>
-
-<p>by email</p>
-
 {# add-member form #}
 <form action="{{ url_for('add-member', { 'groupId': groupId }) }}" method="POST">
 

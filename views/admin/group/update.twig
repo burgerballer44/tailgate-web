@@ -1,0 +1,29 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{% if group is defined %}
+
+    {# update-group form #}
+    <form action="{{ url_for('update-group', { 'groupId':groupId }) }}" method="POST">
+
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+
+        {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+        {% if errors.ownerId is defined %} {{ displayErrors('ownerId', errors)|raw }} {% endif %}
+
+        {{ textField('name', 'Group Name', 'text', 'name of group', 'required', group.name)|raw }}
+        {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
+
+        {{ submitButton('Update Group')|raw }}
+    </form>
+{# end update-group form #}
+
+{% else %}
+
+    <p>Group is not defined.</p>
+
+{% endif %}
+
+{% endblock %}

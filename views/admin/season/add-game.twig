@@ -1,0 +1,26 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# add-game form #}
+<form action="{{ url_for('add-game', { 'seasonId': seasonId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+
+    {{ textField('home_team_id', 'Home Team', 'text', 'what is home team', 'required')|raw }}
+    {% if errors.homeTeamId is defined %} {{ displayErrors('homeTeamId', errors)|raw }} {% endif %}
+
+    {{ textField('away_team_id', 'Away Team', 'text', 'what is away team', 'required')|raw }}
+    {% if errors.awayTeamId is defined %} {{ displayErrors('awayTeamId', errors)|raw }} {% endif %}
+
+    {{ textField('start_date', 'Game Start', 'text', 'when does the game start', 'required')|raw }}
+    {% if errors.startDate is defined %} {{ displayErrors('startDate', errors)|raw }} {% endif %}
+
+    {{ submitButton('Add Game')|raw }}
+</form>
+{# end add-game form #}
+
+{% endblock %}

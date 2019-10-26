@@ -1,0 +1,24 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+{# update-score form #}
+<form action="{{ url_for('update-score', { 'groupId': groupId, 'scoreId': scoreId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.scoreId is defined %} {{ displayErrors('scoreId', errors)|raw }} {% endif %}
+
+    {{ textField('home_team_prediction', 'Home Team Prediction', 'number', '', 'required', score.homeTeamPrediction)|raw }}
+    {% if errors.homeTeamPrediction is defined %} {{ displayErrors('homeTeamPrediction', errors)|raw }} {% endif %}
+
+    {{ textField('away_team_prediction', 'AwayTeam Prediction', 'number', '', 'required', score.awayTeamPrediction)|raw }}
+    {% if errors.awayTeamPrediction is defined %} {{ displayErrors('awayTeamPrediction', errors)|raw }} {% endif %}
+
+    {{ submitButton('Update Score')|raw }}
+</form>
+{# end update-score form #}
+
+{% endblock %}

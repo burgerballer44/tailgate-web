@@ -1,0 +1,21 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+    <h1>all seasons</h1>
+    <p class="py-4"><a href="{{ url_for('create-season') }}"><u>Create Season</u></a></p>
+
+    {% if seasons is defined %}
+        {% for season in seasons %}
+            <div>
+                <a href={{ url_for('season', { 'seasonId': season.seasonId }) }}> <u>{{ season.seasonId }}</u> </a> |
+                {{ season.sport }} |
+                {{ season.seasonType }} |
+                {{ season.name }} |
+                {{ season.seasonStart }} |
+                {{ season.seasonEnd }}
+            </div>
+        {% endfor %}
+    {% endif %}
+
+{% endblock %}

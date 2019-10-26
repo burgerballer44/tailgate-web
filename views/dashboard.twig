@@ -2,6 +2,37 @@
 
 {% block content %}
 
-<p>Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex ea commodo consequat. Duis aute irure dolor in reprehenderit in voluptate velit esse cillum dolore eu fugiat nulla pariatur. Excepteur sint occaecat cupidatat non proident, sunt in culpa qui officia deserunt mollit anim id est laborum.</p>
+<div>
+    <div class="my-6">
+
+        <h1 class="text-2xl my-2">Welcome to Tar Heel Tailgate!</h1>
+
+        {% if groups is defined and groups is empty %}
+            <p class="my-2">To get started, create a group or join a group using an invite code.</p>
+        {% endif %}
+
+        <div class="my-4">
+            <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('create-group') }}">Create Group</a>
+            <a class="p-2 mr-2 bg-gray-300 rounded" href="#">Join a Group with an Invite Code</a>
+        </div>
+    </div>
+
+    {% if groups is defined and groups is not empty %}
+
+        <div class="flex my-4">
+            <p class="text-xl">Groups</p>
+        </div>
+
+        <ul>
+
+        {% for group in groups %}
+            <li><a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.name }}</u> </a></li>
+        {% endfor %}
+
+        </ul>
+
+    {% endif %}
+</div>
+
 
 {% endblock %}
