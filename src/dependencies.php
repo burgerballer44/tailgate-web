@@ -161,6 +161,15 @@ return function (App $app) use ($request) {
                 );
             }
 
+            public function getResetPasswordLink($token)
+            {
+                return $this->routeParser->fullUrlFor(
+                    $this->uri,
+                    'reset-password',
+                    ['token' => $token]
+                );
+            }
+
             public function send($emailParams)
             {   
                 $emailParams = array_merge($emailParams, [

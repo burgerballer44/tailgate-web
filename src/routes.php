@@ -14,6 +14,12 @@ return function (App $app) use ($request) {
     $app->get('/sign-out', \TailgateWeb\Controllers\HomeController::class . ':signOut')->setName('sign-out')->add(MustBeSignedInMiddleware::class);
     $app->post('/sign-in', \TailgateWeb\Controllers\HomeController::class . ':signInPost')->add(MustBeSignedOutMiddleware::class);
 
+    // reset password
+    $app->get('/request-reset', \TailgateWeb\Controllers\HomeController::class . ':requestReset')->setName('request-reset')->add(MustBeSignedOutMiddleware::class);
+    $app->post('/request-reset', \TailgateWeb\Controllers\HomeController::class . ':requestResetPost')->add(MustBeSignedOutMiddleware::class);
+    $app->get('/reset-password/{token}', \TailgateWeb\Controllers\HomeController::class . ':password')->setName('reset-password');
+    $app->post('/reset-password/{token}', \TailgateWeb\Controllers\HomeController::class . ':passwordPost');
+
     // register
     $app->get('/register', \TailgateWeb\Controllers\UserController::class . ':register')->setName('register')->add(MustBeSignedOutMiddleware::class);
     $app->post('/register', \TailgateWeb\Controllers\UserController::class . ':registerPost')->add(MustBeSignedOutMiddleware::class);
@@ -27,26 +33,24 @@ return function (App $app) use ($request) {
         $group->get('/', \TailgateWeb\Controllers\UserController::class . ':profile')->setName('profile');
         $group->get('/email', \TailgateWeb\Controllers\UserController::class . ':email')->setName('update-email');
         $group->post('/email', \TailgateWeb\Controllers\UserController::class . ':emailPost');
-        $group->get('/password', \TailgateWeb\Controllers\UserController::class . ':password')->setName('update-password');
-        $group->post('/password', \TailgateWeb\Controllers\UserController::class . ':passwordPost');
     })->add(MustBeSignedInMiddleware::class);
 
     // group
     $app->group('/group', function (Group $group) {
+        $group->get('/invite-code', \TailgateWeb\Controllers\GroupController::class . ':inviteCode')->setName('invite-code');
+        $group->post('/invite-code', \TailgateWeb\Controllers\GroupController::class . ':inviteCodePost');
         $group->get('/create', \TailgateWeb\Controllers\GroupController::class . ':create')->setName('create-group');
         $group->post('/create', \TailgateWeb\Controllers\GroupController::class . ':createPost');
-
         $group->get('/{groupId}', \TailgateWeb\Controllers\GroupController::class . ':view')->setName('group');
-        $group->get('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':update')->setName('update-group');
-        $group->post('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':updatePost');
         $group->get('/{groupId}/delete', \TailgateWeb\Controllers\GroupController::class . ':delete')->setName('delete-group');
-        $group->get('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMember')->setName('add-member');
-        $group->post('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMemberPost');
+        $group->get('/{groupId}/send-invite', \TailgateWeb\Controllers\GroupController::class . ':sendInvite')->setName('send-invite');
+        $group->post('/{groupId}/send-invite', \TailgateWeb\Controllers\GroupController::class . ':sendInvitePost');
+        $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayer')->setName('add-player');
+        $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayerPost');
+
         $group->get('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMember')->setName('update-member');
         $group->post('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMemberPost');
         $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deleteMember')->setName('delete-member');
-        $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayer')->setName('add-player');
-        $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayerPost');
         $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deletePlayer')->setName('delete-player');
         $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
         $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
@@ -91,6 +95,7 @@ return function (App $app) use ($request) {
         $group->group('/users', function (Group $group) {
             $group->get('', \TailgateWeb\Controllers\UserController::class . ':all')->setName('users');
             $group->get('/{userId}', \TailgateWeb\Controllers\UserController::class . ':view')->setName('user');
+            $group->get('/{userId}/resend', \TailgateWeb\Controllers\UserController::class . ':resendConfirmation')->setName('resend-confirmation');
             $group->get('/{userId}/update', \TailgateWeb\Controllers\UserController::class . ':update')->setName('update-user');
             $group->post('/{userId}/update', \TailgateWeb\Controllers\UserController::class . ':updatePost');
             $group->get('/{userId}/delete', \TailgateWeb\Controllers\UserController::class . ':delete')->setName('delete-user');

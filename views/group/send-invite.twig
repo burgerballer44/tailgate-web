@@ -1,0 +1,20 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+<h1 class="text-2xl my-4">{{ group.name }} - Send Invitation Email</h1>
+
+{# send-invite form #}
+<form action="{{ url_for('send-invite', { 'groupId': groupId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {{ textField('email', 'Email', 'email', 'email@email.com', 'required')|raw }}
+    {% if errors.email is defined %} {{ displayErrors('email', errors)|raw }} {% endif %}
+
+    {{ submitButton('Send Invite to Group')|raw }}
+</form>
+{# end send-invite form #}
+
+{% endblock %}

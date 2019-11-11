@@ -3,7 +3,7 @@
 {% block content %}
 
 {# sign in form #}
-<div class="mx-auto my-8 w-full max-w-xs bg-white px-6 py-8 rounded shadow-md text-black">
+<div class="mx-auto my-8 w-full max-w-sm bg-white px-6 py-8 rounded shadow-md text-black">
     <form action="{{ url_for('sign-in') }}" method="POST">
 
         {{ getHiddenHoneypot()|raw }}
@@ -20,6 +20,8 @@
         {{ textField('email', 'Email', 'email', 'your email address')|raw }}
         {{ textField('password', 'Password', 'password', '************')|raw }}
         {{ submitButton()|raw }}
+
+        <p class="my-4 text-sm">If you forgot your password you can <a class="text-carolina font-semibold" href="{{ url_for('request-reset') }}">reset it.</a></p>
 
     </form>
 </div>

@@ -1,0 +1,24 @@
+{% extends "layout/dashboard-base.twig" %}
+
+{% block content %}
+
+<div class="mx-auto my-8 w-full max-w-lg bg-white px-6 py-8 rounded shadow-md text-black">
+    {# invite-code form #}
+    <form action="{{ url_for('invite-code') }}" method="POST">
+
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+
+        {% if errors.userId is defined %} {{ displayErrors('userId', errors)|raw }} {% endif %}
+        {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+
+        {{ textField('invite_code', 'Invite Code', 'text', 'invite code', 'required')|raw }}
+        {% if errors.email is defined %} {{ displayErrors('invite_code', errors)|raw }} {% endif %}
+
+        {{ submitButton('Join group with this invite code')|raw }}
+        
+    </form>
+    {# end invite-code form #}
+</div>
+
+{% endblock %}

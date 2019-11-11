@@ -1,0 +1,23 @@
+{% extends "layout/index-base.twig" %}
+
+{% block content %}
+
+<div class="mx-auto my-8 w-full max-w-md bg-white px-6 py-8 rounded shadow-md text-black">
+    {# request-reset form #}
+    <form action="{{ url_for('request-reset') }}" method="POST">
+
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
+
+        <p class="my-4">Please fill in your account email address. A link to reset the password will be sent.</p>
+
+        {{ textField('email', 'Email', 'email', 'email address', 'required')|raw }}
+        {% if errors.userId is defined %} {{ displayErrors('userId', errors)|raw }} {% endif %}
+
+        {{ submitButton('Request Reset')|raw }}
+        
+    </form>
+    {# end request-reset form #}
+</div>
+
+{% endblock %}

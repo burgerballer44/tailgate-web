@@ -42,17 +42,7 @@ class UserController extends AbstractController
         }
 
         $user = $data['data'];
-
-        $emailParams = [
-            'to'         => $user['email'],
-            'subject'    => 'Confirm Tar Heel Tailgate Email Address',
-            'template'   => 'confirm_email',
-            'v:link'     => $this->mailer->getConfirmationLink($user['userId'], $user['email']),
-            'o:tag'      => ['register'],
-            'o:testmode' => $this->settings['mailgun_test_mode'],
-        ];
-
-        if ($this->mailer->send($emailParams)) {
+        if ($this->sendConfirmationEmail($user)) {
             $this->flash->addMessage('success', "Thank you for registering. Please check your email at {$user['email']} to confirm your email address.");
         }
 
@@ -154,42 +144,6 @@ class UserController extends AbstractController
 
         $sessionUser['email'] = $parsedBody['email'];
         $this->session->set('user', $sessionUser);
-
-        return $response->withHeader('Location', "/dashboard")->withStatus(302);
-    }
-
-    /**
-     * password form
-     * @param  ServerRequestInterface $request  [description]
-     * @param  ResponseInterface      $response [description]
-     * @param  [type]                 $args     [description]
-     * @return [type]                           [description]
-     */
-    public function password(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        return $this->view->render($response, 'user/password.twig');
-    }
-
-    /**
-     * submit password form
-     * @param  ServerRequestInterface $request  [description]
-     * @param  ResponseInterface      $response [description]
-     * @param  [type]                 $args     [description]
-     * @return [type]                           [description]
-     */
-    public function passwordPost(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {   
-        $parsedBody = $request->getParsedBody();
-
-        $clientResponse = $this->apiPatch("/v1/users/me/password", [
-            'password' => $parsedBody['password'],
-            'confirmPassword' => $parsedBody['confirm_password']
-        ]);
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-            return $this->view->render($response, 'user/password.twig', ['errors' => $data['errors']]);
-        }
 
         return $response->withHeader('Location', "/dashboard")->withStatus(302);
     }
@@ -328,5 +282,50 @@ class UserController extends AbstractController
         }
 
         return $response->withHeader('Location', "/admin/users/{$userId}")->withStatus(302);
+    }
+
+    /**
+     * resend the confirmation email for a user
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function resendConfirmation(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {   
+        extract($args);
+
+        $clientResponse = $this->apiGet("/v1/admin/users/{$userId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            return $this->view->render($response, 'admin/user/view.twig', ['errors' => $data['errors']]);
+        }
+
+        $user = $data['data'];
+        if ($this->sendConfirmationEmail($user)) {
+            $this->flash->addMessage('success', "Email sent to {$user['email']}.");
+        }
+
+        return $response->withHeader('Location', "/admin/users/{$userId}")->withStatus(302);
+    }
+
+    /**
+     * sends confirmation email
+     * @param  [type] $user [description]
+     * @return [type]       [description]
+     */
+    private function sendConfirmationEmail($user)
+    {
+        $emailParams = [
+            'to'         => $user['email'],
+            'subject'    => 'Confirm Tar Heel Tailgate Email Address',
+            'template'   => 'confirm_email',
+            'v:link'     => $this->mailer->getConfirmationLink($user['userId'], $user['email']),
+            'o:tag'      => ['register'],
+            'o:testmode' => $this->settings['mailgun_test_mode'],
+        ];
+
+        return $this->mailer->send($emailParams);
     }
 }

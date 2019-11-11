@@ -8,7 +8,7 @@
 
         {% if isGroupAdmin(member) %}
             <div class="my-4">
-                <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('add-member', { 'groupId': group.groupId }) }}>Add Member</a>
+                <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('send-invite', { 'groupId': group.groupId }) }}>Send an Invite</a>
                 <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('delete-group', { 'groupId': group.groupId }) }}>Delete Group</a>
             </div>
         {% endif %}
@@ -53,6 +53,10 @@
         
         <h1 class="text-xl underline">Players</h1>
         
+        <div class="my-4">
+            <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> Add Player </a>
+        </div>
+
         {% if group.players is defined %}
             {% for player in group.players %}
                 <div>
