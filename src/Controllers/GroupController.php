@@ -168,7 +168,7 @@ class GroupController extends AbstractController
             $this->flash->addMessage('error', 'Unable to determine if you are a member of the group.');
             return $response->withHeader('Location', "/dashboard")->withStatus(302);
         }
-        
+
         return $this->view->render($response, 'group/view.twig', compact('group', 'groupId', 'member'));
     }
 
@@ -183,7 +183,7 @@ class GroupController extends AbstractController
     {   
         extract($args);
 
-        $clientResponse = $this->apiDelete("/v1/groups/{$groupId}");
+        $clientResponse = $this->apiDelete("/v1/grsoups/{$groupId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -255,26 +255,115 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
+    /**
+     * follow form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function follow(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
 
+        // get seasons to get sports and season avaialble
+        $clientResponse = $this->apiGet("/v1/seasons");
+        $data = json_decode($clientResponse->getBody(), true);
+        if ($clientResponse->getStatusCode() >= 400) {
+            return $this->view->render($response, 'admin/season/index.twig', ['errors' => $data['errors']]);
+        }
+        $seasons = $data['data'];
+        $seasons = collect($seasons)->groupBy('sport')->map(function($seasons) {
+            return collect($seasons)->flatMap(function($season) {
+                return [$season['seasonId'] => $season['name']];
+            })->toArray();
+        })->toArray();
 
+        $sports = array_combine(array_keys($seasons), array_keys($seasons));
 
+        return $this->view->render($response, 'group/follow.twig', compact('groupId', 'sports', 'seasons'));
+    }
 
+    /**
+     * submit follow form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function followPost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
+        $parsedBody = $request->getParsedBody();
 
+        $clientResponse = $this->apiPost("/v1/groups/{$groupId}/follow", [
+            'teamId' => $parsedBody['team_id'],
+            'seasonId' => $parsedBody['season_id']
+        ]);
 
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
 
+            $errors = $data['errors'];
 
+            // get seasons to get sports and season avaialble
+            $clientResponse = $this->apiGet("/v1/seasons");
+            $data = json_decode($clientResponse->getBody(), true);
+            if ($clientResponse->getStatusCode() >= 400) {
+                return $this->view->render($response, 'admin/season/index.twig', ['errors' => $data['errors']]);
+            }
+            $seasons = $data['data'];
+            $seasons = collect($seasons)->groupBy('sport')->map(function($seasons) {
+                return collect($seasons)->flatMap(function($season) {
+                    return [$season['seasonId'] => $season['name']];
+                })->toArray();
+            })->toArray();
 
+            $sports = array_combine(array_keys($seasons), array_keys($seasons));
 
+            return $this->view->render($response, 'group/follow.twig', [
+                'errors' => $errors,
+                'groupId' => $groupId,
+                'sports' => $sports,
+                'seasons' => $seasons
+            ]);
+        }
 
+        return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
+    }
 
+    /**
+     * delete a follow
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function deleteFollow(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
+        $parsedBody = $request->getParsedBody();
 
+        $clientResponse = $this->apiDelete("/v1/groups/{$groupId}/follow/{$followId}");
 
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+            $this->flash->addMessage('error', $data['errors']);
+        }
 
-    // update member form
+        return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
+    }
+
+    /**
+     * update member form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function updateMember(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $groupId = $args['groupId'];
-        $memberId = $args['memberId'];
+        extract($args);
 
         $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
         $data = json_decode($clientResponse->getBody(), true);
@@ -289,20 +378,36 @@ class GroupController extends AbstractController
 
         $group = $data['data'];
         $member = collect($group['members'])->firstWhere('memberId', $memberId);
-        return $this->view->render($response, 'group/update-member.twig', compact('groupId', 'memberId', 'member'));
+        $memberTypes = ['Group-Admin' => 'Group-Admin', 'Group-Member' => 'Group-Member'];
+        $allowMultiplePlayers = ['No', 'Yes'];
+
+        return $this->view->render($response, 'group/update-member.twig', compact(
+            'groupId',
+            'memberId',
+            'member',
+            'memberTypes',
+            'allowMultiplePlayers'
+        ));
     }
 
-    // submit update member form
+    /**
+     * submit update member form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function updateMemberPost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $groupId = $args['groupId'];
-        $memberId = $args['memberId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
         $data = json_decode($clientResponse->getBody(), true);
         $group = $data['data'];
         $member = collect($group['members'])->firstWhere('memberId', $memberId);
+        $memberTypes = ['Group-Admin' => 'Group-Admin', 'Group-Member' => 'Group-Member'];
+        $allowMultiplePlayers = ['No', 'Yes'];
 
         $clientResponse = $this->apiPatch("/v1/groups/{$groupId}/member/{$memberId}", [
             'groupId' => $groupId,
@@ -318,27 +423,60 @@ class GroupController extends AbstractController
                 'groupId' => $groupId,
                 'memberId' => $memberId,
                 'member' => $member,
+                'memberTypes' => $memberTypes,
+                'allowMultiplePlayers' => $allowMultiplePlayers
             ]);
         }
 
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
+    /**
+     * remove a member from the group
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function deleteMember(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $groupId = $args['groupId'];
-        $memberId = $args['memberId'];
+        extract($args);
 
         $clientResponse = $this->apiDelete("/v1/groups/{$groupId}/member/{$memberId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-
-            return $this->view->render($response, 'group/view.twig', ['errors' => $data['errors'], 'groupId' => $groupId]);
+            $this->flash->addMessage('error', $data['errors']);
         }
 
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
     // score form
     public function submitScore(ServerRequestInterface $request, ResponseInterface $response, $args)

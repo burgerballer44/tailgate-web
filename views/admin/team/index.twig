@@ -3,12 +3,15 @@
 {% block content %}
 
     <h1>all teams</h1>
-    <p class="py-4"><a href="{{ url_for('add-team') }}"><u>Create Team</u></a></p>
+    <div class="my-2">
+        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('add-team') }}">Create Team</a>
+    </div>
+
 
     {% if teams is defined %}
         {% for team in teams %}
             <div>
-                <a href={{ url_for('team', { 'teamId': team.teamId }) }}> <u>{{ team.teamId }}</u> </a> |
+                <a href={{ url_for('team', { 'teamId': team.teamId }) }}> {{ team.teamId }} </a> |
                 {{ team.designation }} |
                 {{ team.mascot }}
             </div>

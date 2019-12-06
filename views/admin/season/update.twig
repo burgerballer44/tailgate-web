@@ -2,31 +2,35 @@
 
 {% block content %}
 
-{# update-season form #}
-<form action="{{ url_for('update-season', { 'seasonId': seasonId }) }}" method="POST">
+{% if season is defined %}
+    
+    {# update-season form #}
+    <form action="{{ url_for('update-season', { 'seasonId': seasonId }) }}" method="POST">
 
-    {{ getHiddenHoneypot()|raw }}
-    {{ getCsrfFields()|raw }}
+        {{ getHiddenHoneypot()|raw }}
+        {{ getCsrfFields()|raw }}
 
-    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+        {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
 
-    {{ dropdownField('sport', 'Sport', season.sport, ['Football', 'Basketball'], 'Select sport')|raw }}
-    {% if errors.sport is defined %} {{ displayErrors('sport', errors)|raw }} {% endif %}
+        {{ dropdownField('sport', 'Sport', season.sport, sports, 'Select sport')|raw }}
+        {% if errors.sport is defined %} {{ displayErrors('sport', errors)|raw }} {% endif %}
 
-    {{ dropdownField('season_type', 'Season Type', season.seasonType, ["Regular-Season"], 'Select season type')|raw }}
-    {% if errors.seasonType is defined %} {{ displayErrors('seasonType', errors)|raw }} {% endif %}
+        {{ dropdownField('season_type', 'Season Type', season.seasonType, seasonTypes, 'Select season type')|raw }}
+        {% if errors.seasonType is defined %} {{ displayErrors('seasonType', errors)|raw }} {% endif %}
 
-    {{ textField('name', 'Name', 'text', 'what is name of the season', 'required', season.name)|raw }}
-    {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
+        {{ textField('name', 'Name', 'text', 'what is name of the season', 'required', season.name)|raw }}
+        {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
 
-    {{ textField('season_start', 'Season Start', 'date', 'when does the season start', 'required', season.seasonStart)|raw }}
-    {% if errors.seasonStart is defined %} {{ displayErrors('seasonStart', errors)|raw }} {% endif %}
+        {{ textField('season_start', 'Season Start', 'date', 'when does the season start', 'required', season.seasonStart)|raw }}
+        {% if errors.seasonStart is defined %} {{ displayErrors('seasonStart', errors)|raw }} {% endif %}
 
-    {{ textField('season_end', 'Season Start', 'date', 'when does the season end', 'required', season.seasonEnd)|raw }}
-    {% if errors.seasonEnd is defined %} {{ displayErrors('seasonEnd', errors)|raw }} {% endif %}
+        {{ textField('season_end', 'Season Start', 'date', 'when does the season end', 'required', season.seasonEnd)|raw }}
+        {% if errors.seasonEnd is defined %} {{ displayErrors('seasonEnd', errors)|raw }} {% endif %}
 
-    {{ submitButton('Update Season')|raw }}
-</form>
-{# end update-season form #}
+        {{ submitButton('Update Season')|raw }}
+    </form>
+    {# end update-season form #}
+
+{% endif %}
 
 {% endblock %}

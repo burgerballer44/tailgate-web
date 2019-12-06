@@ -7,87 +7,121 @@ use Psr\Http\Message\ServerRequestInterface;
 
 class TeamController extends AbstractController
 {
-    // view all teams
+    /**
+     * view all teams
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function all(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $clientResponse = $this->apiGet("/v1/teams");
         $data = json_decode($clientResponse->getBody(), true);
 
         if ($clientResponse->getStatusCode() >= 400) {            
-            return $this->view->render($response, 'team/index.twig', ['errors' => $data['errors']]);
+            return $this->view->render($response, 'admin/team/index.twig', ['errors' => $data['errors']]);
         }
 
         $teams = $data['data'];
-        return $this->view->render($response, 'team/index.twig', compact('teams'));
+        return $this->view->render($response, 'admin/team/index.twig', compact('teams'));
     }
 
-    // view a team, its follows, and games
+    /**
+     * view a team, its follows, and games
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function view(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['teamId'];
+        extract($args);
 
         $clientResponse = $this->apiGet("/v1/teams/{$teamId}");
         $data = json_decode($clientResponse->getBody(), true);
 
         if ($clientResponse->getStatusCode() >= 400) {
-            return $this->view->render($response, 'team/view.twig', ['errors' => $data['errors']]);
+            return $this->view->render($response, 'admin/team/view.twig', ['errors' => $data['errors']]);
         }
 
         $team = $data['data'];
-        return $this->view->render($response, 'team/view.twig', compact('team'));
+        return $this->view->render($response, 'admin/team/view.twig', compact('team'));
     }
 
-    // add team form
+    /**
+     * add team form
+     * @param ServerRequestInterface $request  [description]
+     * @param ResponseInterface      $response [description]
+     * @param [type]                 $args     [description]
+     */
     public function add(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        return $this->view->render($response, 'team/add.twig');
+        return $this->view->render($response, 'admin/team/add.twig');
     }
 
-    // submit add team form
+    /**
+     * submit add team form
+     * @param ServerRequestInterface $request  [description]
+     * @param ResponseInterface      $response [description]
+     * @param [type]                 $args     [description]
+     */
     public function addPost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/teams", [
+        $clientResponse = $this->apiPost("/v1/admin/teams", [
             'designation' => $parsedBody['designation'],
             'mascot' => $parsedBody['mascot']
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            return $this->view->render($response, 'team/add.twig', ['errors' => $data['errors']]);
+            return $this->view->render($response, 'admin/team/add.twig', ['errors' => $data['errors']]);
         }
 
-        return $response->withHeader('Location', '/team')->withStatus(302);
+        return $response->withHeader('Location', '/admin/team')->withStatus(302);
     }
 
-    // update team form
+    /**
+     * update team form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function update(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['teamId'];
+        extract($args);
 
         $clientResponse = $this->apiGet("/v1/teams/{$teamId}");
         $data = json_decode($clientResponse->getBody(), true);
 
         if ($clientResponse->getStatusCode() >= 400) {
-            return $this->view->render($response, 'team/update.twig', ['errors' => $data['errors']]);
+            return $this->view->render($response, 'admin/team/update.twig', ['errors' => $data['errors']]);
         }
 
         $team = $data['data'];
-        return $this->view->render($response, 'team/update.twig', compact('team'));
+        return $this->view->render($response, 'admin/team/update.twig', compact('team'));
     }
 
-    // submit update team form
+    /**
+     * submit update team form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function updatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $teamId = $args['teamId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiGet("/v1/teams/{$teamId}");
         $data = json_decode($clientResponse->getBody(), true);
         $team = $data['data'];
 
-        $clientResponse = $this->apiPatch("/v1/teams/{$teamId}", [
+        $clientResponse = $this->apiPatch("/v1/admin/teams/{$teamId}", [
             'designation' => $parsedBody['designation'],
             'mascot' => $parsedBody['mascot']
         ]);
@@ -95,72 +129,99 @@ class TeamController extends AbstractController
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
 
-            return $this->view->render($response, 'team/update.twig', [
+            return $this->view->render($response, 'admin/team/update.twig', [
                 'errors' => $data['errors'],
                 'teamId' => $teamId,
                 'team' => $team
             ]);
         }
 
-        return $response->withHeader('Location', "/team/{$teamId}")->withStatus(302);
+        return $response->withHeader('Location', "/admin/team/{$teamId}")->withStatus(302);
     }
 
-    // delete team
+    /**
+     * delete team
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function delete(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $teamId = $args['teamId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiDelete("/v1/teams/{$teamId}");
+        $clientResponse = $this->apiDelete("/v1/admin/teams/{$teamId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            return $this->view->render($response, 'team/update.twig', ['errors' => $data['errors'],'teamId' => $teamId]);
+            $this->flash->addMessage('error', $data['errors']);
         }
 
-        return $response->withHeader('Location', '/team')->withStatus(302);
+        return $response->withHeader('Location', '/admin/team')->withStatus(302);
     }
 
-    // follow form
-    public function follow(ServerRequestInterface $request, ResponseInterface $response, $args)
+    /**
+     * admin follow form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminFollow(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['teamId'];
-        return $this->view->render($response, 'team/follow.twig', compact('teamId'));
+        extract($args);
+        return $this->view->render($response, 'admin/team/follow.twig', compact('teamId'));
     }
 
-    // submit follow form
-    public function followPost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    /**
+     * submit admin follow form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminFollowPost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['teamId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/teams/{$teamId}/follow", [
+        $groupId = $parsedBody['group_id'];
+        $seasonId = $parsedBody['season_id'];
+
+        $clientResponse = $this->apiPost("/v1/groups/{$groupId}/follow", [
             'teamId' => $teamId,
-            'groupId' => $parsedBody['group_id']
+            'seasonId' => $seasonId
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            return $this->view->render($response, 'team/follow.twig', ['errors' => $data['errors'],'teamId' => $teamId]);
+            return $this->view->render($response, 'admin/team/follow.twig', ['errors' => $data['errors'],'teamId' => $teamId]);
         }
 
-        return $response->withHeader('Location', "/team/{$teamId}")->withStatus(302);
+        return $response->withHeader('Location', "/admin/team/{$teamId}")->withStatus(302);
     }
 
-    // delete a follow
-    public function deleteFollow(ServerRequestInterface $request, ResponseInterface $response, $args)
+    /**
+     * delete a follow
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminDeleteFollow(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $teamId = $args['teamId'];
-        $followId = $args['followId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiDelete("/v1/teams/{$teamId}/follow/{$followId}");
+        $clientResponse = $this->apiDelete("/v1/groups/{$groupId}/follow/{$followId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
-            return $this->view->render($response, 'team/view.twig', ['errors' => $data['errors'],'teamId' => $teamId]);
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->view->render($response, 'admin/team/view.twig', ['errors' => $data['errors']]);
         }
 
-        return $response->withHeader('Location', "/team/{$teamId}")->withStatus(302);
+        return $response->withHeader('Location', "/admin/team/{$teamId}")->withStatus(302);
     }
 }

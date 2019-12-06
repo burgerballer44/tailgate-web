@@ -4,12 +4,13 @@
 
     <h1 class="py-4">viewing season</h1>
 
-    <a href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> <u>Update Season</u> </a>
-    <a href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> <u>Delete Season</u> </a>
-    <a href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> <u>Add Game</u> </a>
-
     {% if season is defined %}
-        <div>
+        
+        <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> Update Season </a>
+        <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> Delete Season </a>
+        <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> Add Game </a>
+
+        <div class="my-2">
             {{ season.seasonId }} <br>
             {{ season.sport }} <br>
             {{ season.seasonType }} <br>
@@ -21,10 +22,18 @@
 
         {% if season.games is defined %}
             {% for game in season.games %}
-                <div>
-                    <a href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Update Score</u> </a>
-                    <a href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> <u>Delete Game</u> </a>
-                    {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
+                <div class="border-b-2 border-solid my-2">
+                    <a class="font-bold" href={{ url_for('team', { 'teamId': game.homeTeamId }) }}> {{ game.homeDesignation }} {{ game.homeMascot }} </a>
+                    <span> vs </span>
+                    <a class="font-bold" href={{ url_for('team', { 'teamId': game.awayTeamId }) }}> {{ game.awayDesignation }} {{ game.awayMascot }} </a>
+                    {{ game.startDate|date("M j, Y (D) / g:i A") }}
+                    <br>
+                    {{ game.homeTeamScore }} {{ game.awayTeamScore }}
+                    <br>
+                    <div class="my-2">
+                    <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Update Score </a>
+                    <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Delete Game </a>
+                    </div>
                 </div>
             {% endfor %}
         {% endif %}

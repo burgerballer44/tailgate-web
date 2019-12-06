@@ -210,7 +210,10 @@ class UserController extends AbstractController
 
         $user = $data['data'];
 
-        return $this->view->render($response, 'admin/user/update.twig', compact('userId', 'user'));
+        $statuses = ['Active' => 'Active', 'Pending' => 'Pending', 'Deleted' => 'Deleted'];
+        $roles = ['Normal' => 'Normal', 'Admin' => 'Admin'];
+
+        return $this->view->render($response, 'admin/user/update.twig', compact('userId', 'user', 'statuses', 'roles'));
     }
 
     /**
@@ -234,6 +237,9 @@ class UserController extends AbstractController
         
         $user = $data['data'];
 
+        $statuses = ['Active' => 'Active', 'Pending' => 'Pending', 'Deleted' => 'Deleted'];
+        $roles = ['Normal' => 'Normal', 'Admin' => 'Admin'];
+
         $clientResponse = $this->apiPatch("/v1/admin/users/{$userId}", [
             'email' => $parsedBody['email'],
             'status' => $parsedBody['status'],
@@ -247,6 +253,8 @@ class UserController extends AbstractController
                 'errors' => $data['errors'],
                 'userId' => $userId,
                 'user' => $user,
+                'statuses' => $statuses,
+                'roles' => $roles,
             ]);
         }
 

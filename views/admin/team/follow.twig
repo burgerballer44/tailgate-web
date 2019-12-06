@@ -3,14 +3,19 @@
 {% block content %}
 
 {# follow-team form #}
-<form action="{{ url_for('follow-team', { 'teamId': teamId }) }}" method="POST">
+<form action="{{ url_for('admin-follow-team', { 'teamId': teamId }) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
+    {% if errors.teamId is defined %} {{ displayErrors('teamId', errors)|raw }} {% endif %}
+
     {{ textField('group_id', 'Group', 'text', 'what is the group', 'required')|raw }}
     {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
-    {% if errors.teamId is defined %} {{ displayErrors('teamId', errors)|raw }} {% endif %}
+
+    {{ textField('season_id', 'Season', 'text', 'what is the season', 'required')|raw }}
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+
 
     {{ submitButton('Follow Team')|raw }}
 </form>

@@ -2,8 +2,11 @@
 
 {% block content %}
 
-    <h1>all seasons</h1>
-    <p class="py-4"><a href="{{ url_for('create-season') }}"><u>Create Season</u></a></p>
+    <h1 class="py-4">Seasons</h1>
+
+    <div class="my-2">
+        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('create-season') }}">Create Season</a>
+    </div>
 
     {% if seasons is defined %}
         {% for season in seasons %}

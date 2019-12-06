@@ -61,7 +61,7 @@ class FormBuilderExtension extends AbstractExtension
         $value = htmlspecialchars($value);
 
         $label = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label>";
-        $input = "<input class='block border border-gray-light w-full p-3 rounded mb-4' placeholder='{$placeholder}' autocomplete='off' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
+        $input = "<input class='block border border-gray-light w-full p-3 rounded mb-4' placeholder='{$placeholder}' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
 
         return $label . $input;
     }
@@ -83,15 +83,13 @@ class FormBuilderExtension extends AbstractExtension
         
         $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select required name='{$fieldName}' class='appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500'>";
 
-        if (!$selectedValue) {
-            $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";
-        }
+        $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";
 
-        foreach ($options as $value) {
-            if ($value == $selectedValue) {
-                $output .= "<option selected value='{$value}'>{$value}</option>";
+        foreach ($options as $key => $value) {
+            if ($key == $selectedValue) {
+                $output .= "<option selected value='{$key}'>{$value}</option>";
             } else {
-                $output .= "<option value='{$value}'>{$value}</option>";                                     
+                $output .= "<option value='{$key}'>{$value}</option>";                                     
             } 
         }
         $output .= "</select>";
@@ -161,82 +159,4 @@ class FormBuilderExtension extends AbstractExtension
 
         return $html;
     }
-
-
-
-
-
-
-
-
-
-
-    public function createRadioButtons($fieldName, $label, $selectedValue, array $options)
-    {
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label>";
-
-        foreach ($options as $key => $value) {
-            $cleanValue = str_replace(" ", "", $value);
-            $output .= " <input type='radio' id='{$fieldName}-{$cleanValue}' name='{$fieldName}' value='{$key}'";
-
-            if ($key == $selectedValue) {
-                $output .= " checked ";
-            }
-            $output .= " ><label for='{$fieldName}-{$cleanValue}'> {$value}</label> ";
-        }
-
-        return $output;
-    }
-
-    public function createCheckboxInputs($fieldName, $label, $selectedValues, array $options)
-    {
-        if (!is_array($selectedValues)) {
-            $selectedValues = [];
-        }
-
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label>";
-
-        foreach ($options as $key => $value) {
-
-            $cleanValue = str_replace(" ", "", $value);
-            $output .= "<input type='checkbox' id='{$fieldName}-{$cleanValue}' name='{$fieldName}' value='{$key}'";
-
-            foreach ($selectedValues as $selectedValue) {
-                if ($key == $selectedValue) {
-                    $output .= " checked ";
-                }
-            }
-
-            $output .= " ><label for='{$fieldName}-{$cleanValue}'> {$value}</label> <br> ";
-        }
-
-        return $output;
-    }
-
-    public function makeTableHeader($searchModel, $field, $title)
-    {
-        $html = "<th class='p-1 whitespace-no-wrap'>";
-        $html .= "<a href='index.php?{$searchModel->getQueryStringText()}";
-
-        if ($field == $searchModel->getSortField()) {
-            $html .= "&sortDirection={$searchModel->getOppositeSortDirection()}";
-        } else {
-            $html .= "&sortDirection={$searchModel->getSortDirection()}";
-        }
-
-        $html .= "&sortField={$field}'>";
-
-        $html .= "<span>{$title}</span>";
-
-        if ($field == $searchModel->getSortField()) {
-                $html .= " <i class='fa {$searchModel->getSortDirectionIcon()}'></i>";
-        } else {
-            $html .= " <i class='fa {$searchModel->getDefaultSortDirectionIcon()}'></i>";
-        }
-        $html .= "</a></th>";
-
-        return $html;
-    }
-
-
 }

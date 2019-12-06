@@ -13,10 +13,10 @@
         {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
         {% if errors.memberId is defined %} {{ displayErrors('memberId', errors)|raw }} {% endif %}
 
-        {{ dropdownField('group_role', 'Role', member.role, ['Group-Admin', 'Group-Member'], 'Select role')|raw }}
+        {{ dropdownField('group_role', 'Role', member.role, memberTypes, 'Select role')|raw }}
         {% if errors.groupRole is defined %} {{ displayErrors('groupRole', errors)|raw }} {% endif %}
 
-        {{ dropdownField('allow_multiple', 'Allow Multiple Players', member.allowMultiplePlayers, [0, 1], 'Allow multiple players')|raw }}
+        {{ dropdownField('allow_multiple', 'Allow Multiple Players', member.allowMultiplePlayers, allowMultiplePlayers, 'Allow multiple players')|raw }}
         {% if errors.allowMultiplePlayers is defined %} {{ displayErrors('allowMultiplePlayers', errors)|raw }} {% endif %}
 
 
