@@ -2,19 +2,21 @@
 
 {% block content %}
 
-{# create-group form #}
-<form action="{{ url_for('create-group') }}" method="POST">
+{# admin-create-group form #}
+<form action="{{ url_for('admin-create-group') }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
     
-    {% if errors.ownerId is defined %} {{ displayErrors('ownerId', errors)|raw }} {% endif %}
 
     {{ textField('name', 'Group Name', 'text', 'name of group', 'required')|raw }}
     {% if errors.name is defined %} {{ displayErrors('name', errors)|raw }} {% endif %}
 
+    {{ textField('user_id', 'User', 'text', 'owner of group', 'required')|raw }}
+    {% if errors.ownerId is defined %} {{ displayErrors('ownerId', errors)|raw }} {% endif %}
+
     {{ submitButton('Create Group')|raw }}
 </form>
-{# end create-group form #}
+{# end admin-create-group form #}
 
 {% endblock %}

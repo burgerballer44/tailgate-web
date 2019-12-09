@@ -3,12 +3,12 @@
 {% block content %}
 
 <h1 class="py-4">all groups</h1>
-<p class="py-4"><a href="{{ url_for('create-group') }}"><u>Create Group</u></a></p>
+<p class="py-4"><a href="{{ url_for('admin-create-group') }}"><u>Create Group</u></a></p>
 
 {% if groups is defined %}
     {% for group in groups %}
         <div>
-            <a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.groupId }}</u> </a> |
+            <a href={{ url_for('admin-group', { 'groupId': group.groupId }) }}> <u>{{ group.groupId }}</u> </a> |
             {{ group.name }} |
             {{ group.ownerId }} |
         </div>

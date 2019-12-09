@@ -53,8 +53,6 @@ return function (App $app) use ($request) {
         $group->get('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMember')->setName('update-member');
         $group->post('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMemberPost');
         $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deleteMember')->setName('delete-member');
-
-
         $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deletePlayer')->setName('delete-player');
         $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
         $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
@@ -81,26 +79,30 @@ return function (App $app) use ($request) {
         });
 
         $group->group('/groups', function (Group $group) {
-            $group->get('', \TailgateWeb\Controllers\GroupController::class . ':all')->setName('groups');
-        //     $group->get('/create', \TailgateWeb\Controllers\GroupController::class . ':create')->setName('create-group');
-        //     $group->post('/create', \TailgateWeb\Controllers\GroupController::class . ':createPost');
-        //     $group->get('/{groupId}', \TailgateWeb\Controllers\GroupController::class . ':view')->setName('group');
-        //     $group->get('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':update')->setName('update-group');
-        //     $group->post('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':updatePost');
-        //     $group->get('/{groupId}/delete', \TailgateWeb\Controllers\GroupController::class . ':delete')->setName('delete-group');
-        //     $group->get('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMember')->setName('add-member');
-        //     $group->post('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':addMemberPost');
-        //     $group->get('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMember')->setName('update-member');
-        //     $group->post('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':updateMemberPost');
-        //     $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deleteMember')->setName('delete-member');
-        //     $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayer')->setName('add-player');
-        //     $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':addPlayerPost');
-        //     $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Controllers\GroupController::class . ':deletePlayer')->setName('delete-player');
-        //     $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScore')->setName('submit-score');
-        //     $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':submitScorePost');
-        //     $group->get('/{groupId}/update-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':updateScore')->setName('update-score');
-        //     $group->post('/{groupId}/update-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':updateScorePost');
-        //     $group->get('/{groupId}/delete-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':deleteScore')->setName('delete-score');
+            $group->get('', \TailgateWeb\Controllers\GroupController::class . ':adminAll')->setName('groups');
+            $group->get('/create', \TailgateWeb\Controllers\GroupController::class . ':adminCreate')->setName('admin-create-group');
+            $group->post('/create', \TailgateWeb\Controllers\GroupController::class . ':adminCreatePost');
+            $group->get('/{groupId}', \TailgateWeb\Controllers\GroupController::class . ':adminView')->setName('admin-group');
+            $group->get('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdate')->setName('admin-update-group');
+            $group->post('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdatePost');
+            
+            $group->get('/{groupId}/delete', \TailgateWeb\Controllers\GroupController::class . ':adminDelete')->setName('admin-delete-group');
+            $group->get('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':adminAddMember')->setName('admin-add-member');
+            $group->post('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':adminAddMemberPost');
+            $group->get('/{groupId}/follow', \TailgateWeb\Controllers\GroupController::class . ':adminFollow')->setName('admin-follow-team');
+            $group->post('/{groupId}/follow', \TailgateWeb\Controllers\GroupController::class . ':adminFollowPost');
+            $group->get('/{groupId}/follow/{followId}/delete', \TailgateWeb\Controllers\GroupController::class . ':adminDeleteFollow')->setName('admin-delete-follow');
+            $group->get('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdateMember')->setName('admin-update-member');
+            $group->post('/{groupId}/member/{memberId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdateMemberPost');
+            $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Controllers\GroupController::class . ':adminDeleteMember')->setName('admin-delete-member');
+            $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':adminAddPlayer')->setName('admin-add-player');
+            $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Controllers\GroupController::class . ':adminAddPlayerPost');
+            $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Controllers\GroupController::class . ':adminDeletePlayer')->setName('admin-delete-player');
+            $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':adminSubmitScore')->setName('admin-submit-score');
+            $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Controllers\GroupController::class . ':adminSubmitScorePost');
+            $group->get('/{groupId}/update-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':adminUpdateScore')->setName('admin-update-score');
+            $group->post('/{groupId}/update-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':adminUpdateScorePost');
+            $group->get('/{groupId}/delete-score/{scoreId}', \TailgateWeb\Controllers\GroupController::class . ':adminDeleteScore')->setName('admin-delete-score');
         });
 
         // team

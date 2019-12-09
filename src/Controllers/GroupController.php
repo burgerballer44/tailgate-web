@@ -132,7 +132,10 @@ class GroupController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/groups", ['name' => $parsedBody['name']]);
+        $clientResponse = $this->apiPost("/v1/groups", [
+            'name' => $parsedBody['name'],
+            'userId' => $this->session->get('user')['userId'],
+        ]);
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -183,7 +186,7 @@ class GroupController extends AbstractController
     {   
         extract($args);
 
-        $clientResponse = $this->apiDelete("/v1/grsoups/{$groupId}");
+        $clientResponse = $this->apiDelete("/v1/groups/{$groupId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
@@ -452,45 +455,29 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-
-    // score form
+    /** 
+     * score form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function submitScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $groupId = $args['groupId'];
-        $playerId = $args['playerId'];
+        extract($args);
         return $this->view->render($response, 'group/submit-score.twig', compact('groupId', 'playerId'));
     }
 
-    // submit score form
+    /**
+     * submit score form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function submitScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $groupId = $args['groupId'];
-        $playerId = $args['playerId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiPost("/v1/groups/{$groupId}/player/{$playerId}/score", [
@@ -512,10 +499,16 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
+    /**
+     * update score form
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function updateScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $groupId = $args['groupId'];
-        $scoreId = $args['scoreId'];
+        extract($args);
 
         $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
         $data = json_decode($clientResponse->getBody(), true);
@@ -525,10 +518,16 @@ class GroupController extends AbstractController
         return $this->view->render($response, 'group/update-score.twig', compact('groupId', 'scoreId', 'score'));
     }
 
+    /**
+     * submit update score from
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function updateScorePost(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
-        $groupId = $args['groupId'];
-        $scoreId = $args['scoreId'];
+        extract($args);
         $parsedBody = $request->getParsedBody();
 
         $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
@@ -555,24 +554,177 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
+    /**
+     * [deleteScore description]
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
     public function deleteScore(ServerRequestInterface $request, ResponseInterface $response, $args)
     {   
-        $groupId = $args['groupId'];
-        $scoreId = $args['scoreId'];
+        extract($args);
 
         $clientResponse = $this->apiDelete("/v1/groups/{$groupId}/score/{$scoreId}");
 
         if ($clientResponse->getStatusCode() >= 400) {
             $data = json_decode($clientResponse->getBody(), true);
+            $this->flash->addMessage('error', $data['errors']);
+        }
 
-            return $this->view->render($response, 'group/view.twig', [
+        return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
+    }
+
+    /**
+     * all groups for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminAll(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $clientResponse = $this->apiGet("/v1/admin/groups");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            return $this->view->render($response, 'admin/group/index.twig');
+        }
+
+        $groups = $data['data'];
+        return $this->view->render($response, 'admin/group/index.twig', compact('groups'));
+    }
+
+    /**
+     * create group form for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminCreate(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        return $this->view->render($response, 'admin/group/create.twig');
+    }
+
+    /**
+     * submit the create group form for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminCreatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiPost("/v1/groups", [
+            'name' => $parsedBody['name'],
+            'userId' => $parsedBody['user_id']
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+            return $this->view->render($response, 'admin/group/create.twig', ['errors' => $data['errors']]);
+        }
+
+        return $response->withHeader('Location', '/admin/groups')->withStatus(302);
+    }
+
+    /**
+     * view a group for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminView(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
+
+        $clientResponse = $this->apiGet("/v1/admin/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $response->withHeader('Location', "/admin/groups")->withStatus(302);
+        }
+
+        $group = $data['data'];
+
+        return $this->view->render($response, 'admin/group/view.twig', compact('group', 'groupId'));
+    }
+
+    /**
+     * update group form for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminUpdate(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
+
+        $clientResponse = $this->apiGet("/v1/admin/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            return $this->view->render($response, 'admin/group/update.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,
             ]);
         }
 
-        return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
+        $group = $data['data'];
+        return $this->view->render($response, 'admin/group/update.twig', compact('group', 'groupId'));
     }
+
+    /**
+     * submit update group form for admin
+     * @param  ServerRequestInterface $request  [description]
+     * @param  ResponseInterface      $response [description]
+     * @param  [type]                 $args     [description]
+     * @return [type]                           [description]
+     */
+    public function adminUpdatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
+    {
+        extract($args);
+        $parsedBody = $request->getParsedBody();
+
+        $clientResponse = $this->apiGet("/v1/admin/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+        $group = $data['data'];
+
+        $clientResponse = $this->apiPatch("/v1/admin/groups/{$groupId}", [
+            'name' => $parsedBody['name'],
+            'ownerId' => $group['ownerId'],
+        ]);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $data = json_decode($clientResponse->getBody(), true);
+
+            return $this->view->render($response, 'admin/group/update.twig', [
+                'errors' => $data['errors'],
+                'group' => $group,
+                'groupId' => $groupId,
+            ]);
+        }
+
+        return $response->withHeader('Location', "/admin/groups/{$groupId}")->withStatus(302);
+    }
+
+
+
+
+
+
+
+
+
+
+
+
 
     // add member form
     public function addMember(ServerRequestInterface $request, ResponseInterface $response, $args)
@@ -611,48 +763,5 @@ class GroupController extends AbstractController
         return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
     }
 
-    // update group form
-    public function update(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        $groupId = $args['groupId'];
 
-        $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            return $this->view->render($response, 'group/update.twig', [
-                'errors' => $data['errors'],
-                'groupId' => $groupId,
-            ]);
-        }
-
-        $group = $data['data'];
-        return $this->view->render($response, 'group/update.twig', compact('group', 'groupId'));
-    }
-
-
-    // submit update group form
-    public function updatePost(ServerRequestInterface $request, ResponseInterface $response, $args)
-    {
-        $groupId = $args['groupId'];
-        $parsedBody = $request->getParsedBody();
-
-        $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        $group = $data['data'];
-
-        $clientResponse = $this->apiPatch("/v1/groups/{$groupId}", ['name' => $parsedBody['name']]);
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-
-            return $this->view->render($response, 'group/update.twig', [
-                'errors' => $data['errors'],
-                'group' => $group,
-                'groupId' => $groupId,
-            ]);
-        }
-
-        return $response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
-    }
 }

@@ -4,8 +4,8 @@
 
 {% if group is defined %}
 
-    {# update-group form #}
-    <form action="{{ url_for('update-group', { 'groupId':groupId }) }}" method="POST">
+    {# admin-update-group form #}
+    <form action="{{ url_for('admin-update-group', { 'groupId':groupId }) }}" method="POST">
 
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}
@@ -18,7 +18,7 @@
 
         {{ submitButton('Update Group')|raw }}
     </form>
-{# end update-group form #}
+{# end admin-update-group form #}
 
 {% else %}
 
