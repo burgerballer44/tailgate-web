@@ -2,8 +2,8 @@
 
 {% block content %}
 
-{# update-score form #}
-<form action="{{ url_for('update-score', { 'groupId': groupId, 'scoreId': scoreId }) }}" method="POST">
+{# admin-update-score form #}
+<form action="{{ url_for('admin-update-score', { 'groupId': groupId, 'scoreId': scoreId }) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
@@ -19,6 +19,6 @@
 
     {{ submitButton('Update Score')|raw }}
 </form>
-{# end update-score form #}
+{# end admin-update-score form #}
 
 {% endblock %}

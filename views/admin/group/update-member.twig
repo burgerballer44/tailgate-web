@@ -4,8 +4,8 @@
 
 {% if member is defined %}
 
-    {# update-member form #}
-    <form action="{{ url_for('update-member', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
+    {# admin-update-member form #}
+    <form action="{{ url_for('admin-update-member', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
 
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}
@@ -22,7 +22,7 @@
 
         {{ submitButton('Update Member')|raw }}
     </form>
-    {# end update-member form #}
+    {# end admin-update-member form #}
 
 {% else %}
 

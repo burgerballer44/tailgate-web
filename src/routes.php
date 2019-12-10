@@ -85,7 +85,6 @@ return function (App $app) use ($request) {
             $group->get('/{groupId}', \TailgateWeb\Controllers\GroupController::class . ':adminView')->setName('admin-group');
             $group->get('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdate')->setName('admin-update-group');
             $group->post('/{groupId}/update', \TailgateWeb\Controllers\GroupController::class . ':adminUpdatePost');
-            
             $group->get('/{groupId}/delete', \TailgateWeb\Controllers\GroupController::class . ':adminDelete')->setName('admin-delete-group');
             $group->get('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':adminAddMember')->setName('admin-add-member');
             $group->post('/{groupId}/add-member', \TailgateWeb\Controllers\GroupController::class . ':adminAddMemberPost');

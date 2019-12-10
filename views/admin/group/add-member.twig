@@ -2,8 +2,8 @@
 
 {% block content %}
 
-{# add-member form #}
-<form action="{{ url_for('add-member', { 'groupId': groupId }) }}" method="POST">
+{# admin-add-member form #}
+<form action="{{ url_for('admin-add-member', { 'groupId': groupId }) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
@@ -15,6 +15,6 @@
 
     {{ submitButton('Add Member')|raw }}
 </form>
-{# end add-member form #}
+{# end admin-add-member form #}
 
 {% endblock %}

@@ -2,8 +2,8 @@
 
 {% block content %}
 
-{# add-player form #}
-<form action="{{ url_for('add-player', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
+{# admin-add-player form #}
+<form action="{{ url_for('admin-add-player', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
@@ -16,6 +16,6 @@
 
     {{ submitButton('Add Player')|raw }}
 </form>
-{# end add-player form #}
+{# end admin-add-player form #}
 
 {% endblock %}
