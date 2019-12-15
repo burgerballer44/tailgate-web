@@ -1,38 +1,34 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-normal.twig" %}
 
 {% block content %}
 
 <div>
-    <div class="my-6">
+    <h1 class="text-2xl">Welcome to Tar Heel Tailgate!</h1>
 
-        <h1 class="text-2xl my-2">Welcome to Tar Heel Tailgate!</h1>
-
-        {% if groups is defined and groups is empty %}
-            <p class="my-2">To get started, create a group or join a group using an invite code.</p>
-        {% endif %}
-
-        <div class="my-4">
-            <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('create-group') }}">Create Group</a>
-            <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('invite-code') }}">Join a Group with an Invite Code</a>
-        </div>
-    </div>
-
-    {% if groups is defined and groups is not empty %}
-
-        <div class="flex my-4">
-            <p class="text-xl">Groups</p>
-        </div>
-
-        <ul>
-
-        {% for group in groups %}
-            <li><a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.name }}</u> </a></li>
-        {% endfor %}
-
-        </ul>
-
+    {% if groups is defined and groups is empty %}
+        <p class="my-2">To get started, create a group or join a group using an invite code.</p>
     {% endif %}
+
+    <div class="my-4">
+        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('create-group') }}">Create Group</a>
+        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('invite-code') }}">Join a Group with an Invite Code</a>
+    </div>
 </div>
 
+{% if groups is defined and groups is not empty %}
+
+    <div class="flex my-4">
+        <p class="text-xl">Groups</p>
+    </div>
+
+    <ul>
+
+    {% for group in groups %}
+        <li><a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.name }}</u> </a></li>
+    {% endfor %}
+
+    </ul>
+
+{% endif %}
 
 {% endblock %}

@@ -19,6 +19,7 @@ abstract class AbstractController
 
     public function __construct(ContainerInterface $container)
     {
+        $this->container = $container;
         $this->settings = $container->get('settings');
         $this->logger = $container->get('logger');
         $this->flash = $container->get('flash');

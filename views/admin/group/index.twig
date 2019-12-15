@@ -1,9 +1,9 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-admin.twig" %}
 
 {% block content %}
 
-<h1 class="py-4">all groups</h1>
-<p class="py-4"><a href="{{ url_for('admin-create-group') }}"><u>Create Group</u></a></p>
+<h1 class="mb-4">all groups</h1>
+<p class="mb-4"><a href="{{ url_for('admin-create-group') }}"><u>Create Group</u></a></p>
 
 {% if groups is defined %}
     {% for group in groups %}

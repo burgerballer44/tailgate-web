@@ -1,10 +1,10 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-admin.twig" %}
 
 {% block content %}
 
     {% if group is defined %}
 
-        <h1 class="text-2xl my-4">{{ group.name }}</h1>
+        <h1 class="text-2xl mb-4">{{ group.name }}</h1>
 
         <div class="my-4">
             <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('admin-update-group', { 'groupId': group.groupId }) }}>Update Group</a>

@@ -1,8 +1,8 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-admin.twig" %}
 
 {% block content %}
 
-    <h1 class="py-4">viewing season</h1>
+    <h1 class="mb-4">viewing season</h1>
 
     {% if season is defined %}
         
@@ -20,13 +20,13 @@
 
         <h1 class="py-4">Games</h1>
 
-        {% if season.games is defined %}
-            {% for game in season.games %}
+        {% if games is defined %}
+            {% for game in games %}
                 <div class="border-b-2 border-solid my-2">
                     <a class="font-bold" href={{ url_for('team', { 'teamId': game.homeTeamId }) }}> {{ game.homeDesignation }} {{ game.homeMascot }} </a>
                     <span> vs </span>
                     <a class="font-bold" href={{ url_for('team', { 'teamId': game.awayTeamId }) }}> {{ game.awayDesignation }} {{ game.awayMascot }} </a>
-                    {{ game.startDate|date("M j, Y (D) / g:i A") }}
+                    {{ game.startDate }} / {{ game.startTime }}
                     <br>
                     {{ game.homeTeamScore }} {{ game.awayTeamScore }}
                     <br>

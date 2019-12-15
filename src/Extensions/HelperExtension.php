@@ -22,6 +22,7 @@ class HelperExtension extends AbstractExtension
         return [
             new TwigFunction('isAdmin', [$this, 'isAdmin']),
             new TwigFunction('isGroupAdmin', [$this, 'isGroupAdmin']),
+            new TwigFunction('isGroupOwner', [$this, 'isGroupOwner']),
         ];
     }
 
@@ -33,6 +34,11 @@ class HelperExtension extends AbstractExtension
     public function isGroupAdmin($member)
     {
         return $member['role'] == 'Group-Admin';
+    }
+
+    public function isGroupOwner($group, $member)
+    {
+        return $group['ownerId'] == $member['userId'];
     }
 
 }

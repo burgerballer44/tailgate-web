@@ -1,8 +1,8 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-normal.twig" %}
 
 {% block content %}
 
-<h1 class="text-2xl my-4">{{ group.name }} - Send Invitation Email</h1>
+<h1 class="text-2xl mb-4">{{ group.name }} - Send Invitation Email</h1>
 
 {# send-invite form #}
 <form action="{{ url_for('send-invite', { 'groupId': groupId }) }}" method="POST">

@@ -154,8 +154,14 @@ class GroupController extends AbstractController
      */
     public function view(ServerRequestInterface $request, ResponseInterface $response, $args)
     {
+        $group = [];
+        $member = [];
+        $season = [];
+        $gridHtml = '';
+
         extract($args);
 
+        // get the group and determine if the user is a member
         $clientResponse = $this->apiGet("/v1/groups/{$groupId}");
         $data = json_decode($clientResponse->getBody(), true);
 
@@ -166,13 +172,26 @@ class GroupController extends AbstractController
 
         $group = $data['data'];
         $member = collect($group['members'])->firstWhere('userId', $this->session->get('user')['userId']);
-
         if (!$member) {
             $this->flash->addMessage('error', 'Unable to determine if you are a member of the group.');
             return $response->withHeader('Location', "/dashboard")->withStatus(302);
         }
 
-        return $this->view->render($response, 'group/view.twig', compact('group', 'groupId', 'member'));
+        // if the group is following a team then get all the games for the season they are following
+        if (isset($group['follow']['seasonId'])) {
+            $seasonId = $group['follow']['seasonId'];
+            $clientResponse = $this->apiGet("/v1/seasons/{$seasonId}");
+            $data = json_decode($clientResponse->getBody(), true);
+            if ($clientResponse->getStatusCode() >= 400) {
+                return $this->view->render($response, 'admin/season/view.twig', ['errors' => $data['errors']]);
+            }
+            $season = $data['data'];
+        
+            $gridHtml = $this->container->get('scoring')->generate($group, $season, [])->getHtml();
+        }
+
+
+        return $this->view->render($response, 'group/view.twig', compact('group', 'groupId', 'member', 'season', 'gridHtml'));
     }
 
     /**
@@ -633,7 +652,7 @@ class GroupController extends AbstractController
     {
         $parsedBody = $request->getParsedBody();
 
-        $clientResponse = $this->apiPost("/v1/groups", [
+        $clientResponse = $this->apiPost("/v1/admin/groups", [
             'name' => $parsedBody['name'],
             'userId' => $parsedBody['user_id']
         ]);

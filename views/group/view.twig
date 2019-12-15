@@ -1,15 +1,17 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-normal.twig" %}
 
 {% block content %}
 
     {% if group is defined %}
 
-        <h1 class="text-2xl my-4">{{ group.name }}</h1>
+        <h1 class="text-2xl mb-4">{{ group.name }}</h1>
 
         {% if isGroupAdmin(member) %}
             <div class="my-4">
                 <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('send-invite', { 'groupId': group.groupId }) }}>Send an Invite</a>
-                <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-group', { 'groupId': group.groupId }) }}>Delete Group</a>
+                {% if isGroupOwner(group, member) %}
+                    <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-group', { 'groupId': group.groupId }) }}>Delete Group</a>
+                {% endif %}
 
                 {# determine if the group is following a team #}
                 {% if group.follow is defined and group.follow is not null %}
@@ -95,5 +97,12 @@
         {% endif %}
 
     {% endif %}
+
+
+
+    {{ gridHtml|raw }}
+
+
+
 
 {% endblock %}

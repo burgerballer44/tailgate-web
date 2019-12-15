@@ -46,7 +46,8 @@ class SeasonController extends AbstractController
         }
 
         $season = $data['data'];
-        return $this->view->render($response, 'admin/season/view.twig', compact('season'));
+        $games = $season['games'];
+        return $this->view->render($response, 'admin/season/view.twig', compact('season', 'games'));
     }
 
     /**
@@ -116,9 +117,6 @@ class SeasonController extends AbstractController
         }
 
         $season = $data['data'];
-        $season['seasonStart'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $season['seasonStart'])->format("Y-m-d");
-        $season['seasonEnd'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $season['seasonEnd'])->format("Y-m-d");
-
         $sports = ['Football' => 'Football', 'Basketball' => 'Basketball'];
         $seasonTypes = ['Regular-Season' => 'Regular-Season'];
 
@@ -140,8 +138,6 @@ class SeasonController extends AbstractController
         $clientResponse = $this->apiGet("/v1/seasons/{$seasonId}");
         $data = json_decode($clientResponse->getBody(), true);
         $season = $data['data'];
-        $season['seasonStart'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $season['seasonStart'])->format("Y-m-d");
-        $season['seasonEnd'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $season['seasonEnd'])->format("Y-m-d");
 
         $sports = ['Football' => 'Football', 'Basketball' => 'Basketball'];
         $seasonTypes = ['Regular-Season' => 'Regular-Season'];
@@ -218,7 +214,8 @@ class SeasonController extends AbstractController
             'seasonId' => $seasonId,
             'homeTeamId' => $parsedBody['home_team_id'],
             'awayTeamId' => $parsedBody['away_team_id'],
-            'startDate' => $parsedBody['start_date']
+            'startDate' => $parsedBody['start_date'],
+            'startTime' => $parsedBody['start_time']
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {
@@ -244,7 +241,6 @@ class SeasonController extends AbstractController
         $data = json_decode($clientResponse->getBody(), true);
         $season = $data['data'];
         $game = collect($season['games'])->firstWhere('gameId', $gameId);
-        $game['startDate'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $game['startDate'])->format("Y-m-d H:i");
         return $this->view->render($response, 'admin/season/update-game-score.twig', compact('seasonId', 'gameId', 'game'));
     }
 
@@ -264,14 +260,14 @@ class SeasonController extends AbstractController
         $data = json_decode($clientResponse->getBody(), true);
         $season = $data['data'];
         $game = collect($season['games'])->firstWhere('gameId', $gameId);
-        $game['startDate'] = \DateTimeImmutable::createFromFormat("Y-m-d H:i:s", $game['startDate'])->format("Y-m-d H:i");
 
         $clientResponse = $this->apiPatch("/v1/admin/seasons/{$seasonId}/game/{$gameId}/score", [
             'seasonId' => $seasonId,
             'gameId' => $gameId,
             'homeTeamScore' => $parsedBody['home_team_score'],
             'awayTeamScore' => $parsedBody['away_team_score'],
-            'startDate' => $parsedBody['start_date']
+            'startDate' => $parsedBody['start_date'],
+            'startTime' => $parsedBody['start_time']
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {

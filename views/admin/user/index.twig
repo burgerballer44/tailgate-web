@@ -1,8 +1,8 @@
-{% extends "layout/dashboard-base.twig" %}
+{% extends "layout/dashboard-base-admin.twig" %}
 
 {% block content %}
 
-    <h1 class="py-4">all users</h1>
+    <h1 class="mb-4">all users</h1>
 
     {% if users is defined %}
         {% for user in users %}
