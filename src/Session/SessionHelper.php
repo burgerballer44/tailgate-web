@@ -2,12 +2,9 @@
 
 namespace TailgateWeb\Session;
 
-use ArrayAccess;
-use Countable;
-use IteratorAggregate;
+use TailgateWeb\Session\SessionHelperInterface;
 
-
-class Helper implements ArrayAccess, Countable, IteratorAggregate
+class SessionHelper implements SessionHelperInterface
 {
     /**
      * Get a session variable.

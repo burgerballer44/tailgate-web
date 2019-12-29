@@ -55,7 +55,7 @@
                             {{ tableHeader(member.allowMultiplePlayers ? 'Yes':'No')|raw }}
                             <td class='p-1 py-2'><a href={{ url_for('add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
                             <td class='p-1 py-2'><a href={{ url_for('update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
-                            <td class='p-1 py-2'><a href={{ url_for('delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
+                            <td class='p-1 py-2'><a onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
                         </tr>
 
                     {% endfor %}
@@ -77,7 +77,7 @@
         {% if group.players is defined %}
             {% for player in group.players %}
                 <div>
-                    <a href={{ url_for('delete-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Delete Player</u> </a>
+                    <a onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Delete Player</u> </a>
                     <a href={{ url_for('submit-score', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Submit Score</u> </a>
                     {{ player.username }}  
                 </div>
@@ -90,7 +90,7 @@
             {% for score in group.scores %}
                 <div>
                     <a href={{ url_for('update-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> <u>Update Score</u> </a>
-                    <a href={{ url_for('delete-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> <u>Delete Score</u> </a>
+                    <a onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> <u>Delete Score</u> </a>
                     {{ score.homeTeamPrediction }}  {{ score.awayTeamPrediction }}  
                 </div>
             {% endfor %}

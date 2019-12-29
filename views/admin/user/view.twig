@@ -16,6 +16,9 @@
             {{ user.status }} <br>
             {{ user.role }} <br>
         </div>
+
+        {% include 'admin/eventLog.twig' %}
+
     {% endif %}
 
 {% endblock %}

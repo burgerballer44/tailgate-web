@@ -1,0 +1,10 @@
+{% if eventLog is defined %}
+    <div class="py-4">
+        <p class="text-lg font-bold">Events</p>
+        <ul class="list-decimal list-inside">
+            {% for event in eventLog %}
+                <li>{{ event.type }} - {{ event.created_at|date('Y-M-d H:i') }}</li>
+            {% endfor %}
+        </ul>
+    </div>
+{% endif %}

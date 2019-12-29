@@ -4,7 +4,7 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#installing-dependencies",
         "This file is @generated automatically"
     ],
-    "content-hash": "88df833e323ca377b4204f706975e1ab",
+    "content-hash": "fe405cef33f119c5d3b2d9abf197cd73",
     "packages": [
         {
             "name": "clue/stream-filter",
@@ -2027,16 +2027,16 @@
         },
         {
             "name": "slim/twig-view",
-            "version": "3.0.0-alpha",
+            "version": "3.0.0-beta",
             "source": {
                 "type": "git",
                 "url": "https://github.com/slimphp/Twig-View.git",
-                "reference": "fed1bec854113fa0650d8126da9284f58e78688c"
+                "reference": "f4601348d445cfc96f223c5be9a2c8eda80375fe"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/fed1bec854113fa0650d8126da9284f58e78688c",
-                "reference": "fed1bec854113fa0650d8126da9284f58e78688c",
+                "url": "https://api.github.com/repos/slimphp/Twig-View/zipball/f4601348d445cfc96f223c5be9a2c8eda80375fe",
+                "reference": "f4601348d445cfc96f223c5be9a2c8eda80375fe",
                 "shasum": ""
             },
             "require": {
@@ -2048,13 +2048,12 @@
                 "php-di/php-di": "^6.0",
                 "phpunit/phpunit": "^7.5",
                 "psr/http-factory": "^1.0",
-                "slim/slim": "^4.0.0-alpha"
+                "slim/slim": "^4.0"
             },
             "type": "library",
             "autoload": {
                 "psr-4": {
-                    "Slim\\Views\\": "src",
-                    "Slim\\Tests\\": "tests"
+                    "Slim\\Views\\": "src"
                 }
             },
             "notification-url": "https://packagist.org/downloads/",
@@ -2082,7 +2081,7 @@
                 "twig",
                 "view"
             ],
-            "time": "2019-04-28T08:02:02+00:00"
+            "time": "2019-08-20T00:55:36+00:00"
         },
         {
             "name": "symfony/options-resolver",

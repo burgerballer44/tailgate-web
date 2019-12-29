@@ -8,6 +8,7 @@ $dotenv->load();
 $dotenv->required([
     'MODE',
     'DISPLAY_ERROR_DETAILS',
+    'LOG_ERRORS',
     'DB_CONNECTION',
     'DB_HOST',
     'DB_PORT',

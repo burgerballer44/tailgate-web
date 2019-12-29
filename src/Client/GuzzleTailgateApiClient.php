@@ -1,127 +1,80 @@
 <?php
 
-namespace TailgateWeb\Controllers;
+namespace TailgateWeb\Client;
 
-use GuzzleHttp\Exception\TransferException;
-use GuzzleHttp\Exception\ConnectException;
-use Psr\Container\ContainerInterface;
-use Slim\Psr7\Response;
+use GuzzleHttp\Client;
+use GuzzleHttp\Exception\ClientException;
+use TailgateWeb\Client\TailgateApiClientInterface;
+use TailgateWeb\Session\SessionHelperInterface;
 
-abstract class AbstractController
+class GuzzleTailgateApiClient implements TailgateApiClientInterface
 {
-    protected $settings;
-    protected $logger;
-    protected $flash;
-    protected $session;
     protected $client;
-    protected $view;
-    protected $mailer;
+    protected $session;
+    public $config;
 
-    public function __construct(ContainerInterface $container)
+    public function __construct(Client $client, SessionHelperInterface $session, array $config)
     {
-        $this->container = $container;
-        $this->settings = $container->get('settings');
-        $this->logger = $container->get('logger');
-        $this->flash = $container->get('flash');
-        $this->session = $container->get('session');
-        $this->client = $container->get('guzzleClient');
-        $this->view = $container->get('view');
-        $this->mailer = $container->get('mailer');
+        $this->client = $client;
+        $this->session = $session;
+        $this->config = $config;
     }
 
-    /**
-     * [apiGet description]
-     * @param  string $path             [description]
-     * @param  array  $queryStringArray [description]
-     * @return [type]                   [description]
-     */
-    public function apiGet(string $path, array $queryStringArray = [])
+    public function get(string $path, array $queryStringArray = [])
     {
         return $this->send('GET', $path, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
-            ],
+            'headers' => $this->getHeaders(),
             'query' => $queryStringArray
         ]);
     }
 
-    /**
-     * [apiPost description]
-     * @param  string $path [description]
-     * @param  array  $data [description]
-     * @return [type]       [description]
-     */
-    public function apiPost(string $path, array $data)
-    {        
+    public function post(string $path, array $data)
+    {
         return $this->send('POST', $path, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
-            ],
+            'headers' => $this->getHeaders(),
             'json' => $data,
         ]);
     }
 
-    /**
-     * [apiPut description]
-     * @param  string $path [description]
-     * @param  array  $data [description]
-     * @return [type]       [description]
-     */
-    public function apiPut(string $path, array $data)
-    {        
+    public function put(string $path, array $data)
+    {
         return $this->send('PUT', $path, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
-            ],
+            'headers' => $this->getHeaders(),
             'json' => $data,
         ]);
     }
 
-    /**
-     * [apiPatch description]
-     * @param  string $path [description]
-     * @param  array  $data [description]
-     * @return [type]       [description]
-     */
-    public function apiPatch(string $path, array $data)
-    {        
+    public function patch(string $path, array $data)
+    {
         return $this->send('PATCH', $path, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
-            ],
+            'headers' => $this->getHeaders(),
             'json' => $data,
         ]);
     }
 
-    /**
-     * [apiDelete description]
-     * @param  string $path [description]
-     * @param  array  $data [description]
-     * @return [type]       [description]
-     */
-    public function apiDelete(string $path)
-    {        
+    public function delete(string $path)
+    {
         return $this->send('DELETE', $path, [
-            'headers' => [
-                'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
-            ]
+            'headers' => $this->getHeaders()
         ]);
     }
 
-    /**
-     * [send description]
-     * @param  string $verb [description]
-     * @param  string $path [description]
-     * @param  array  $data [description]
-     * @return [type]       [description]
-     */
+    private function getHeaders()
+    {
+        return [
+            'Authorization' => 'Bearer ' . $this->session->get('tokens')['access_token']
+        ];
+    }
+
     private function send(string $verb, string $path, array $data)
     {
         try {
 
             return $this->client->request($verb, $path, $data);
 
-        } catch (TransferException $e) {
+        // } catch (TransferException $e) {
+        } catch (ClientException $e) {
+        // } catch (\Exception $e) {
 
             // dd($e->getResponse()->getStatusCode());
 

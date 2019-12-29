@@ -11,7 +11,6 @@
             {{ team.mascot }} <br>
             <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-team', { 'teamId': team.teamId }) }}> Update Team </a>
             <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-team', { 'teamId': team.teamId }) }}> Delete Team </a>
-            <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('admin-follow-team', { 'teamId': team.teamId }) }}> Add Follow </a>
         </div>
 
 
@@ -37,5 +36,7 @@
         {% endif %}
 
     {% endif %}
+
+    {% include 'admin/eventLog.twig' %}
 
 {% endblock %}
