@@ -10,8 +10,8 @@
         {# navbar #}
         <div class="flex flex-row justify-between items-center p-4 mb-4 bg-carolina">
             <span class="my-1 mx-2 text-2xl sm:mr-8"><a href={{ url_for('home') }}>Tar Heel Tailgate </a></span>
-            {% if session.email is defined %}
-                <a href={{ url_for('sign-out') }}>Sign out {{ session.email }}</a>
+            {% if isSignedIn() %}
+                <a href={{ url_for('sign-out') }}>Sign out</a>
             {% else %}
                 <span class="hover:underline my-1 mx-2"><a href={{ url_for('sign-in') }}>Sign In</a></span>
             {% endif %}

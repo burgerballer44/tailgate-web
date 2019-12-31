@@ -20,10 +20,16 @@ class HelperExtension extends AbstractExtension
     public function getFunctions()
     {
         return [
+            new TwigFunction('isSignedIn', [$this, 'isSignedIn']),
             new TwigFunction('isAdmin', [$this, 'isAdmin']),
             new TwigFunction('isGroupAdmin', [$this, 'isGroupAdmin']),
             new TwigFunction('isGroupOwner', [$this, 'isGroupOwner']),
         ];
+    }
+
+    public function isSignedIn()
+    {
+        return $this->session->has('user');
     }
 
     public function isAdmin()

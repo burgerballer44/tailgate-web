@@ -28,40 +28,39 @@
         </div>
         
         <div class="my-4">
-        <h1 class="text-xl underline">Members</h1>
+            <h1 class="text-xl underline">Members</h1>
 
-        <a href={{ url_for('admin-add-member', { 'groupId': groupId }) }}> Add Member </a>
+            <a href={{ url_for('admin-add-member', { 'groupId': groupId }) }}> Add Member </a>
 
-        {% if group.members is defined %}
+            {% if group.members is defined %}
 
-            {{ tableStart()|raw }}
+                {{ tableStart()|raw }}
 
-            <tr class="border-b border-black">
-                {{ tableHeader('Email')|raw }}
-                {{ tableHeader('Role')|raw }}
-                {{ tableHeader('Allow Multiple')|raw }}
-                {{ tableHeader('')|raw }}
-                {{ tableHeader('')|raw }}
-                {{ tableHeader('')|raw }}
-            </tr>
-
-            {% for member in group.members %}
-
-                <tr class="border-b hover:bg-orange-100 bg-gray-100">
-                    {{ tableHeader(member.email)|raw }}
-                    {{ tableHeader(member.role)|raw }}
-                    {{ tableHeader(member.allowMultiplePlayers ? 'Yes':'No')|raw }}
-                    <td class='p-1 py-2'><a href={{ url_for('admin-add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
-                    <td class='p-1 py-2'><a href={{ url_for('admin-update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
-                    <td class='p-1 py-2'><a href={{ url_for('admin-delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
+                <tr class="border-b border-black">
+                    {{ tableHeader('Email')|raw }}
+                    {{ tableHeader('Role')|raw }}
+                    {{ tableHeader('Allow Multiple')|raw }}
+                    {{ tableHeader('')|raw }}
+                    {{ tableHeader('')|raw }}
+                    {{ tableHeader('')|raw }}
                 </tr>
 
-            {% endfor %}
+                {% for member in group.members %}
 
-            {{ tableEnd()|raw }}
+                    <tr class="border-b hover:bg-orange-100 bg-gray-100">
+                        {{ tableHeader(member.email)|raw }}
+                        {{ tableHeader(member.role)|raw }}
+                        {{ tableHeader(member.allowMultiplePlayers ? 'Yes':'No')|raw }}
+                        <td class='p-1 py-2'><a href={{ url_for('admin-add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
+                        <td class='p-1 py-2'><a href={{ url_for('admin-update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
+                        <td class='p-1 py-2'><a href={{ url_for('admin-delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
+                    </tr>
 
-        {% endif %}
+                {% endfor %}
 
+                {{ tableEnd()|raw }}
+
+            {% endif %}
         </div>
             
         
@@ -90,6 +89,8 @@
         {% endif %}
 
     {% endif %}
+
+    {{ gridHtml|raw }}
 
     {% include 'admin/eventLog.twig' %}
 

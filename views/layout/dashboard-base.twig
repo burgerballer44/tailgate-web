@@ -7,7 +7,7 @@
     {# nav header #}
     <div class="flex justify-between flex-wrap bg-carolina text-white py-2 px-4">
         <a class="hover:text-navy" href={{ url_for('home') }}>Tar Heel Tailgate - Score Prediction With Friends</a>
-        {% if session.email is defined %}
+        {% if isSignedIn() %}
             <span>
                 {# admin things #}
                 {% if isAdmin() %}

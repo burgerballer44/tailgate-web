@@ -3,11 +3,31 @@
 namespace TailgateWeb\Actions\Group;
 
 use Psr\Http\Message\ResponseInterface;
+use Slim\Flash\Messages;
+use Slim\Views\Twig;
 use TailgateWeb\Actions\AbstractAction;
+use TailgateWeb\Client\TailgateApiClientInterface;
+use TailgateWeb\Mailer\MailerInterface;
+use TailgateWeb\Scoring\ScoringInterface;
+use TailgateWeb\Session\SessionHelperInterface;
 
 // view group
 class ViewGroupAction extends AbstractAction
 {   
+    private $scoring;
+
+    public function __construct(
+        TailgateApiClientInterface $apiClient,
+        SessionHelperInterface $session,
+        MailerInterface $mailer,
+        Twig $view,
+        Messages $flash,
+        ScoringInterface $scoring
+    ) {
+        parent::__construct($apiClient, $session, $mailer, $view, $flash);
+        $this->scoring = $scoring;
+    }
+
     public function action() : ResponseInterface
     {            
         $group = [];
@@ -43,9 +63,8 @@ class ViewGroupAction extends AbstractAction
             }
             $season = $data['data'];
         
-            // $gridHtml = $this->container->get('scoring')->generate($group, $season, [])->getHtml();
+            $gridHtml = $this->scoring->generate($group, $season)->getHtml();
         }
-
 
         return $this->view->render($this->response, 'group/view.twig', compact('group', 'groupId', 'member', 'season', 'gridHtml'));
     }

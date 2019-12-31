@@ -1,0 +1,13 @@
+{% extends isSignedIn() ? "layout/dashboard-base-normal.twig" : "layout/index-base.twig" %}
+
+{% block content %}
+
+<div class="text-black p-4">
+
+    <h1 class="text-2xl mb-4">{{ title|raw }}</h1>
+
+    {# <div class="my-4">{{ message }}</div> #}
+
+</div>
+
+{% endblock %}

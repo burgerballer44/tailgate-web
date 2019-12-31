@@ -4,6 +4,7 @@ use Middlewares\Honeypot;
 use Psr\Log\LoggerInterface;
 use Slim\App;
 use TailgateWeb\Handlers\MyErrorHandler;
+use TailgateWeb\Handlers\MyHtmlErrorRenderer;
 use TailgateWeb\Middleware\AddGlobalsToTwigMiddleware;
 use TailgateWeb\Middleware\CleanStringsMiddleware;
 use TailgateWeb\Middleware\TwigMiddleware;
@@ -15,9 +16,6 @@ return function (App $app) {
 
     // Remember LIFO!
     // last in this list is the first touched
-
-    // variables to see in the view 
-    $app->add(new AddGlobalsToTwigMiddleware($container->get(SessionHelperInterface::class), $container->get('view')));
 
     // further configure twig with request data
     $app->add(TwigMiddleware::createFromContainer($app));
@@ -46,6 +44,8 @@ return function (App $app) {
         $container->get(LoggerInterface::class)
     );
     $errorMiddleware->setDefaultErrorHandler($myErrorHandler);
+    $errorHandler = $errorMiddleware->getDefaultErrorHandler();
+    $errorHandler->registerErrorRenderer('text/html', MyHtmlErrorRenderer::class);
 
     $app->add($errorMiddleware);
 };
