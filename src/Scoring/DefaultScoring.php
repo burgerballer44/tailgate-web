@@ -4,11 +4,15 @@ namespace TailgateWeb\Scoring;
 
 class DefaultScoring implements ScoringInterface
 {
-    private $playerNames;
-    private $formattedData;
+    private $playerNames = [];
+    private $formattedData = [];
+    private $finalValuesPerGame = [];
+    private $leaderboard = [];
 
     public function generate($group, $season)
     {   
+        $this->finalValuesPerGame = collect([]);
+
         // initialize as collections
         $players = collect($group['players'])->sortBy('username');
         $scores  = collect($group['scores']);
@@ -21,68 +25,97 @@ class DefaultScoring implements ScoringInterface
         });
 
         // get all player names for use in header
-        $this->playerNames = $players->pluck('username');
+        $this->playerNames = $players->flatMap(function($player) {
+            return [$player['playerId'] => $player['username']];
+        });
 
         // gather all data and group it by games
         $this->formattedData = $games->reduce(function($carry, $game) use ($players, $scores) {
 
-            // get all home predictions
-            $homePredictions = $players->reduce(function($temp, $player) use ($game, $scores) {
-                $homePrediction  = $scores->where('playerId', $player['playerId'])->where('gameId', $game['gameId'])->first()['homeTeamPrediction'];
-                $temp[$player['playerId']] = $homePrediction;
-                return $temp;
-            }, collect([]));
+            // get all score predictions by player
+            $playerPredictionValues = $players->reduce(function($carry, $player) use ($game, $scores) {
+                $scorePrediction = $scores->where('playerId', $player['playerId'])->where('gameId', $game['gameId'])->first();
 
-            // get all away predictions
-            $awayPredictions = $players->reduce(function($temp, $player) use ($game, $scores) {
-                $awayPrediction  = $scores->where('playerId', $player['playerId'])->where('gameId', $game['gameId'])->first()['awayTeamPrediction'];
-                $temp[$player['playerId']] = $awayPrediction;
-                return $temp;
-            }, collect([]));
+                // player score predictions
+                $homeTeamPrediction = $scorePrediction['homeTeamPrediction'];
+                $awayTeamPrediction = $scorePrediction['awayTeamPrediction'];
 
-            // calculate the absolute value difference from scores predicted and 
-            $pointDifferences = $homePredictions->map(function($homePrediction, $playerId) use ($game, $awayPredictions) {
-                if (null == $homePrediction || null == $awayPredictions[$playerId] || null == $game['homeTeamScore'] || null == $game['awayTeamScore']) {
-                    return null;
+                // absolute value difference from scores predicted and actual
+                // return null if the game has no score or their is no prediction
+                $difference = null;
+                if ((null != $homeTeamPrediction) && (null != $awayTeamPrediction) && (null != $game['homeTeamScore']) && (null != $game['awayTeamScore'])) {
+                    $difference = abs($game['homeTeamScore'] - $homeTeamPrediction) + abs($game['awayTeamScore'] - $awayTeamPrediction);
                 }
-                return abs(($game['homeTeamScore'] + $game['awayTeamScore']) - ($homePrediction + $awayPredictions[$playerId]));
-            });
+
+                $carry[] = [
+                    'playerId' => $player['playerId'],
+                    'home' => $homeTeamPrediction,
+                    'away' => $awayTeamPrediction,
+                    'difference' => $difference,
+                ];
+                return $carry;
+            }, collect([]));
 
             // keep track of the highest point difference since it is used in penalty points
-            $highestPointDifference = $pointDifferences->max();
+            $highestPointDifference = collect($playerPredictionValues)->pluck('difference')->max();
 
             // calculate penalty points
-            $penaltyPoints = $homePredictions->map(function($homePrediction, $playerId) use ($game, $awayPredictions, $highestPointDifference) {
+            $playerPredictionValues = $playerPredictionValues->zip($playerPredictionValues->map(function($playerPrediction, $playerId) use ($game, $highestPointDifference) {
                 
+                $points = 0;
+
+                $didHomeTeamWin = $game['homeTeamScore'] > $game['awayTeamScore'];
+                $wasHomeTeamSelected = $playerPrediction['home'] > $playerPrediction['away'];
+                $choseCorrectTeam = $didHomeTeamWin == $wasHomeTeamSelected;
+
                 // no final score means we should not calculate
                 if (null == $game['homeTeamScore'] || null == $game['awayTeamScore']) {
                     return null;
                 }
+
                 // if a user fails to submit a score then they get the highest point difference plus 7
-                if (null == $homePrediction || null == $awayPredictions[$playerId] ) {
-                    return $highestPointDifference + 7;
+                if (null == $playerPrediction['home'] || null == $playerPrediction['home'] ) {
+                    $points += $highestPointDifference;
+                    $points += 7;
                 }
 
-                return 0;
+                // if a user selects the wrong team then 7 points
+                if (!$choseCorrectTeam) {
+                    $points += 7;
+                }
+
+                return $points;
+            }))->map(function ($predictionValuesAndPenalty) {
+                list($values, $penalty) = $predictionValuesAndPenalty;
+                $complete = array_merge($values, ['penalty' => $penalty]);
+                // final points is penalty plus point difference
+                $complete['final'] = $complete['difference'] + $complete['penalty'];
+                return $complete;
             });
 
-            // final points is penalty plus point difference
-            $finalPoints = $penaltyPoints->map(function($penaltyPoint, $playerId) use ($pointDifferences) {
-                return $penaltyPoint + $pointDifferences[$playerId];
-            });
+            // dd([$game['homeTeamScore'], $game['awayTeamScore']], $playerPredictionValues);
 
-            // dd([$game['homeTeamScore'], $game['awayTeamScore']], $homePredictions, $awayPredictions, $pointDifferences, $penaltyPoints, $finalPoints);
+            // rank players
+            $this->finalValuesPerGame[$game['gameId']] = $playerPredictionValues
+                ->sortBy('final')
+                ->zip(range(1, $playerPredictionValues->count()))
+                ->flatMap(function ($predictionValuesAndRank) {
+                    list($values, $rank) = $predictionValuesAndRank;
+                    return [
+                        $values['playerId'] => array_merge($values, ['rank' => $rank])
+                    ];
+                });
 
             $carry[$game['gameId']] = [
                 'homeTeam'         => $game['homeDesignation'] . ' ' . $game['homeMascot'],
                 'homeTeamScore'    => $game['homeTeamScore'],
                 'awayTeam'         => $game['awayDesignation'] . ' ' . $game['awayMascot'],
                 'awayTeamScore'    => $game['awayTeamScore'],
-                'homePredictions'  => $homePredictions,
-                'awayPredictions'  => $awayPredictions,
-                'pointDifferences' => $pointDifferences,
-                'penaltyPoints'    => $penaltyPoints,
-                'finalPoints'      => $finalPoints,
+                'homePredictions'  => collect($playerPredictionValues)->pluck('home'),
+                'awayPredictions'  => collect($playerPredictionValues)->pluck('away'),
+                'pointDifferences' => collect($playerPredictionValues)->pluck('difference'),
+                'penaltyPoints'    => collect($playerPredictionValues)->pluck('penalty'),
+                'finalPoints'      => collect($playerPredictionValues)->pluck('final'),
             ];
 
             return $carry;
@@ -90,14 +123,65 @@ class DefaultScoring implements ScoringInterface
         }, collect([]));
 
         // dd($this->formattedData);
+        // dd($this->finalValuesPerGame);
+        
+        $playerNames = $this->playerNames;
+        $this->leaderboard = $this->finalValuesPerGame
+            ->flatten(1)
+            ->groupBy('playerId')
+            ->map(function($allPlayerPredicationValues, $playerId) use ($playerNames) {
+                return [
+                    'player' => $playerNames[$playerId],
+                    'total' => collect($allPlayerPredicationValues)->pluck('final')->sum()
+                ];
+            })
+            ->sortBy('total')
+            ->zip(range(1, $playerNames->count()))
+            ->map(function ($totalAndRank) {
+                list($values, $rank) = $totalAndRank;
+                return array_merge($values, ['rank' => $rank]);
+            })
+            ->groupBy('total')
+            ->map(function ($tiedTotals) {
+                $lowestRank = $tiedTotals->pluck('rank')->min();
+                return $tiedTotals->map(function ($rankedTotal) use ($lowestRank) {
+                    return array_merge($rankedTotal, [
+                        'rank' => $lowestRank
+                    ]);
+                });
+            })
+            ->collapse()
+            ->sortBy('rank');
+        // dd($this->leaderboard);
 
         return $this;
     }
 
-    public function getHtml() : string
-    {   
+    public function getLeaderboardHtml() : string
+    {
+        $gridHtml = "";
+
         // table and header start
-        $gridHtml = "<table cellpadding='5'><tr class='border-t-2 border-black'><th>Game</th><th>Final Score</th>";
+        $gridHtml .= "<table cellpadding='5'><tr class='border-t-2 border-black'><th>Name</th><th>Total Points</th><th>Rank</th></tr>";
+        $gridHtml .= $this->leaderboard->reduce(function($html, $points) {
+            $html .= "<tr>
+                        <td class='border'>{$points['player']}</td>
+                        <td class='border'>{$points['total']}</td>
+                        <td class='border'>{$points['rank']}</td>
+                    </tr>";
+            return $html;
+        }, '');
+        $gridHtml .= '</table>';
+
+        return $gridHtml;
+    }
+
+    public function getChartHtml() : string
+    {   
+        $gridHtml = "";
+
+        // table and header start
+        $gridHtml .= "<table cellpadding='5'><tr class='border-t-2 border-black'><th>Game</th><th>Final Score</th>";
 
         // add player names to header
         $gridHtml .= $this->playerNames->reduce(function($headerHtml, $player) {

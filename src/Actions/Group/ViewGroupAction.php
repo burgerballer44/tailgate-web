@@ -33,7 +33,8 @@ class ViewGroupAction extends AbstractAction
         $group = [];
         $member = [];
         $season = [];
-        $gridHtml = '';
+        $leaderboard = '';
+        $scoreChart = '';
 
         extract($this->args);
 
@@ -62,10 +63,12 @@ class ViewGroupAction extends AbstractAction
                 return $this->view->render($this->response, 'admin/season/view.twig', ['errors' => $data['errors']]);
             }
             $season = $data['data'];
-        
-            $gridHtml = $this->scoring->generate($group, $season)->getHtml();
+            
+            $this->scoring->generate($group, $season);
+            $leaderboard = $this->scoring->getLeaderboardHtml();
+            $scoreChart = $this->scoring->getChartHtml();
         }
 
-        return $this->view->render($this->response, 'group/view.twig', compact('group', 'groupId', 'member', 'season', 'gridHtml'));
+        return $this->view->render($this->response, 'group/view.twig', compact('group', 'groupId', 'member', 'season', 'leaderboard', 'scoreChart'));
     }
 }

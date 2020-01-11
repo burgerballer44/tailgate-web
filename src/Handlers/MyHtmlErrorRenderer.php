@@ -22,7 +22,7 @@ class MyHtmlErrorRenderer extends AbstractErrorRenderer
         $title = 'Application Error';
         $message = 'A website error has occurred. Sorry for the temporary inconvenience.</p>';
 
-        if (!$displayErrorDetails) {
+        if ($displayErrorDetails) {
             $message = '<p>The application could not run because of the following error:</p>';
             $message .= '<h2>Details</h2>';
             $message .= $this->renderExceptionFragment($exception);

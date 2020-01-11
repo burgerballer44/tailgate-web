@@ -3,7 +3,7 @@
     "prefer-stable": true,
     "require": {
         "slim/slim": "^4.0",
-        "slim/psr7": "^0.3.0",
+        "slim/psr7": "^1.0",
         "slim/twig-view": "3.0.0-beta",
         "php-di/php-di": "^6.0",
         "respect/validation": "^1.1",
@@ -16,7 +16,8 @@
         "mailgun/mailgun-php": "^2.8",
         "php-http/httplug": "v1.1.0",
         "php-http/guzzle6-adapter": "@dev",
-        "tightenco/collect": "^6.0"
+        "tightenco/collect": "^6.0",
+        "phpoffice/phpspreadsheet": "^1.10"
     },
     "autoload": {
         "psr-4": {
