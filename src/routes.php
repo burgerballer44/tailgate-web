@@ -25,7 +25,7 @@ return function (App $app) {
 
     // dashboard
     $app->get('/dashboard', \TailgateWeb\Actions\Dashboard\DashboardAction::class)->setName('dashboard')->add(MustBeSignedInMiddleware::class);
-    $app->post('/upload', \TailgateWeb\Actions\Dashboard\UploadAction::class)->setName('upload')->add(MustBeSignedInMiddleware::class);
+    // $app->post('/upload', \TailgateWeb\Actions\Dashboard\UploadAction::class)->setName('upload')->add(MustBeSignedInMiddleware::class);
 
     // user
     $app->group('/profile', function (Group $group) {

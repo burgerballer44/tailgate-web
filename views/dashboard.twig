@@ -30,7 +30,7 @@
     </ul>
 
 
-    <div class="">
+{#     <div class="">
         <form action={{ url_for('upload') }} method="POST" enctype="multipart/form-data">
             {{ getHiddenHoneypot()|raw }}
             {{ getCsrfFields()|raw }}
@@ -38,7 +38,7 @@
             <input required type='file' class='form-control-file' id='excel-file' name='excel-file'>
             <button type='submit' class='bg-blue-800 cursor-pointer hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' name='submit-file'>Upload</button>
         </form>
-    </div>
+    </div> #}
 
 
 {% endif %}
