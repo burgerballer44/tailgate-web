@@ -53,6 +53,8 @@ return function (App $app) {
         $group->post('/{groupId}/member/{memberId}/update', \TailgateWeb\Actions\Group\UpdateMemberAction::class);
         $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Actions\Group\DeleteMemberAction::class)->setName('delete-member');
         $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Actions\Group\DeletePlayerAction::class)->setName('delete-player');
+        $group->get('/{groupId}/player/{playerId}', \TailgateWeb\Actions\Group\UpdatePlayerAction::class)->setName('update-player');
+        $group->post('/{groupId}/player/{playerId}', \TailgateWeb\Actions\Group\UpdatePlayerAction::class);
         $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Actions\Group\SubmitScoreForGroupAction::class)->setName('submit-score');
         $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Actions\Group\SubmitScoreForGroupAction::class);
         $group->get('/{groupId}/update-score/{scoreId}', \TailgateWeb\Actions\Group\UpdateScoreForGroupAction::class)->setName('update-score');
@@ -95,6 +97,8 @@ return function (App $app) {
             $group->get('/{groupId}/member/{memberId}/delete', \TailgateWeb\Actions\Group\AdminDeleteMemberAction::class)->setName('admin-delete-member');
             $group->get('/{groupId}/add-player/{memberId}', \TailgateWeb\Actions\Group\AdminAddPlayerAction::class)->setName('admin-add-player');
             $group->post('/{groupId}/add-player/{memberId}', \TailgateWeb\Actions\Group\AdminAddPlayerAction::class);
+            $group->get('/{groupId}/player/{playerId}', \TailgateWeb\Actions\Group\AdminUpdatePlayerAction::class)->setName('admin-update-player');
+            $group->post('/{groupId}/player/{playerId}', \TailgateWeb\Actions\Group\AdminUpdatePlayerAction::class);
             $group->get('/{groupId}/player/{playerId}/delete', \TailgateWeb\Actions\Group\AdminDeletePlayerAction::class)->setName('admin-delete-player');
             $group->get('/{groupId}/submit-score/{playerId}', \TailgateWeb\Actions\Group\AdminSubmitScoreForGroupAction::class)->setName('admin-submit-score');
             $group->post('/{groupId}/submit-score/{playerId}', \TailgateWeb\Actions\Group\AdminSubmitScoreForGroupAction::class);

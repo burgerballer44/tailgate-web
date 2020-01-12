@@ -70,6 +70,7 @@
             {% for player in group.players %}
                 <div>
                     <a href={{ url_for('admin-delete-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Delete Player</u> </a>
+                    <a href={{ url_for('admin-update-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Update Player</u> </a>
                     <a href={{ url_for('admin-submit-score', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Submit Score</u> </a>
                     {{ player.username }}  
                 </div>
@@ -90,7 +91,8 @@
 
     {% endif %}
 
-    {{ gridHtml|raw }}
+    {{ leaderboard|raw }}
+    {{ scoreChart|raw }}
 
     {% include 'admin/eventLog.twig' %}
 

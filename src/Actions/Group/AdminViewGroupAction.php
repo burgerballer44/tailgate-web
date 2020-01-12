@@ -33,7 +33,8 @@ class AdminViewGroupAction extends AbstractAction
         $group = [];
         $season = [];
         $eventLog = [];
-        $gridHtml = '';
+        $leaderboard = '';
+        $scoreChart = '';
         extract($this->args);
 
         $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
@@ -57,9 +58,11 @@ class AdminViewGroupAction extends AbstractAction
             }
             $season = $data['data'];
         
-            $gridHtml = $this->scoring->generate($group, $season)->getHtml();
+            $this->scoring->generate($group, $season);
+            $leaderboard = $this->scoring->getLeaderboardHtml();
+            $scoreChart = $this->scoring->getChartHtml();
         }
 
-        return $this->view->render($this->response, 'admin/group/view.twig', compact('group', 'groupId', 'gridHtml', 'eventLog'));
+        return $this->view->render($this->response, 'admin/group/view.twig', compact('group', 'groupId', 'leaderboard', 'scoreChart', 'eventLog'));
     }
 }

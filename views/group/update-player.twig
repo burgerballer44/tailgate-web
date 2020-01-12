@@ -1,0 +1,22 @@
+{% extends "layout/dashboard-base-normal.twig" %}
+
+{% block content %}
+
+{# update-player form #}
+<form action="{{ url_for('update-player', { 'groupId': groupId, 'playerId': playerId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.playerId is defined %} {{ displayErrors('playerId', errors)|raw }} {% endif %}
+
+    {{ dropdownField('member_id', 'Member', memberId, members, 'Select a member')|raw }}
+    {% if errors.memberId is defined %} {{ displayErrors('memberId', errors)|raw }} {% endif %}
+
+
+    {{ submitButton('Update Player')|raw }}
+</form>
+{# end update-player form #}
+
+{% endblock %}

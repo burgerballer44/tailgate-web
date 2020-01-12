@@ -133,7 +133,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
                 $statusCode = $statusCode <= 600 ? $statusCode : $response->getStatusCode();
 
                 $type = $jsonBody['exception'][0]['type'] ?? 'Unknown API Error';
-                $message = $jsonBody['message'] ?? 'Unspecified API error occurred';
+                $message = $jsonBody['exception'][0]['message'] ?? $jsonBody['message'] ?? 'Unspecified API error occurred';
 
                 // create a new body for the response
                 $newBody = (new \Slim\Psr7\Factory\StreamFactory())->createStream();

@@ -78,6 +78,7 @@
             {% for player in group.players %}
                 <div>
                     <a onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Delete Player</u> </a>
+                    <a href={{ url_for('update-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Update Player</u> </a>
                     <a href={{ url_for('submit-score', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Submit Score</u> </a>
                     {{ player.username }}  
                 </div>
