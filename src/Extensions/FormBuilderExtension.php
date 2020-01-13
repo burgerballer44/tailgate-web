@@ -61,7 +61,7 @@ class FormBuilderExtension extends AbstractExtension
         $value = htmlspecialchars($value);
 
         $label = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label>";
-        $input = "<input class='block border border-gray-light w-full p-3 rounded mb-4' placeholder='{$placeholder}' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
+        $input = "<input class='block border border-gray-300 w-full max-w-lg p-3 rounded mb-4' placeholder='{$placeholder}' type='{$type}' name={$fieldName} value='{$value}' {$required}>";
 
         return $label . $input;
     }
@@ -81,7 +81,7 @@ class FormBuilderExtension extends AbstractExtension
         $selectedValue = $this->parsedBody[$fieldName] ?? $selectedValue;
         $selectedValue = htmlspecialchars($selectedValue);
         
-        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select required name='{$fieldName}' class='appearance-none block w-full border border-gray-200 rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500'>";
+        $output = "<label class='block uppercase tracking-wide text-gray-700 text-xs font-bold mb-2'>{$label}</label><select required name='{$fieldName}' class='appearance-none block w-full border border-gray-300 max-w-lg rounded py-3 px-4 leading-tight focus:outline-none focus:border-gray-500 mb-4'>";
 
         $output .= "<option selected {$disabled} value='' >{$placeholder}...</option>";
 
@@ -104,7 +104,7 @@ class FormBuilderExtension extends AbstractExtension
      */
     public function submitButton($text = 'Go')
     {
-        return "<button type='submit' class='w-full text-center py-3 rounded bg-carolina text-white hover:bg-navy focus:outline-none mt-4'
+        return "<button type='submit' class='button hover:bg-navy focus:outline-none'
         >{$text}</button>";
     }
 
@@ -119,9 +119,9 @@ class FormBuilderExtension extends AbstractExtension
         $output = '';
 
         if (isset($errors[$field])) {
-            $output .= "<div class='mb-4'>";
+            $output .= "<div class='flex flex-col'>";
             foreach ($errors[$field] as $error) {
-                $output .= "<p class='text-sm text-red-600 italic'>{$error}</p>";
+                $output .= "<p class='validation-error'>{$error}</p>";
             }
             $output .= "</div>";
         }

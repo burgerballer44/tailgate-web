@@ -9,12 +9,15 @@
 
         {# navbar #}
         <div class="flex flex-row justify-between items-center p-4 mb-4 bg-carolina">
+
             <span class="my-1 mx-2 text-2xl sm:mr-8"><a href={{ url_for('home') }}>Tar Heel Tailgate </a></span>
+
             {% if isSignedIn() %}
                 <a href={{ url_for('sign-out') }}>Sign out</a>
             {% else %}
                 <span class="hover:underline my-1 mx-2"><a href={{ url_for('sign-in') }}>Sign In</a></span>
             {% endif %}
+
         </div>
         {# end navbar #}
 
@@ -42,13 +45,16 @@
         {% endif %}
         {# end success #}
 
+
+
         {# main content #}
         {% block content %}{% endblock %}
         {# end main content #}
 
+
+
         {# footer #}
         <div class="p-4 text-right bg-carolina">
-            <span class="text-xl">Arriving 2019</span>
         </div>
         {# end footer #}
 

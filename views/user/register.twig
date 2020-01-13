@@ -20,6 +20,10 @@
                 {% if errors.password is defined %} {{ displayErrors('password', errors)|raw }} {% endif %}
                 {{ textField('confirm_password', 'Confirm Password', 'password', 'Confirm Password', 'required')|raw }}
 
+                {{ textField('phrase', 'Type in the image text.', 'text', '', 'required')|raw }}
+                {% if errors.phrase is defined %} {{ displayErrors('phrase', errors)|raw }} {% endif %}
+                <img src={{ captcha }} />
+
                 {{ submitButton('Create Account')|raw }}
             </form>
 

@@ -61,3 +61,22 @@
   * @import "utilities/skew-transforms";
   */
  
+h1 {
+  @apply text-3xl my-2;
+}
+
+h2 {
+  @apply text-2xl my-2;
+}
+
+h3 {
+  @apply text-xl my-2;
+}
+
+.button {
+  @apply p-2 mr-2 bg-gray-300 rounded bg-carolina text-white;
+}
+
+.validation-error {
+  @apply text-sm text-red-600 italic;
+}

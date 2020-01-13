@@ -2,44 +2,33 @@
 
 {% block content %}
 
-<div>
-    <h1 class="text-2xl">Welcome to Tar Heel Tailgate!</h1>
+<div class="flex flex-col">
+    <h2>Welcome to Tar Heel Tailgate!</h2>
 
     {% if groups is defined and groups is empty %}
-        <p class="my-2">To get started, create a group or join a group using an invite code.</p>
+        <p>To get started, create a group or join a group using an invite code.</p>
     {% endif %}
 
-    <div class="my-4">
-        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('create-group') }}">Create Group</a>
-        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('invite-code') }}">Join a Group with an Invite Code</a>
+    <div class="flex">
+        <a class="button" href="{{ url_for('create-group') }}">Create Group</a>
+        {# <a class="button" href="{{ url_for('invite-code') }}">Join a Group with an Invite Code</a> #}
     </div>
 </div>
 
+{# list all groups user is part of #}
 {% if groups is defined and groups is not empty %}
 
-    <div class="flex my-4">
-        <p class="text-xl">Groups</p>
+    <div class="flex flex-col mt-4">
+
+        <h3>Groups</h3>
+
+        <ul class="list-disc list-inside">
+            {% for group in groups %}
+                <li><a class="hover:underline" href={{ url_for('group', { 'groupId': group.groupId }) }}> {{ group.name }}</a></li>
+            {% endfor %}
+        </ul>
+
     </div>
-
-    <ul>
-
-    {% for group in groups %}
-        <li><a href={{ url_for('group', { 'groupId': group.groupId }) }}> <u>{{ group.name }}</u> </a></li>
-    {% endfor %}
-
-    </ul>
-
-
-{#     <div class="">
-        <form action={{ url_for('upload') }} method="POST" enctype="multipart/form-data">
-            {{ getHiddenHoneypot()|raw }}
-            {{ getCsrfFields()|raw }}
-            <label for='excel-file'>Excel File</label>
-            <input required type='file' class='form-control-file' id='excel-file' name='excel-file'>
-            <button type='submit' class='bg-blue-800 cursor-pointer hover:bg-blue-900 text-white font-bold py-2 px-4 rounded focus:outline-none focus:shadow-outline' name='submit-file'>Upload</button>
-        </form>
-    </div> #}
-
 
 {% endif %}
 

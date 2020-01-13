@@ -2,17 +2,22 @@
 
 {% block content %}
 
-    <h1 class="mb-4">all users</h1>
+<div class="flex flex-col">
+
+    <h2>Users</h2>
 
     {% if users is defined %}
-        {% for user in users %}
-            <div>
-                <a href={{ url_for('user', { 'userId': user.userId }) }}> <u>{{ user.userId }}</u> </a> |
-                {{ user.email }} |
-                {{ user.status }} |
-                {{ user.role }}
-            </div>
-        {% endfor %}
+        <ul class="list-decimal list-inside">
+            {% for user in users %}
+                <li class="hover:underline">
+                    <a href={{ url_for('user', { 'userId': user.userId }) }}> {{ user.email }} </a> |
+                    {{ user.status }} |
+                    {{ user.role }}
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
+
+</div>
 
 {% endblock %}

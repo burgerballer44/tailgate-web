@@ -2,20 +2,24 @@
 
 {% block content %}
 
-    <h1>all teams</h1>
-    <div class="my-2">
-        <a class="p-2 mr-2 bg-gray-300 rounded" href="{{ url_for('add-team') }}">Create Team</a>
+<div class="flex flex-col">
+
+    <h2>Teams</h2>
+
+    <div class="flex my-4">
+        <a class="button" href="{{ url_for('add-team') }}">Create Team</a>
     </div>
 
-
     {% if teams is defined %}
-        {% for team in teams %}
-            <div>
-                <a href={{ url_for('team', { 'teamId': team.teamId }) }}> {{ team.teamId }} </a> |
-                {{ team.designation }} |
-                {{ team.mascot }}
-            </div>
-        {% endfor %}
+        <ul class="list-decimal list-inside">
+            {% for team in teams %}
+                <li class="hover:underline">
+                    <a href={{ url_for('team', { 'teamId': team.teamId }) }}> {{ team.designation }} {{ team.mascot }} </a>
+                </li>
+            {% endfor %}
+        </ul>
     {% endif %}
+
+</div>
 
 {% endblock %}

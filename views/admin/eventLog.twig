@@ -1,6 +1,6 @@
 {% if eventLog is defined %}
-    <div class="py-4">
-        <p class="text-lg font-bold">Events</p>
+    <div class="flex flex-col">
+        <h3 class="font-bold">Events</h3>
         <ul class="list-decimal list-inside">
             {% for event in eventLog %}
                 <li>{{ event.type }} - {{ event.created_at|date('Y-M-d H:i') }}</li>

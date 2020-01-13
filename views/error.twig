@@ -2,11 +2,11 @@
 
 {% block content %}
 
-<div class="text-black p-4">
+<div class="flex flex-col text-black p-4">
 
-    <h1 class="text-2xl mb-4">{{ title|raw }}</h1>
+    <h1>{{ title|raw }}</h1>
 
-    <div class="my-4">{{ message|raw }}</div>
+    {{ message|raw }}
 
 </div>
 

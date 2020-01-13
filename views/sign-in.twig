@@ -9,12 +9,12 @@
         {{ getHiddenHoneypot()|raw }}
         {{ getCsrfFields()|raw }}
 
-        <h1 class="mb-8 text-3xl text-center">Sign in</h1>
+        <h1 class="mb-8 text-center">Sign in</h1>
 
         {# we only want to show that it is an invalid email and password #}
         {# do not show the actual message since it could be anything #}
         {% if errors is defined %}
-            <p class="text-sm text-red-600 italic">Invalid email or password</p>
+            <p class="validation-error">Invalid email or password</p>
         {% endif %}
         
         {{ textField('email', 'Email', 'email', 'your email address')|raw }}
@@ -22,6 +22,8 @@
         {{ submitButton()|raw }}
 
         <p class="my-4 text-sm">If you forgot your password you can <a class="text-carolina font-semibold" href="{{ url_for('request-reset') }}">reset it.</a></p>
+        
+        <p class="my-4 text-sm">Are you new to Tar Heel Tailgate? <a class="text-carolina font-semibold" href="{{ url_for('register') }}"> Register for an account.</a></p>
 
     </form>
 </div>
