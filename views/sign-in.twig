@@ -19,7 +19,7 @@
         
         {{ textField('email', 'Email', 'email', 'your email address')|raw }}
         {{ textField('password', 'Password', 'password', '************')|raw }}
-        {{ submitButton()|raw }}
+        {{ submitButton('Sign In')|raw }}
 
         <p class="my-4 text-sm">If you forgot your password you can <a class="text-carolina font-semibold" href="{{ url_for('request-reset') }}">reset it.</a></p>
         

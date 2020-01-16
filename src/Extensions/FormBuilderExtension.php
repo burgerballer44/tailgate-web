@@ -104,8 +104,7 @@ class FormBuilderExtension extends AbstractExtension
      */
     public function submitButton($text = 'Go')
     {
-        return "<button type='submit' class='button hover:bg-navy focus:outline-none'
-        >{$text}</button>";
+        return "<button type='submit' class='button mt-2 hover:bg-navy focus:outline-none'>{$text}</button>";
     }
 
     /**

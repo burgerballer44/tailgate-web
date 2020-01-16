@@ -12,8 +12,19 @@ class AddPlayerAction extends AbstractAction
     {   
         extract($this->args);
 
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+
         if ('POST' != $this->request->getMethod()) {
-            return $this->view->render($this->response, 'group/add-player.twig', compact('groupId', 'memberId'));
+            return $this->view->render($this->response, 'group/add-player.twig', compact('groupId', 'memberId', 'group'));
         }
 
         $parsedBody = $this->request->getParsedBody();
@@ -29,6 +40,7 @@ class AddPlayerAction extends AbstractAction
                 'errors' => $data['errors'],
                 'groupId' => $groupId,
                 'memberId' => $memberId,
+                'group' => $group,
             ]);
         }
 

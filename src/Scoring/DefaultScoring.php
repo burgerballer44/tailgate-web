@@ -9,14 +9,14 @@ class DefaultScoring implements ScoringInterface
     private $finalValuesPerGame = [];
     private $leaderboard = [];
 
-    public function generate($group, $season)
+    public function generate($group, $games)
     {   
         $this->finalValuesPerGame = collect([]);
 
         // initialize as collections
         $players = collect($group['players'])->sortBy('username');
         $scores  = collect($group['scores']);
-        $games   = collect($season['games']);
+        $games   = collect($games);
         
         // only get games that are being followed by group
         $followedTeamId = $group['follow']['teamId'];

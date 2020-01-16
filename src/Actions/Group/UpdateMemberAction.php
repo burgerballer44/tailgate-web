@@ -15,36 +15,28 @@ class UpdateMemberAction extends AbstractAction
 
         extract($this->args);
 
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+        $member = collect($group['members'])->firstWhere('memberId', $memberId);
+
         if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
-
-            if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'group/update-member.twig', [
-                    'errors' => $data['errors'],
-                    'groupId' => $groupId,
-                    'memberId' => $memberId,
-                ]);
-            }
-
-            $group = $data['data'];
-            $member = collect($group['members'])->firstWhere('memberId', $memberId);
-
             return $this->view->render($this->response, 'group/update-member.twig', compact(
                 'groupId',
                 'memberId',
                 'member',
                 'memberTypes',
-                'allowMultiplePlayers'
+                'allowMultiplePlayers',
+                'member'
             ));;
         }
-
-        $parsedBody = $this->request->getParsedBody();
-
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        $group = $data['data'];
-        $member = collect($group['members'])->firstWhere('memberId', $memberId);
 
         $clientResponse = $this->apiClient->patch("/v1/groups/{$groupId}/member/{$memberId}", [
             'groupId' => $groupId,
@@ -61,7 +53,8 @@ class UpdateMemberAction extends AbstractAction
                 'memberId' => $memberId,
                 'member' => $member,
                 'memberTypes' => $memberTypes,
-                'allowMultiplePlayers' => $allowMultiplePlayers
+                'allowMultiplePlayers' => $allowMultiplePlayers,
+                'member' => $member
             ]);
         }
 

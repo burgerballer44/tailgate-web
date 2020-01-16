@@ -4,6 +4,8 @@
 
 {% if season is defined %}
     
+    <h2>Updating {{ season.name }}</h2>
+
     {# update-season form #}
     <form action="{{ url_for('update-season', { 'seasonId': seasonId }) }}" method="POST">
 

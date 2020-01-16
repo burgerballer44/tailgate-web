@@ -10,10 +10,10 @@
 
     {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
 
-    {{ textField('home_team_id', 'Home Team', 'text', 'what is home team', 'required')|raw }}
+    {{ dropdownField('home_team_id', 'Home Team', null, teams, 'Select a team')|raw }}
     {% if errors.homeTeamId is defined %} {{ displayErrors('homeTeamId', errors)|raw }} {% endif %}
 
-    {{ textField('away_team_id', 'Away Team', 'text', 'what is away team', 'required')|raw }}
+    {{ dropdownField('away_team_id', 'Away Team', null, teams, 'Select a team')|raw }}
     {% if errors.awayTeamId is defined %} {{ displayErrors('awayTeamId', errors)|raw }} {% endif %}
 
     {{ textField('start_date', 'Game Day', 'text', 'when day is the game', 'required')|raw }}

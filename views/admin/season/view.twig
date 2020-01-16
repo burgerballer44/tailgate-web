@@ -2,23 +2,27 @@
 
 {% block content %}
 
-    <h1 class="mb-4">viewing season</h1>
+{% if season is defined %}
 
-    {% if season is defined %}
+    <div class="flex flex-col">
+
+        <h2>Viewing {{ season.name }}</h2>
         
-        <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> Update Season </a>
-        <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> Delete Season </a>
-        <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> Add Game </a>
-
-        <div class="my-2">
-            {{ season.seasonId }} <br>
-            {{ season.sport }} <br>
-            {{ season.seasonType }} <br>
-            {{ season.seasonStart }} <br>
-            {{ season.seasonEnd }} <br>
+        <div class="flex my-4">
+            <a class="button" href={{ url_for('update-season', { 'seasonId': season.seasonId }) }}> Update Season </a>
+            <a class="button" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-season', { 'seasonId': season.seasonId }) }}> Delete Season </a>
+            <a class="button" href={{ url_for('add-game', { 'seasonId': season.seasonId }) }}> Add Game </a>
         </div>
 
-        <h1 class="py-4">Games</h1>
+        <div>
+            <p><span class="font-bold">Id:</span> {{ season.seasonId }} </p>
+            <p><span class="font-bold">Sport:</span> {{ season.sport }} </p>
+            <p><span class="font-bold">SeasonType:</span> {{ season.seasonType }} </p>
+            <p><span class="font-bold">Start:</span> {{ season.seasonStart }} </p>
+            <p><span class="font-bold">End:</span> {{ season.seasonEnd }} </p>
+        </div>
+
+        <h2>Games</h2>
 
         {% if games is defined %}
             {% for game in games %}
@@ -31,15 +35,17 @@
                     {{ game.homeTeamScore }} {{ game.awayTeamScore }}
                     <br>
                     <div class="my-2">
-                    <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Update Score </a>
-                    <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Delete Game </a>
+                        <a class="button" href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Update Score </a>
+                        <a class="button" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-game', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Delete Game </a>
                     </div>
                 </div>
             {% endfor %}
         {% endif %}
 
-    {% endif %}
+    </div>
 
-    {% include 'admin/eventLog.twig' %}
+{% endif %}
+
+{% include 'admin/eventLog.twig' %}
 
 {% endblock %}

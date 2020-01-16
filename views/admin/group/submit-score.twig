@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h2>Submitting score for {{ player.username }} for {{ group.name }}</h2>
+
 {# admin-submit-score form #}
 <form action="{{ url_for('admin-submit-score', { 'groupId': groupId, 'playerId': playerId }) }}" method="POST">
 
@@ -11,7 +13,7 @@
     {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
     {% if errors.playerId is defined %} {{ displayErrors('playerId', errors)|raw }} {% endif %}
 
-    {{ textField('game_id', 'Game', 'text', 'what game id', 'required')|raw }}
+    {{ dropdownField('game_id', 'Game', null, games, 'Select a game')|raw }}
     {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
 
     {{ textField('home_team_prediction', 'Home Team Prediction', 'number', '', 'required')|raw }}

@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h2>Adding player to {{ group.name }}</h2>
+
 {# admin-add-player form #}
 <form action="{{ url_for('admin-add-player', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
 

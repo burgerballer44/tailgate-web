@@ -12,19 +12,19 @@ class UpdatePlayerAction extends AbstractAction
     {    
         extract($this->args);
 
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+        $player = collect($group['players'])->firstWhere('playerId', $playerId);
+
         if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
-
-            if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'group/update-player.twig', [
-                    'errors' => $data['errors'],
-                    'groupId' => $groupId,
-                    'playerId' => $playerId,
-                ]);
-            }
-
-            $group = $data['data'];
             $members = collect($group['members'])->flatMap(function($member){
                 return [$member['memberId'] => $member['email']];
             })->toArray();
@@ -34,7 +34,9 @@ class UpdatePlayerAction extends AbstractAction
                 'groupId',
                 'playerId',
                 'members',
-                'memberId'
+                'memberId',
+                'group',
+                'player'
             ));
         }
 
@@ -57,7 +59,9 @@ class UpdatePlayerAction extends AbstractAction
                 'groupId' => $groupId,
                 'playerId' => $playerId,
                 'members' => $members,
-                'memberId' => $memberId
+                'memberId' => $memberId,
+                'group' => $group,
+                'player' => $player
             ]);
         }
 

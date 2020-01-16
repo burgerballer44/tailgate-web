@@ -2,6 +2,8 @@
 
 {% block content %}
 
+<h2>Updating {{ game.homeDesignation }} {{ game.homeMascot }} vs {{ game.awayDesignation }} {{ game.awayMascot }}</h2>
+
 {# update-game-score form #}
 <form action="{{ url_for('update-game-score', { 'seasonId': seasonId, 'gameId': gameId }) }}" method="POST">
 

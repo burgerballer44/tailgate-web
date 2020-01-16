@@ -12,8 +12,32 @@ class AdminSubmitScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
+
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+        $player = collect($group['players'])->firstWhere('playerId', $playerId);
+
+        // get the games
+        $followId = $group['follow']['followId'];
+        $clientResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
+        $data = json_decode($clientResponse->getBody(), true);
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+        $games = collect($data['data'])->flatMap(function($game) {
+            return [$game['gameId'] => "{$game['homeDesignation']} {$game['homeMascot']} vs {$game['awayDesignation']} {$game['awayMascot']} {$game['startDate']} / {$game['startTime']}"];
+        })->toArray();
+
         if ('POST' != $this->request->getMethod()) {
-            return $this->view->render($this->response, 'admin/group/submit-score.twig', compact('groupId', 'playerId'));
+            return $this->view->render($this->response, 'admin/group/submit-score.twig', compact('groupId', 'playerId', 'group', 'player', 'games'));
         }
 
         $parsedBody = $this->request->getParsedBody();
@@ -31,6 +55,9 @@ class AdminSubmitScoreForGroupAction extends AbstractAction
                 'errors' => $data['errors'],
                 'groupId' => $groupId,
                 'playerId' => $playerId,
+                'group' => $group,
+                'player' => $player,
+                'games' => $games,
             ]);
         }
 

@@ -4,6 +4,8 @@
 
 {% if user is defined %}
 
+    <h2>Updating - {{ user.email }}</h2>
+
     {# update-user form #}
     <form action="{{ url_for('update-user', { 'userId': userId }) }}" method="POST">
 

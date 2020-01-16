@@ -4,6 +4,8 @@
 
 {% if team is defined %}
 
+    <h2>Updating - {{ team.designation }} {{ team.mascot }} </h2>
+
     {# update-team form #}
     <form action="{{ url_for('update-team', { 'teamId': team.teamId }) }}" method="POST">
 
@@ -24,7 +26,7 @@
 
 {% else %}
 
-<p>Team is not defined</p>
+    <p>Team is not defined</p>
 
 {% endif %}
 

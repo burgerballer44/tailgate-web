@@ -12,36 +12,41 @@ class UpdateScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
-            $group = $data['data'];
-            $score = collect($group['scores'])->firstWhere('scoreId', $scoreId);
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
 
-            return $this->view->render($this->response, 'group/update-score.twig', compact('groupId', 'scoreId', 'score'));
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+        $score = collect($group['scores'])->firstWhere('scoreId', $scoreId);
+        $player = collect($group['players'])->firstWhere('playerId', $score['playerId']);
+
+        if ('POST' != $this->request->getMethod()) {
+            return $this->view->render($this->response, 'group/update-score.twig', compact('groupId', 'scoreId', 'score', 'player', 'group'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        $group = $data['data'];
-        $score = collect($group['scores'])->firstWhere('scoreId', $scoreId);
-
         $clientResponse = $this->apiClient->patch("/v1/groups/{$groupId}/score/{$scoreId}", [
-          'homeTeamPrediction' => $parsedBody['home_team_prediction'],
-          'awayTeamPrediction' => $parsedBody['away_team_prediction']
+            'homeTeamPrediction' => $parsedBody['home_team_prediction'],
+            'awayTeamPrediction' => $parsedBody['away_team_prediction']
         ]);
 
         if ($clientResponse->getStatusCode() >= 400) {
           $data = json_decode($clientResponse->getBody(), true);
 
-          return $this->view->render($this->response, 'group/update-score.twig', [
-              'errors' => $data['errors'],
-              'groupId' => $groupId,
-              'scoreId' => $scoreId,
-              'score' => $score,
-          ]);
+            return $this->view->render($this->response, 'group/update-score.twig', [
+                'errors' => $data['errors'],
+                'groupId' => $groupId,
+                'scoreId' => $scoreId,
+                'score' => $score,
+                'player' => $player,
+                'group' => $group,
+            ]);
         }
 
         return $this->response->withHeader('Location', "/group/{$groupId}")->withStatus(302);

@@ -12,13 +12,21 @@ class AdminUpdateScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
-            $group = $data['data'];
-            $score = collect($group['scores'])->firstWhere('scoreId', $scoreId);
+        // get the group
+        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = json_decode($clientResponse->getBody(), true);
 
-            return $this->view->render($this->response, 'admin/group/update-score.twig', compact('groupId', 'scoreId', 'score'));
+        if ($clientResponse->getStatusCode() >= 400) {
+            $this->flash->addMessage('error', $data['errors']);
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        $group = $data['data'];
+        $score = collect($group['scores'])->firstWhere('scoreId', $scoreId);
+        $player = collect($group['players'])->firstWhere('playerId', $score['playerId']);
+
+        if ('POST' != $this->request->getMethod()) {
+            return $this->view->render($this->response, 'admin/group/update-score.twig', compact('groupId', 'scoreId', 'score', 'player', 'group'));
         }
 
         $parsedBody = $this->request->getParsedBody();
@@ -41,6 +49,8 @@ class AdminUpdateScoreForGroupAction extends AbstractAction
                 'groupId' => $groupId,
                 'scoreId' => $scoreId,
                 'score' => $score,
+                'player' => $player,
+                'group' => $group
             ]);
         }
     

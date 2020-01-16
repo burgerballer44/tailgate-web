@@ -49,16 +49,16 @@ class AdminViewGroupAction extends AbstractAction
         $eventLog = $group['eventLog'];
 
         // if the group is following a team then get all the games for the season they are following
-        if (isset($group['follow']['seasonId'])) {
-            $seasonId = $group['follow']['seasonId'];
-            $clientResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
+        if (isset($group['follow']['followId'])) {
+            $followId = $group['follow']['followId'];
+            $clientResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
             $data = json_decode($clientResponse->getBody(), true);
             if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'admin/season/view.twig', ['errors' => $data['errors']]);
+                return $this->view->render($this->response, 'admin/group/view.twig', ['errors' => $data['errors']]);
             }
-            $season = $data['data'];
-        
-            $this->scoring->generate($group, $season);
+            $games = $data['data'];
+
+            $this->scoring->generate($group, $games);
             $leaderboard = $this->scoring->getLeaderboardHtml();
             $scoreChart = $this->scoring->getChartHtml();
         }

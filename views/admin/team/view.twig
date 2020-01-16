@@ -2,41 +2,35 @@
 
 {% block content %}
 
-    <h1>viewing team</h1>
+{% if team is defined %}
 
-    {% if team is defined %}
+    <div class="flex flex-col">
+        <h2>Viewing {{ team.designation }} {{ team.mascot }} </h2>
+
+        <div class="flex my-4">
+            <a class="button" href={{ url_for('update-team', { 'teamId': team.teamId }) }}> Update Team </a>
+            <a class="button" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-team', { 'teamId': team.teamId }) }}> Delete Team </a>
+        </div>
         <div>
-            {{ team.teamId }} <br>
-            {{ team.designation }} <br>
-            {{ team.mascot }} <br>
-            <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-team', { 'teamId': team.teamId }) }}> Update Team </a>
-            <a class="p-2 mr-2 bg-gray-300 rounded" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-team', { 'teamId': team.teamId }) }}> Delete Team </a>
+            <p><span class="font-bold">Id:</span> {{ team.teamId }}</p>
+            <p><span class="font-bold">Designation:</span> {{ team.designation }} </p>
+            <p><span class="font-bold">Mascot:</span> {{ team.mascot }} </p>
         </div>
 
-
-        <h1 class="py-4">Follows</h1>
-
         {% if team.follows is defined %}
+            <h2>Follows</h2>
             {% for follow in team.follows %}
                 <div>
-                    {{ follow.groupId }}
-                    <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('admin-delete-follow', { 'teamId': follow.teamId, 'groupId': follow.groupId, 'followId': follow.followId }) }}> Delete Follow </a>
+                    <p><span class="font-bold">Group:</span> {{ follow.groupName }}</span></p>
+                    <a class="button" onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('admin-delete-follow', { 'teamId': follow.teamId, 'groupId': follow.groupId, 'followId': follow.followId }) }}> Delete Follow </a>
                 </div>
             {% endfor %}
         {% endif %}
 
-        <h1 class="py-4">Games</h1>
-        {% if team.games is defined %}
-            {% for game in team.games %}
-                <div>
-                    <a class="p-2 mr-2 bg-gray-300 rounded" href={{ url_for('update-game-score', { 'seasonId': game.seasonId, 'gameId': game.gameId }) }}> Update Score </a>
-                    {{ game.homeTeamId }} {{ game.awayTeamId }} {{ game.homeTeamScore }} {{ game.awayTeamScore }} {{ game.startDate }}
-                </div>
-            {% endfor %}
-        {% endif %}
+    </div>
 
-    {% endif %}
+{% endif %}
 
-    {% include 'admin/eventLog.twig' %}
+{% include 'admin/eventLog.twig' %}
 
 {% endblock %}

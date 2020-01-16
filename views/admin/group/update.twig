@@ -4,6 +4,8 @@
 
 {% if group is defined %}
 
+    <h2>Updating {{ group.name }} </h2>
+
     {# admin-update-group form #}
     <form action="{{ url_for('admin-update-group', { 'groupId':groupId }) }}" method="POST">
 
