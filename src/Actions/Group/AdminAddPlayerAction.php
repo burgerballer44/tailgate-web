@@ -13,29 +13,28 @@ class AdminAddPlayerAction extends AbstractAction
         extract($this->args);
 
         // get the group
-        $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/admin/groups")->withStatus(302);
         }
 
         $group = $data['data'];
 
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/group/add-player.twig', compact('groupId', 'memberId', 'group'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member/{$memberId}/player", [
+        $apiResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member/{$memberId}/player", [
             'username' => $parsedBody['username'],
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/group/add-player.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,

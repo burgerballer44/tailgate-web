@@ -12,10 +12,10 @@ class DeleteUserAction extends AbstractAction
     {
         extract($this->args);
 
-        $clientResponse = $this->apiClient->delete("/v1/admin/users/{$userId}");
+        $apiResponse = $this->apiClient->delete("/v1/admin/users/{$userId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/user/view.twig', ['errors' => $data['errors']]);
         }
 

@@ -10,10 +10,10 @@ class AllGroupsAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {   
-        $clientResponse = $this->apiClient->get("/v1/admin/groups");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/groups");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/group/index.twig');
         }
 

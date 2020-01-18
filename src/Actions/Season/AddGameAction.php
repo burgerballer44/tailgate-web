@@ -13,10 +13,10 @@ class AddGameAction extends AbstractAction
         extract($this->args);
 
         // get all teams
-        $clientResponse = $this->apiClient->get("/v1/teams");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/teams");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {            
+        if ($apiResponse->hasErrors()) {            
             return $this->view->render($this->response, 'admin/team/index.twig', ['errors' => $data['errors']]);
         }
 
@@ -24,13 +24,13 @@ class AddGameAction extends AbstractAction
             return [$team['teamId'] => "{$team['designation']} {$team['mascot']}"];
         })->toArray();
 
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/season/add-game.twig', compact('seasonId', 'teams'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/admin/seasons/{$seasonId}/game", [
+        $apiResponse = $this->apiClient->post("/v1/admin/seasons/{$seasonId}/game", [
             'seasonId' => $seasonId,
             'homeTeamId' => $parsedBody['home_team_id'],
             'awayTeamId' => $parsedBody['away_team_id'],
@@ -38,8 +38,8 @@ class AddGameAction extends AbstractAction
             'startTime' => $parsedBody['start_time']
         ]);
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
+            $data = $apiResponse->getData();
             return $this->view->render($this->response, 'admin/season/add-game.twig', [
                 'errors' => $data['errors'],
                 'teams' => $teams,

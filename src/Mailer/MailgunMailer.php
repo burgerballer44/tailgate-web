@@ -4,6 +4,7 @@ namespace TailgateWeb\Mailer;
 
 use Mailgun\Mailgun;
 use Psr\Http\Message\UriInterface;
+use Psr\Log\LoggerInterface;
 use Slim\Interfaces\RouteParserInterface;
 use TailgateWeb\Mailer\ConfirmationEmail;
 use TailgateWeb\Mailer\GroupInvite;
@@ -14,13 +15,20 @@ class MailgunMailer implements MailerInterface
 {
     private $mailgun;
     private $routeParser;
+    private $logger;
     private $domain = '';
     private $mailgunTestMode = true;
 
-    public function __construct(Mailgun $mailgun, RouteParserInterface $routeParser, $domain, $mailgunTestMode)
-    {
+    public function __construct(
+        Mailgun $mailgun,
+        RouteParserInterface $routeParser,
+        LoggerInterface $logger,
+        $domain,
+        $mailgunTestMode
+    ) {
         $this->mailgun = $mailgun;
         $this->routeParser = $routeParser;
+        $this->logger = $logger;
         $this->domain = $domain;
         $this->mailgunTestMode = $mailgunTestMode;
     }
@@ -76,7 +84,8 @@ class MailgunMailer implements MailerInterface
             $this->mailgun->messages()->send($this->domain, $emailParams);
             return true;
         } catch (\Throwable $e) {
-            // TODO: log failed email
+            $this->logger->error("Mailgun email failed to send to {$emailParams['to']}");
+            $this->logger->error($e->getMessage());
         }
 
         return false;

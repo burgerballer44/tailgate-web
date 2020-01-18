@@ -15,13 +15,11 @@ class ConfirmEmailAction extends AbstractAction
         $userId = $params['id'];
         $email = $params['email'];
 
-        $clientResponse = $this->apiClient->patch("/activate/{$userId}", ['email' => $email]);
+        $apiResponse = $this->apiClient->patch("/activate/{$userId}", ['email' => $email]);
+        $data = $apiResponse->getData(); 
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true); 
-
+        if ($apiResponse->hasErrors()) {
             $error = isset($data['errors']['userId']) ? implode(', ', $data['errors']['userId']) : 'An unspecified error occured while trying to confirm your email address.';
-
             $this->flash->addMessage('error', $error);
             return $this->response->withHeader('Location', '/')->withStatus(302);
         }

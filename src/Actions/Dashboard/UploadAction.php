@@ -54,24 +54,24 @@ class UploadAction extends AbstractAction
         // foreach($playerNames as $playerName) {
 
         //     // register
-        //     $clientResponse = $this->apiClient->post("/register", [
+        //     $apiResponse = $this->apiClient->post("/register", [
         //         'email' => "{$playerName}@email.com",
         //         'password' => 'password',
         //         'confirmPassword' => 'password',
         //     ]);
-        //     $data = json_decode($clientResponse->getBody(), true);
+        //     $data = $apiResponse->getData();
         //     $user = $data['data'];
         //     $userId = $user['userId'];
 
         //     // activate
-        //     $clientResponse = $this->apiClient->patch("/activate/{$userId}", ['email' => "{$playerName}@email.com"]);
+        //     $apiResponse = $this->apiClient->patch("/activate/{$userId}", ['email' => "{$playerName}@email.com"]);
 
         //     // add member
-        //     $clientResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member", ['userId' => $userId]);
+        //     $apiResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member", ['userId' => $userId]);
         // };
 
-        // $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-        // $data = json_decode($clientResponse->getBody(), true);
+        // $apiResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        // $data = $apiResponse->getData();
         // $group = $data['data'];
         // $members = collect($group['members'])->sortBy('email')->values();
         // unset($members[20]);
@@ -80,13 +80,13 @@ class UploadAction extends AbstractAction
         // foreach($members as $key => $member) {
 
         //     $memberId = $member['memberId'];
-        //     $clientResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member/{$memberId}/player", [
+        //     $apiResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/member/{$memberId}/player", [
         //         'username' => $playerNames[$key],
         //     ]);
         // }
 
-        $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        $data = $apiResponse->getData();
         $group = $data['data'];
         $players = collect($group['players'])->sortBy('username')->values();
 
@@ -135,7 +135,7 @@ set_time_limit(180);
                 //     $away = 0;
                 // }
 
-                $clientResponse = $this->apiClient->post("/v1/groups/{$groupId}/player/{$playerId}/score", [
+                $apiResponse = $this->apiClient->post("/v1/groups/{$groupId}/player/{$playerId}/score", [
                     'gameId' => $game,
                     'homeTeamPrediction' => $scores[$scoreGroups[$gameKey][$home]][$key],
                     'awayTeamPrediction' => $scores[$scoreGroups[$gameKey][$away]][$key]

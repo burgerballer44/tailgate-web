@@ -13,20 +13,20 @@ class ResetPasswordAction extends AbstractAction
     {
         extract($this->args);
         
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'reset-password.twig', ['token' => $token]);
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->patch("/reset-password", [
+        $apiResponse = $this->apiClient->patch("/reset-password", [
             'passwordResetToken' => $token,
             'password' => $parsedBody['password'],
             'confirmPassword' => $parsedBody['confirm_password']
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'reset-password.twig', ['errors' => $data['errors'], 'token' => $token]);
         }
 

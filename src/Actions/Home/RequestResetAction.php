@@ -11,16 +11,16 @@ class RequestResetAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'request-reset.twig');
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/request-reset", ['email' => $parsedBody['email']]);
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->post("/request-reset", ['email' => $parsedBody['email']]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'request-reset.twig', ['errors' => $data['errors']]);
         }
 

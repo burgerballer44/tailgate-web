@@ -24,7 +24,8 @@ class UpdateUserSessionMiddleware implements MiddlewareInterface
     public function process(ServerRequestInterface $request, RequestHandlerInterface $handler): ResponseInterface
     {   
         if ($this->session->has('tokens')) {
-            $data = $this->apiClient->get("/v1/users/me");
+            $apiResponse = $this->apiClient->get("/v1/users/me");
+            $data = $apiResponse->getData();
             $this->session->set('user', $data['data']);
         }
        

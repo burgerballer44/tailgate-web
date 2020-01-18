@@ -179,6 +179,7 @@ return function (ContainerBuilder $containerBuilder) {
             return new MailgunMailer(
                 $container->get(Mailgun::class),
                 $container->get(RouteParserInterface::class),
+                $container->get(LoggerInterface::class),
                 $container->get('settings')['mailgun_domain'],
                 $container->get('settings')['mailgun_test_mode']
             );

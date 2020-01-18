@@ -10,10 +10,10 @@ class AllUsersAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {
-        $clientResponse = $this->apiClient->get("/v1/admin/users");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/users");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/user/index.twig');
         }
 

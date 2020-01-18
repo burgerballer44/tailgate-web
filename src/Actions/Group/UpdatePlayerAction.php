@@ -12,24 +12,21 @@ class UpdatePlayerAction extends AbstractAction
     {    
         extract($this->args);
 
-        // get the group
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
+        // get the group,  player, and member
+        $apiResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
-
         $group = $data['data'];
         $player = collect($group['players'])->firstWhere('playerId', $playerId);
+        $members = collect($group['members'])->flatMap(function($member){
+            return [$member['memberId'] => $member['email']];
+        })->toArray();
+        $memberId = collect($group['players'])->firstWhere('playerId', $playerId)['memberId'];
 
-        if ('POST' != $this->request->getMethod()) {
-            $members = collect($group['members'])->flatMap(function($member){
-                return [$member['memberId'] => $member['email']];
-            })->toArray();
-            $memberId = collect($group['players'])->firstWhere('playerId', $playerId)['memberId'];
-
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'group/update-player.twig', compact(
                 'groupId',
                 'playerId',
@@ -42,18 +39,10 @@ class UpdatePlayerAction extends AbstractAction
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        $group = $data['data'];
-        $members = collect($group['members'])->flatMap(function($member){
-            return [$member['memberId'] => $member['email']];
-        })->toArray();
-        $memberId = collect($group['players'])->firstWhere('playerId', $playerId)['memberId'];
+        $apiResponse = $this->apiClient->patch("/v1/groups/{$groupId}/player/{$playerId}", ['memberId' => $parsedBody['member_id']]);
+        $data = $apiResponse->getData();
 
-        $clientResponse = $this->apiClient->patch("/v1/groups/{$groupId}/player/{$playerId}", ['memberId' => $parsedBody['member_id']]);
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'group/update-player.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,

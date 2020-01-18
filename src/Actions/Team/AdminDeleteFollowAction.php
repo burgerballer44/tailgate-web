@@ -14,10 +14,10 @@ class AdminDeleteFollowAction extends AbstractAction
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->delete("/v1/groups/{$groupId}/follow/{$followId}");
+        $apiResponse = $this->apiClient->delete("/v1/groups/{$groupId}/follow/{$followId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->view->render($this->response, 'admin/team/view.twig', ['errors' => $data['errors']]);
         }

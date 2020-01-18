@@ -11,6 +11,7 @@ class FormBuilderExtension extends AbstractExtension
     private $fieldsToIgnore = [
         'password',
         'confirm_password',
+        'phrase',
     ];
 
     public function __construct($parsedBody)

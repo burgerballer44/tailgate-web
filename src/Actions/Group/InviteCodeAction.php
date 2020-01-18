@@ -10,16 +10,16 @@ class InviteCodeAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {            
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'group/invite-code.twig');
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/groups/invite-code", ['inviteCode' => $parsedBody['invite_code']]);
+        $apiResponse = $this->apiClient->post("/v1/groups/invite-code", ['inviteCode' => $parsedBody['invite_code']]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'group/invite-code.twig', ['errors' => $data['errors']]);
         }
 

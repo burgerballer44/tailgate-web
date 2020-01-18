@@ -13,10 +13,11 @@ class ResendConfirmationAction extends AbstractAction
     {
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        // get user
+        $apiResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/user/view.twig', ['errors' => $data['errors']]);
         }
 
@@ -26,6 +27,8 @@ class ResendConfirmationAction extends AbstractAction
 
         if ($this->mailer->sendConfirmationLink($this->request->getUri(), $template)) {
             $this->flash->addMessage('success', "Email sent to {$user['email']}.");
+        } else {
+            $this->flash->addMessage('error', "Email failed to send.");
         }
 
         return $this->response->withHeader('Location', "/admin/users/{$userId}")->withStatus(302);

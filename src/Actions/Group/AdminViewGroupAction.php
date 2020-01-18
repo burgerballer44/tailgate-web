@@ -37,10 +37,10 @@ class AdminViewGroupAction extends AbstractAction
         $scoreChart = '';
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/admin/groups")->withStatus(302);
         }
@@ -51,9 +51,9 @@ class AdminViewGroupAction extends AbstractAction
         // if the group is following a team then get all the games for the season they are following
         if (isset($group['follow']['followId'])) {
             $followId = $group['follow']['followId'];
-            $clientResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
-            $data = json_decode($clientResponse->getBody(), true);
-            if ($clientResponse->getStatusCode() >= 400) {
+            $apiResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
+            $data = $apiResponse->getData();
+            if ($apiResponse->hasErrors()) {
                 return $this->view->render($this->response, 'admin/group/view.twig', ['errors' => $data['errors']]);
             }
             $games = $data['data'];

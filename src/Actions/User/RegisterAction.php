@@ -12,39 +12,38 @@ class RegisterAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {
+        // create an inline html captcha to use in the form
         $builder = new CaptchaBuilder;
         $builder->build();
         $captcha =  $builder->inline();
 
-        if ('POST' != $this->request->getMethod()) {
-
+        if ('GET' == $this->request->getMethod()) {
+            // set the captcha phrase in the session so we remember to check against it
             $this->session->set('phrase', $builder->getPhrase());
-
             return $this->view->render($this->response, 'user/register.twig', compact('captcha'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-
+        // validate the captcha phrase
         if (!$this->session->has('phrase') || $this->session->get('phrase') != $parsedBody['phrase']) {
             $errors = [];
             $errors['phrase'] = ['Captcha incorrect. Please try again.'];
-
             $this->session->set('phrase', $builder->getPhrase());
-
             return $this->view->render($this->response, 'user/register.twig', compact('captcha', 'errors'));
         }
 
+        // remove captcha phrase since it is no longer needed
         $this->session->delete('phrase');
-
-        $clientResponse = $this->apiClient->post("/register", [
+        
+        $apiResponse = $this->apiClient->post("/register", [
             'email' => $parsedBody['email'],
             'password' => $parsedBody['password'],
             'confirmPassword' => $parsedBody['confirm_password'],
         ]);
-        $data = json_decode($clientResponse->getBody(), true);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'user/register.twig', [
                 'captcha' => $captcha,
                 'errors' => $data['errors']

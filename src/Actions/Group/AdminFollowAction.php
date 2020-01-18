@@ -12,52 +12,32 @@ class AdminFollowAction extends AbstractAction
     {   
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
-            // get seasons to get sports and season avaialble
-            $clientResponse = $this->apiClient->get("/v1/seasons");
-            $data = json_decode($clientResponse->getBody(), true);
-            if ($clientResponse->getStatusCode() >= 400) {
-            }
-            $seasons = $data['data'];
-            $seasons = collect($seasons)->groupBy('sport')->map(function($seasons) {
-                return collect($seasons)->flatMap(function($season) {
-                    return [$season['seasonId'] => $season['name']];
-                })->toArray();
+        // get seasons to get sports and season avaialble
+        $apiResponse = $this->apiClient->get("/v1/seasons");
+        $data = $apiResponse->getData();
+        $seasons = $data['data'];
+        $seasons = collect($seasons)->groupBy('sport')->map(function($seasons) {
+            return collect($seasons)->flatMap(function($season) {
+                return [$season['seasonId'] => $season['name']];
             })->toArray();
+        })->toArray();
+        $sports = array_combine(array_keys($seasons), array_keys($seasons));
 
-            $sports = array_combine(array_keys($seasons), array_keys($seasons));
-
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/group/follow.twig', compact('groupId', 'sports', 'seasons'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/follow", [
+        $apiResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/follow", [
             'teamId' => $parsedBody['team_id'],
             'seasonId' => $parsedBody['season_id']
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-
-            $errors = $data['errors'];
-
-            // get seasons to get sports and season avaialble
-            $clientResponse = $this->apiClient->get("/v1/seasons");
-            $data = json_decode($clientResponse->getBody(), true);
-            if ($clientResponse->getStatusCode() >= 400) {
-            }
-            $seasons = $data['data'];
-            $seasons = collect($seasons)->groupBy('sport')->map(function($seasons) {
-                return collect($seasons)->flatMap(function($season) {
-                    return [$season['seasonId'] => $season['name']];
-                })->toArray();
-            })->toArray();
-
-            $sports = array_combine(array_keys($seasons), array_keys($seasons));
-
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/group/follow.twig', [
-                'errors' => $errors,
+                'errors' => $data['errors'],
                 'groupId' => $groupId,
                 'sports' => $sports,
                 'seasons' => $seasons

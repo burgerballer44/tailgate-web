@@ -12,10 +12,10 @@ class ViewSeasonAction extends AbstractAction
     {
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/season/view.twig', ['errors' => $data['errors']]);
         }
 

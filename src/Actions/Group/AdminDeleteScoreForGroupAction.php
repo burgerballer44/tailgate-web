@@ -12,10 +12,10 @@ class AdminDeleteScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        $clientResponse = $this->apiClient->delete("/v1/admin/groups/{$groupId}/score/{$scoreId}");
+        $apiResponse = $this->apiClient->delete("/v1/admin/groups/{$groupId}/score/{$scoreId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
         }
 

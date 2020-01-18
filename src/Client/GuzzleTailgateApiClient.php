@@ -8,6 +8,7 @@ use GuzzleHttp\Exception\TransferException;
 use Psr\Http\Message\ResponseFactoryInterface;
 use Psr\Log\LoggerInterface;
 use Slim\Flash\Messages;
+use TailgateWeb\Client\ApiResponseInterface;
 use TailgateWeb\Client\TailgateApiClientInterface;
 use TailgateWeb\Session\SessionHelperInterface;
 
@@ -36,7 +37,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
         $this->config = $config;
     }
 
-    public function get(string $path, array $queryStringArray = [])
+    public function get(string $path, array $queryStringArray = []) : ApiResponseInterface
     {
         return $this->send('GET', $path, [
             'headers' => $this->getHeaders(),
@@ -44,7 +45,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
         ]);
     }
 
-    public function post(string $path, array $data)
+    public function post(string $path, array $data) : ApiResponseInterface
     {
         return $this->send('POST', $path, [
             'headers' => $this->getHeaders(),
@@ -52,7 +53,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
         ]);
     }
 
-    public function put(string $path, array $data)
+    public function put(string $path, array $data) : ApiResponseInterface
     {
         return $this->send('PUT', $path, [
             'headers' => $this->getHeaders(),
@@ -60,7 +61,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
         ]);
     }
 
-    public function patch(string $path, array $data)
+    public function patch(string $path, array $data) : ApiResponseInterface
     {
         return $this->send('PATCH', $path, [
             'headers' => $this->getHeaders(),
@@ -68,7 +69,7 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
         ]);
     }
 
-    public function delete(string $path)
+    public function delete(string $path) : ApiResponseInterface
     {
         return $this->send('DELETE', $path, [
             'headers' => $this->getHeaders()
@@ -84,9 +85,16 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
 
     private function send(string $verb, string $path, array $data)
     {
+        $apiData = [];
+        $apiData['errors'] = [];
+
         try {
 
-            return $this->client->request($verb, $path, $data);
+            $response = $this->client->request($verb, $path, $data);
+            $contents = $response->getBody()->getContents();
+            if ("" != $contents) {
+                $apiData = json_decode($contents, true);
+            }
 
         // 400 level exceptions
         } catch (ClientException $e) {
@@ -95,9 +103,6 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
             $response = $e->getResponse();
             $jsonBody = json_decode($response->getBody()->getContents(), true);
 
-            // create a new body for the response
-            $newBody = (new \Slim\Psr7\Factory\StreamFactory())->createStream();
-
             // /token on api will return ['error' => foo, 'error_description' => bar]
             // or bad client credentials
             // let's make it consistent
@@ -105,18 +110,16 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
                 ($response->getStatusCode() == 401 && isset($jsonBody['error']))
                 || ($response->getStatusCode() == 400 && isset($jsonBody['error']))
             ) {
-                
-                $newBody->write(json_encode([
-                    'code' => $response->getStatusCode(),
-                    'type' => $jsonBody['error'],
-                    'errors' => $jsonBody['error_description'],
-                ]));
-                $newBody->rewind();
-                $this->flash->addMessageNow('error', $jsonBody['error_description']);
-                $response = $response->withBody($newBody);
+                $apiData['errors'] = $jsonBody['error_description'];
+                $this->flash->addMessageNow('error', $apiData['errors']);
+            } else {
+                if (isset($jsonBody['errors'])) {
+                    $apiData['errors'] = $jsonBody['errors'];
+                } else {
+                    $apiData['errors'] = $jsonBody['exception'][0]['message'] ?? $jsonBody['message'] ?? 'Unspecified 400 API error occurred';
+                    $this->flash->addMessageNow('error', $e->getMessage());
+                }
             }
-
-            return $response;
 
         // all other exceptions
         } catch (TransferException $e) {
@@ -133,47 +136,22 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
                 $statusCode = $statusCode <= 600 ? $statusCode : $response->getStatusCode();
 
                 $type = $jsonBody['exception'][0]['type'] ?? 'Unknown API Error';
-                $message = $jsonBody['exception'][0]['message'] ?? $jsonBody['message'] ?? 'Unspecified API error occurred';
-
-                // create a new body for the response
-                $newBody = (new \Slim\Psr7\Factory\StreamFactory())->createStream();
+                $message = $jsonBody['exception'][0]['message'] ?? $jsonBody['message'] ?? 'Unspecified 500 API error occurred';
 
                 // if this is a server error then we need to translate
                 // the uglier response into the consistent one
                 if ($response->getStatusCode() >= 404) {
-
-                    $newBody->write(json_encode([
-                        'code' => $statusCode,
-                        'type' => $type,
-                        'errors' => $message,
-                    ]));
-                    $newBody->rewind();
+                    $apiData['errors'] = $message;
                     $this->flash->addMessageNow('error', $message);
-                    $response = $response->withBody($newBody)->withStatus($statusCode);
                 }
 
                 $this->logger->error($message);
-
-                return $response;
+            } else {
+                $apiData['errors'] = ['server'=> ['Unspecified error occurred']];   
+                $this->flash->addMessageNow('error', $e->getMessage());
             }
-
-            // if for whatever reason there is no response from the exception then we need to create one
-            $response = $this->responseFactory->createResponse();
-
-            // create a new body for the response
-            $newBody = (new \Slim\Psr7\Factory\StreamFactory())->createStream();
-
-            $newBody->write(json_encode([
-                'code' => 500,
-                'type' => 'connection_failed',
-                'errors' => ['server'=> ['Unspecified error occurred']],
-            ]));
-            $newBody->rewind();
-            $response = $response->withBody($newBody);
-
-            $this->flash->addMessageNow('error', $e->getMessage());
-
-            return $response->withStatus(500);
         }
+
+        return new TailgateApiResponse($apiData);
     }
 }

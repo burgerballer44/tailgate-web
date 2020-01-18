@@ -10,19 +10,19 @@ class AddTeamAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {            
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/team/add.twig');
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/admin/teams", [
+        $apiResponse = $this->apiClient->post("/v1/admin/teams", [
             'designation' => $parsedBody['designation'],
             'mascot' => $parsedBody['mascot']
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/team/add.twig', ['errors' => $data['errors']]);
         }
 

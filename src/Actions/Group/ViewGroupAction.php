@@ -39,14 +39,12 @@ class ViewGroupAction extends AbstractAction
         extract($this->args);
 
         // get the group and determine if the user is a member
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
+        $apiResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
-
         $group = $data['data'];
         $member = collect($group['members'])->firstWhere('userId', $this->session->get('user')['userId']);
         if (!$member) {
@@ -57,9 +55,9 @@ class ViewGroupAction extends AbstractAction
         // if the group is following a team then get all the games for the season they are following
         if (isset($group['follow']['followId'])) {
             $followId = $group['follow']['followId'];
-            $clientResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
-            $data = json_decode($clientResponse->getBody(), true);
-            if ($clientResponse->getStatusCode() >= 400) {
+            $apiResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
+            $data = $apiResponse->getData();
+            if ($apiResponse->hasErrors()) {
                 return $this->view->render($this->response, 'group/view.twig', ['errors' => $data['errors']]);
             }
             $games = $data['data'];

@@ -12,35 +12,30 @@ class AdminUpdateGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
+        // get the group
+        $apiResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
+            return $this->view->render($this->response, 'admin/group/update.twig', [
+                'errors' => $data['errors'],
+                'groupId' => $groupId,
+            ]);
+        }
+        $group = $data['data'];
 
-            if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'admin/group/update.twig', [
-                    'errors' => $data['errors'],
-                    'groupId' => $groupId,
-                ]);
-            }
-
-            $group = $data['data'];
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/group/update.twig', compact('group', 'groupId'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->get("/v1/admin/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        $group = $data['data'];
-
-        $clientResponse = $this->apiClient->patch("/v1/admin/groups/{$groupId}", [
+        $apiResponse = $this->apiClient->patch("/v1/admin/groups/{$groupId}", [
             'name' => $parsedBody['name'],
             'ownerId' => $group['ownerId'],
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/group/update.twig', [
                 'errors' => $data['errors'],
                 'group' => $group,

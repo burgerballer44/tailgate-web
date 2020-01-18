@@ -10,19 +10,19 @@ class CreateGroupAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {            
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'group/create.twig');
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/groups", [
+        $apiResponse = $this->apiClient->post("/v1/groups", [
             'name' => $parsedBody['name'],
             'userId' => $this->session->get('user')['userId'],
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'group/create.twig', ['errors' => $data['errors']]);
         }
 

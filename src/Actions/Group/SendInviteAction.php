@@ -13,48 +13,27 @@ class SendInviteAction extends AbstractAction
     {            
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
-
-            $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-            $data = json_decode($clientResponse->getBody(), true);
-
-            if ($clientResponse->getStatusCode() >= 400) {
-                $this->flash->addMessage('error', $data['errors']);
-                return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
-            }
-
-            $group = $data['data'];
-
-            $member = collect($group['members'])->firstWhere('userId', $this->session->get('user')['userId']);
-
-            // must be group admin
-            if ('Group-Admin' != $member['role']) {
-                $this->flash->addMessage('error', 'must be group admin');
-                return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
-            }
-
-            return $this->view->render($this->response, 'group/send-invite.twig', compact('group', 'groupId'));
-        }
-
-        $parsedBody = $this->request->getParsedBody();
-
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
+        // get the group, and member
+        $apiResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
-
         $group = $data['data'];
-
         $member = collect($group['members'])->firstWhere('userId', $this->session->get('user')['userId']);
 
         // must be group admin
         if ('Group-Admin' != $member['role']) {
-            $this->flash->addMessage('error', 'goup admin');
+            $this->flash->addMessage('error', 'must be group admin');
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
+
+        if ('GET' == $this->request->getMethod()) {
+            return $this->view->render($this->response, 'group/send-invite.twig', compact('group', 'groupId'));
+        }
+
+        $parsedBody = $this->request->getParsedBody();
 
         if (!filter_var($parsedBody['email'], FILTER_VALIDATE_EMAIL)) {
             $errors = [];

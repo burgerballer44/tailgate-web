@@ -12,12 +12,10 @@ class DeleteTeamAction extends AbstractAction
     {            
         extract($this->args);
 
-        $parsedBody = $this->request->getParsedBody();
+        $apiResponse = $this->apiClient->delete("/v1/admin/teams/{$teamId}");
+        $data = $apiResponse->getData();
 
-        $clientResponse = $this->apiClient->delete("/v1/admin/teams/{$teamId}");
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
         }
 

@@ -12,10 +12,10 @@ class ViewTeamAction extends AbstractAction
     {            
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/teams/{$teamId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/teams/{$teamId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/team/view.twig', ['errors' => $data['errors']]);
         }
 

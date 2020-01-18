@@ -12,23 +12,21 @@ class SubmitScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        // get the group
-        $clientResponse = $this->apiClient->get("/v1/groups/{$groupId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
+        // get the group, and player
+        $apiResponse = $this->apiClient->get("/v1/groups/{$groupId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
-
         $group = $data['data'];
         $player = collect($group['players'])->firstWhere('playerId', $playerId);
 
         // get the games
         $followId = $group['follow']['followId'];
-        $clientResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
-        $data = json_decode($clientResponse->getBody(), true);
-        if ($clientResponse->getStatusCode() >= 400) {
+        $apiResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
@@ -37,21 +35,20 @@ class SubmitScoreForGroupAction extends AbstractAction
         })->toArray();
 
 
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'group/submit-score.twig', compact('groupId', 'playerId', 'group', 'player', 'games'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/groups/{$groupId}/player/{$playerId}/score", [
+        $apiResponse = $this->apiClient->post("/v1/groups/{$groupId}/player/{$playerId}/score", [
             'gameId' => $parsedBody['game_id'],
             'homeTeamPrediction' => $parsedBody['home_team_prediction'],
             'awayTeamPrediction' => $parsedBody['away_team_prediction']
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
-
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'group/submit-score.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,

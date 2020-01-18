@@ -12,10 +12,10 @@ class TeamListAction extends AbstractAction
     {            
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             $this->response->getBody()->write(json_encode('nope'));
             return $this->response->withHeader('Content-Type', 'application/json')->withStatus(500);
         }

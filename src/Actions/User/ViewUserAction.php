@@ -12,10 +12,10 @@ class ViewUserAction extends AbstractAction
     {
         extract($this->args);
 
-        $clientResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/user/view.twig');
         }
 

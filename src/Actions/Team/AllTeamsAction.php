@@ -10,10 +10,10 @@ class AllTeamsAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {
-        $clientResponse = $this->apiClient->get("/v1/teams");
-        $data = json_decode($clientResponse->getBody(), true);
+        $apiResponse = $this->apiClient->get("/v1/teams");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {            
+        if ($apiResponse->hasErrors()) {            
             return $this->view->render($this->response, 'admin/team/index.twig', ['errors' => $data['errors']]);
         }
 

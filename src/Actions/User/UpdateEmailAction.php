@@ -10,38 +10,28 @@ class UpdateEmailAction extends AbstractAction
 {   
     public function action() : ResponseInterface
     {
-        if ('POST' != $this->request->getMethod()) {
-            $clientResponse = $this->apiClient->get("/v1/users/me");
-            $data = json_decode($clientResponse->getBody(), true);
+        // get user
+        $apiResponse = $this->apiClient->get("/v1/users/me");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
+            return $this->view->render($this->response, 'user/email.twig');
+        }
+        $user = $data['data'];
 
-            if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'user/email.twig');
-            }
-
-            $user = $data['data'];
-
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'user/email.twig', compact('user'));
         }
 
        $parsedBody = $this->request->getParsedBody();
 
-       $clientResponse = $this->apiClient->get("/v1/users/me");
-       $data = json_decode($clientResponse->getBody(), true);
+       $apiResponse = $this->apiClient->patch("/v1/users/me/email", ['email' => $parsedBody['email']]);
+       $data = $apiResponse->getData();
 
-       if ($clientResponse->getStatusCode() >= 400) {
-           return $this->view->render($this->response, 'user/email.twig');
-       }
-
-       $user = $data['data'];
-
-       $clientResponse = $this->apiClient->patch("/v1/users/me/email", ['email' => $parsedBody['email']]);
-
-       if ($clientResponse->getStatusCode() >= 400) {
-           $data = json_decode($clientResponse->getBody(), true);
-           return $this->view->render($this->response, 'user/email.twig', [
-               'errors' => $data['errors'],
-               'user' => $user,
-           ]);
+       if ($apiResponse->hasErrors()) {
+            return $this->view->render($this->response, 'user/email.twig', [
+                'errors' => $data['errors'],
+                'user' => $user,
+            ]);
        }
 
        $sessionUser = $this->session->get('user');

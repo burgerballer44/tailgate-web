@@ -15,41 +15,28 @@ class UpdateUserAction extends AbstractAction
 
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
+        // get user
+        $apiResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
+        $data = $apiResponse->getData();
+        if ($apiResponse->hasErrors()) {
+            return $this->view->render($this->response, 'admin/user/update.twig');
+        }
+        $user = $data['data'];
 
-            $clientResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
-            $data = json_decode($clientResponse->getBody(), true);
-
-            if ($clientResponse->getStatusCode() >= 400) {
-                return $this->view->render($this->response, 'admin/user/update.twig');
-            }
-
-            $user = $data['data'];
-
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/user/update.twig', compact('userId', 'user', 'statuses', 'roles'));
         }
 
-        extract($this->args);
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->get("/v1/admin/users/{$userId}");
-        $data = json_decode($clientResponse->getBody(), true);
-
-        if ($clientResponse->getStatusCode() >= 400) {
-            return $this->view->render($this->response, 'admin/user/update.twig');
-        }
-        
-        $user = $data['data'];
-
-        $clientResponse = $this->apiClient->patch("/v1/admin/users/{$userId}", [
+        $apiResponse = $this->apiClient->patch("/v1/admin/users/{$userId}", [
             'email' => $parsedBody['email'],
             'status' => $parsedBody['status'],
             'role' => $parsedBody['role'],
         ]);
-        $data = json_decode($clientResponse->getBody(), true);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/user/update.twig', [
                 'errors' => $data['errors'],
                 'userId' => $userId,

@@ -13,22 +13,22 @@ class CreateSeasonAction extends AbstractAction
         $sports = ['Football' => 'Football', 'Basketball' => 'Basketball'];
         $seasonTypes = ['Regular-Season' => 'Regular-Season'];
 
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/season/create.twig', compact('sports', 'seasonTypes'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
-        $clientResponse = $this->apiClient->post("/v1/admin/seasons", [
+        $apiResponse = $this->apiClient->post("/v1/admin/seasons", [
             'name' => $parsedBody['name'],
             'sport' => $parsedBody['sport'],
             'seasonType' => $parsedBody['season_type'],
             'seasonStart' => $parsedBody['season_start'],
             'seasonEnd' => $parsedBody['season_end']
         ]);
+        $data = $apiResponse->getData();
 
-       if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+       if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/season/create.twig', [
                 'errors' => $data['errors'],
                 'sports' => $sports, 

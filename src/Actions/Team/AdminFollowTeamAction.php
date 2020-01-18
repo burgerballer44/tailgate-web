@@ -12,22 +12,22 @@ class AdminFollowTeamAction extends AbstractAction
     {            
         extract($this->args);
 
-        if ('POST' != $this->request->getMethod()) {
+        if ('GET' == $this->request->getMethod()) {
             return $this->view->render($this->response, 'admin/team/follow.twig', compact('teamId'));
         }
 
-       $parsedBody = $this->request->getParsedBody();
+        $parsedBody = $this->request->getParsedBody();
 
         $groupId = $parsedBody['group_id'];
         $seasonId = $parsedBody['season_id'];
 
-        $clientResponse = $this->apiClient->post("/v1/groups/{$groupId}/follow", [
+        $apiResponse = $this->apiClient->post("/v1/groups/{$groupId}/follow", [
             'teamId' => $teamId,
             'seasonId' => $seasonId
         ]);
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             return $this->view->render($this->response, 'admin/team/follow.twig', ['errors' => $data['errors'],'teamId' => $teamId]);
         }
 

@@ -12,10 +12,10 @@ class DeletePlayerAction extends AbstractAction
     {      
         extract($this->args);
 
-        $clientResponse = $this->apiClient->delete("/v1/groups/{$groupId}/player/{$playerId}");
+        $apiResponse = $this->apiClient->delete("/v1/groups/{$groupId}/player/{$playerId}");
+        $data = $apiResponse->getData();
 
-        if ($clientResponse->getStatusCode() >= 400) {
-            $data = json_decode($clientResponse->getBody(), true);
+        if ($apiResponse->hasErrors()) {
             $this->flash->addMessage('error', $data['errors']);
         }
 
