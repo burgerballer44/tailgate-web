@@ -26,6 +26,7 @@ use TailgateWeb\Middleware\AdminMiddleware;
 use TailgateWeb\Middleware\CsrfMiddleware;
 use TailgateWeb\Middleware\MustBeSignedInMiddleware;
 use TailgateWeb\Middleware\MustBeSignedOutMiddleware;
+use TailgateWeb\Middleware\UpdateUserSessionMiddleware;
 use TailgateWeb\Scoring\DefaultScoring;
 use TailgateWeb\Scoring\ScoringInterface;
 use TailgateWeb\Session\SessionHelper;
@@ -123,6 +124,13 @@ return function (ContainerBuilder $containerBuilder) {
                 $container->get(ResponseFactoryInterface::class)
             );
         },
+        UpdateUserSessionMiddleware::class => function (ContainerInterface $container) {
+            return new UpdateUserSessionMiddleware(
+                $container->get(SessionHelperInterface::class),
+                $container->get(TailgateApiClientInterface::class)
+            );
+        },
+
 
         // logger
         LoggerInterface::class => function (ContainerInterface $container) {

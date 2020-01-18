@@ -7,6 +7,7 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use TailgateWeb\Session\SessionHelperInterface;
 
 // must be signed in
 class MustBeSignedInMiddleware implements MiddlewareInterface
@@ -14,7 +15,7 @@ class MustBeSignedInMiddleware implements MiddlewareInterface
     protected $session;
     protected $responseFactory;
 
-    public function __construct($session, ResponseFactoryInterface $responseFactory)
+    public function __construct(SessionHelperInterface $session, ResponseFactoryInterface $responseFactory)
     {
         $this->session = $session;
         $this->responseFactory = $responseFactory;

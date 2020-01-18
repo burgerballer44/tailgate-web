@@ -1,16 +1,16 @@
 # Tailgate Web
 
-#### Composer
+## Composer
 
 Install the dependencies by running `composer install`.
 
 
-#### Environment
+## Environment
 
 Create a .env file by copying and the .env.example file. Update the values accordingly in the new .env file.
 
 
-#### NPM
+## NPM
 
 To install the node packages run `npm install`.
 To create an initial css file run `npm run dev:css`.

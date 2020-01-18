@@ -7,6 +7,8 @@ use Psr\Http\Message\ResponseInterface;
 use Psr\Http\Message\ServerRequestInterface;
 use Psr\Http\Server\MiddlewareInterface;
 use Psr\Http\Server\RequestHandlerInterface;
+use Slim\Flash\Messages;
+use TailgateWeb\Session\SessionHelperInterface;
 
 class AdminMiddleware implements MiddlewareInterface
 {   
@@ -14,7 +16,7 @@ class AdminMiddleware implements MiddlewareInterface
     protected $flash;
     protected $responseFactory;
 
-    public function __construct($session, $flash, ResponseFactoryInterface $responseFactory)
+    public function __construct(SessionHelperInterface $session, Messages $flash, ResponseFactoryInterface $responseFactory)
     {
         $this->session = $session;
         $this->flash = $flash;

@@ -8,6 +8,7 @@ use TailgateWeb\Handlers\MyHtmlErrorRenderer;
 use TailgateWeb\Middleware\AddGlobalsToTwigMiddleware;
 use TailgateWeb\Middleware\CleanStringsMiddleware;
 use TailgateWeb\Middleware\TwigMiddleware;
+use TailgateWeb\Middleware\UpdateUserSessionMiddleware;
 use TailgateWeb\Session\SessionHelperInterface;
 
 return function (App $app) {
@@ -16,6 +17,9 @@ return function (App $app) {
 
     // Remember LIFO!
     // last in this list is the first touched
+
+    // set user data
+    $app->add(UpdateUserSessionMiddleware::class);
 
     // further configure twig with request data
     $app->add(TwigMiddleware::createFromContainer($app));
