@@ -1,0 +1,37 @@
+{% extends "layout/dashboard-base-admin.twig" %}
+
+{% block content %}
+
+{# admin-follow-team form #}
+<form action="{{ url_for('admin-follow-team', { 'groupId': groupId }) }}" method="POST">
+
+    {{ getHiddenHoneypot()|raw }}
+    {{ getCsrfFields()|raw }}
+
+    {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+    {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
+    {% if errors.teamId is defined %} {{ displayErrors('teamId', errors)|raw }} {% endif %}
+
+    {{ dropdownField('sport', 'Sport', null, sports, 'Select a sport')|raw }}
+
+    <div class="season_div">
+        {{ dropdownField('season_id', 'season', null, [], 'What season')|raw }}
+    </div>
+
+    <div class="team_div">
+        {{ dropdownField('team_id', 'Team', null, [], 'What team')|raw }}
+    </div>
+
+
+    {{ submitButton('Follow Team')|raw }}
+</form>
+{# end admin-follow-team form #}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        const sports = {{ sports | json_encode | raw }};
+        const seasons = {{ seasons | json_encode | raw }};
+    </script>
+    <script src="{{ url_for('home') }}js/follow-team.js"></script>
+{% endblock %}

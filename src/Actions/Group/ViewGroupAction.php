@@ -32,6 +32,7 @@ class ViewGroupAction extends AbstractAction
     {            
         $group = [];
         $member = [];
+        $players = [];
         $season = [];
         $leaderboard = '';
         $scoreChart = '';
@@ -52,8 +53,15 @@ class ViewGroupAction extends AbstractAction
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
 
+        // get players or all players if admin
+        if ('Group-Admin' == $member['role']) {
+            $players = collect($group['players'])->toArray();
+        } else {
+            $players = collect($group['players'])->where('memberId', $member['memberId'])->toArray();
+        }
+
         // if the group is following a team then get all the games for the season they are following
-        if (isset($group['follow']['followId'])) {
+        if (!empty($players) && isset($group['follow']['followId'])) {
             $followId = $group['follow']['followId'];
             $apiResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
             $data = $apiResponse->getData();
@@ -67,6 +75,14 @@ class ViewGroupAction extends AbstractAction
             $scoreChart = $this->scoring->getChartHtml();
         }
 
-        return $this->view->render($this->response, 'group/view.twig', compact('group', 'groupId', 'member', 'season', 'leaderboard', 'scoreChart'));
+        return $this->view->render($this->response, 'group/view.twig', compact(
+            'group',
+            'groupId',
+            'member',
+            'players',
+            'season',
+            'leaderboard',
+            'scoreChart'
+        ));
     }
 }

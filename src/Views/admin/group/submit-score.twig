@@ -1,16 +1,18 @@
-{% extends "layout/dashboard-base-normal.twig" %}
+{% extends "layout/dashboard-base-admin.twig" %}
 
 {% block content %}
 
-<h2>Submitting score for {{ player.username }} for {{ group.name }}</h2>
+<h2>Submitting score for {{ member.email }} for {{ group.name }}</h2>
 
-{# submite-score form #}
-<form action="{{ url_for('submit-score', { 'groupId': groupId, 'playerId': playerId }) }}" method="POST">
+{# admin-submit-score form #}
+<form action="{{ url_for('admin-submit-score', { 'groupId': groupId, 'memberId': memberId }) }}" method="POST">
 
     {{ getHiddenHoneypot()|raw }}
     {{ getCsrfFields()|raw }}
 
     {% if errors.groupId is defined %} {{ displayErrors('groupId', errors)|raw }} {% endif %}
+
+    {{ dropdownField('player_id', 'Player', null, players, 'Select a player')|raw }}
     {% if errors.playerId is defined %} {{ displayErrors('playerId', errors)|raw }} {% endif %}
 
     {{ dropdownField('game_id', 'Game', null, games, 'Select a game')|raw }}
@@ -24,6 +26,6 @@
 
     {{ submitButton('Submit Score')|raw }}
 </form>
-{# end submite-score form #}
+{# end admin-submit-score form #}
 
 {% endblock %}

@@ -36,9 +36,35 @@ class DefaultScoring implements ScoringInterface
             $playerPredictionValues = $players->reduce(function($carry, $player) use ($game, $scores) {
                 $scorePrediction = $scores->where('playerId', $player['playerId'])->where('gameId', $game['gameId'])->first();
 
-                // player score predictions
-                $homeTeamPrediction = $scorePrediction['homeTeamPrediction'];
-                $awayTeamPrediction = $scorePrediction['awayTeamPrediction'];
+                // get the date and time of the game
+                $storeScore = true;
+                $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D) g:i A', $game['startDate'] . " " . $game['startTime']);
+                if ($gameDateTime instanceof \DateTimeImmutable) {
+                    $today = (new \DateTime('now'))->format('Y-m-d H:i:s');
+                    $gameStart = $gameDateTime->format('Y-m-d H:i:s');
+                    if ($today < $gameStart) {
+                        $storeScore = false;
+                    }
+                } 
+
+                // if creating the date time object fails then the game time is probably 'TBA' or something like that so just use the game date
+                $gameDateTime = $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D)', $game['startDate']);
+
+                if ($gameDateTime instanceof \DateTimeImmutable) {
+                    $today = (new \DateTime('now'))->format('Y-m-d');
+                    $gameStart = $gameDateTime->format('Y-m-d');
+                    if ($today <= $gameStart) {
+                        $storeScore = false;
+                    }
+                }
+
+                // if the game time has not passed then do not do any calculations and act as if no score was submitted
+                $homeTeamPrediction = null;
+                $awayTeamPrediction = null;
+                if ($storeScore) {
+                    $homeTeamPrediction = $scorePrediction['homeTeamPrediction'];
+                    $awayTeamPrediction = $scorePrediction['awayTeamPrediction'];
+                }
 
                 // absolute value difference from scores predicted and actual
                 // return null if the game has no score or their is no prediction
@@ -57,7 +83,7 @@ class DefaultScoring implements ScoringInterface
             }, collect([]));
 
             // keep track of the highest point difference since it is used in penalty points
-            $highestPointDifference = collect($playerPredictionValues)->pluck('difference')->max();
+            $highestPointDifference = (int)collect($playerPredictionValues)->pluck('difference')->max();
 
             // calculate penalty points
             $playerPredictionValues = $playerPredictionValues->zip($playerPredictionValues->map(function($playerPrediction, $playerId) use ($game, $highestPointDifference) {
@@ -74,7 +100,9 @@ class DefaultScoring implements ScoringInterface
                 }
 
                 // if a user fails to submit a score then they get the highest point difference plus 7
+                // it also means they did not choose the winning team
                 if (null == $playerPrediction['home'] || null == $playerPrediction['home'] ) {
+                    $choseCorrectTeam = false;
                     $points += $highestPointDifference;
                     $points += 7;
                 }
@@ -162,7 +190,7 @@ class DefaultScoring implements ScoringInterface
         $gridHtml = "";
 
         // table and header start
-        $gridHtml .= "<table cellpadding='5'><tr class='border-t-2 border-black'><th>Name</th><th>Total Points</th><th>Rank</th></tr>";
+        $gridHtml .= "<table cellpadding='5'><tr class='border-t-2 border-b-2 border-black'><th>Name</th><th>Total Points</th><th>Rank</th></tr>";
         $gridHtml .= $this->leaderboard->reduce(function($html, $points) {
             $html .= "<tr>
                         <td class='border'>{$points['player']}</td>

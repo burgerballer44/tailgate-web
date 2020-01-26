@@ -18,6 +18,7 @@ use Slim\Views\Twig;
 use TailgateWeb\Client\GuzzleTailgateApiClient;
 use TailgateWeb\Client\TailgateApiClientInterface;
 use TailgateWeb\Extensions\CsrfExtension;
+use TailgateWeb\Extensions\EnvironmentExtension;
 use TailgateWeb\Extensions\HelperExtension;
 use TailgateWeb\Extensions\HoneypotExtension;
 use TailgateWeb\Mailer\MailerInterface;
@@ -84,7 +85,7 @@ return function (ContainerBuilder $containerBuilder) {
         },
 
         Twig::class => function (ContainerInterface $container) {
-            $twig = new Twig(__DIR__ . '/../views/', [
+            $twig = new Twig(__DIR__ . '/Views/', [
                 'cache' => PROD_MODE ?  __DIR__ . '/../var/cache/twig/' : false,
                 'auto_reload' => true,
                 'debug' => $container->get('settings')['errorHandlerMiddleware']['displayErrorDetails'],
@@ -95,6 +96,7 @@ return function (ContainerBuilder $containerBuilder) {
             $twig->addExtension(new CsrfExtension($container->get('csrf')));
             $twig->addExtension(new TwigMessages($container->get(Messages::class)));
             $twig->addExtension(new HelperExtension($container->get(SessionHelperInterface::class)));
+            $twig->addExtension(new EnvironmentExtension(PROD_MODE));
 
             return $twig;
         },

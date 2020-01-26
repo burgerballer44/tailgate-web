@@ -39,7 +39,7 @@ class HelperExtension extends AbstractExtension
 
     public function isGroupAdmin($member)
     {
-        return $member['role'] == 'Group-Admin';
+        return 'Group-Admin' == $member['role'];
     }
 
     public function isGroupOwner($group, $member)

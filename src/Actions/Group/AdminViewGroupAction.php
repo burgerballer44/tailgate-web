@@ -48,8 +48,10 @@ class AdminViewGroupAction extends AbstractAction
         $group = $data['data'];
         $eventLog = $group['eventLog'];
 
+        $players = collect($group['players'])->toArray();
+
         // if the group is following a team then get all the games for the season they are following
-        if (isset($group['follow']['followId'])) {
+        if (!empty($players) && isset($group['follow']['followId'])) {
             $followId = $group['follow']['followId'];
             $apiResponse = $this->apiClient->get("/v1/seasons/follow/{$followId}");
             $data = $apiResponse->getData();

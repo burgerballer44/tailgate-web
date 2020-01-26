@@ -20,14 +20,15 @@ $session = new SessionStarter([
     'session_path' => __DIR__ . '/../var/sessions/', // where the session data saves
 ]);
 
+// in production environments cache the container
 if (PROD_MODE) {
     $containerBuilder->enableCompilation(__DIR__ . '/../var/cache/container');
 }
 
-// add settings to the app
+// add settings to the container
 (require __DIR__ . '/../src/settings.php')($containerBuilder);
 
-// configure dependencies the application needs
+// configure dependencies in the container the application needs
 (require __DIR__ . '/../src/dependencies.php')($containerBuilder);
 
 // build PHP-DI Container instance

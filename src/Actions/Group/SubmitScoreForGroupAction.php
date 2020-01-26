@@ -12,7 +12,7 @@ class SubmitScoreForGroupAction extends AbstractAction
     {   
         extract($this->args);
 
-        // get the group, and player
+        // get the group, and member
         $apiResponse = $this->apiClient->get("/v1/groups/{$groupId}");
         $data = $apiResponse->getData();
         if ($apiResponse->hasErrors()) {
@@ -20,7 +20,20 @@ class SubmitScoreForGroupAction extends AbstractAction
             return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
         }
         $group = $data['data'];
-        $player = collect($group['players'])->firstWhere('playerId', $playerId);
+        $member = collect($group['members'])->firstWhere('memberId', $memberId);
+        if (!$member) {
+            $this->flash->addMessage('error', 'Member is not part of the group.');
+            return $this->response->withHeader('Location', "/dashboard")->withStatus(302);
+        }
+
+        // get players of member
+        $players = collect($group['players'])->where('memberId', $member['memberId'])->flatMap(function($player) {
+            return [$player['playerId'] => $player['username']];
+        })->toArray();
+        if (empty($players)) {
+            $this->flash->addMessage('error', 'Selected member has no players.');
+            return $this->response->withHeader('Location', "/group/{$groupId}")->withStatus(302);
+        }
 
         // get the games
         $followId = $group['follow']['followId'];
@@ -34,12 +47,13 @@ class SubmitScoreForGroupAction extends AbstractAction
             return [$game['gameId'] => "{$game['homeDesignation']} {$game['homeMascot']} vs {$game['awayDesignation']} {$game['awayMascot']} {$game['startDate']} / {$game['startTime']}"];
         })->toArray();
 
-
         if ('GET' == $this->request->getMethod()) {
-            return $this->view->render($this->response, 'group/submit-score.twig', compact('groupId', 'playerId', 'group', 'player', 'games'));
+            return $this->view->render($this->response, 'group/submit-score.twig', compact('groupId', 'memberId', 'member', 'group', 'players', 'games'));
         }
 
         $parsedBody = $this->request->getParsedBody();
+
+        $playerId = $parsedBody['player_id'];
 
         $apiResponse = $this->apiClient->post("/v1/groups/{$groupId}/player/{$playerId}/score", [
             'gameId' => $parsedBody['game_id'],
@@ -52,9 +66,10 @@ class SubmitScoreForGroupAction extends AbstractAction
             return $this->view->render($this->response, 'group/submit-score.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,
-                'playerId' => $playerId,
+                'memberId' => $memberId,
+                'member' => $member,
                 'group' => $group,
-                'player' => $player,
+                'players' => $players,
                 'games' => $games
             ]);
         }

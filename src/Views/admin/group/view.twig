@@ -48,6 +48,7 @@
                     {{ tableHeader('')|raw }}
                     {{ tableHeader('')|raw }}
                     {{ tableHeader('')|raw }}
+                    {{ tableHeader('')|raw }}
                 </tr>
 
                 {% for member in group.members %}
@@ -59,6 +60,7 @@
                         <td class='p-1 py-2'><a href={{ url_for('admin-add-player', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Add Player</u> </a></td>
                         <td class='p-1 py-2'><a href={{ url_for('admin-update-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Update Member</u> </a></td>
                         <td class='p-1 py-2'><a href={{ url_for('admin-delete-member', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Delete Member</u> </a></td>
+                        <td class='p-1 py-2'><a href={{ url_for('admin-submit-score', { 'groupId': member.groupId, 'memberId': member.memberId }) }}> <u>Submit Score</u> </a></td>
                     </tr>
 
                 {% endfor %}
@@ -76,7 +78,6 @@
                 <div>
                     <a href={{ url_for('admin-delete-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Delete Player</u> </a>
                     <a href={{ url_for('admin-update-player', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Update Player</u> </a>
-                    <a href={{ url_for('admin-submit-score', { 'groupId': player.groupId, 'playerId': player.playerId }) }}> <u>Submit Score</u> </a>
                     {{ player.username }}  
                 </div>
             {% endfor %}

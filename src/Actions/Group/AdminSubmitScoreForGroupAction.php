@@ -22,7 +22,16 @@ class AdminSubmitScoreForGroupAction extends AbstractAction
         }
 
         $group = $data['data'];
-        $player = collect($group['players'])->firstWhere('playerId', $playerId);
+        $member = collect($group['members'])->firstWhere('memberId', $memberId);
+
+        // get players of member
+        $players = collect($group['players'])->where('memberId', $member['memberId'])->flatMap(function($player) {
+            return [$player['playerId'] => $player['username']];
+        })->toArray();
+        if (empty($players)) {
+            $this->flash->addMessage('error', 'Selected member has no players.');
+            return $this->response->withHeader('Location', "/admin/group/{$groupId}")->withStatus(302);
+        }
 
         // get the games
         $followId = $group['follow']['followId'];
@@ -37,10 +46,12 @@ class AdminSubmitScoreForGroupAction extends AbstractAction
         })->toArray();
 
         if ('GET' == $this->request->getMethod()) {
-            return $this->view->render($this->response, 'admin/group/submit-score.twig', compact('groupId', 'playerId', 'group', 'player', 'games'));
+            return $this->view->render($this->response, 'admin/group/submit-score.twig', compact('groupId', 'memberId', 'member', 'group', 'players', 'games'));
         }
 
         $parsedBody = $this->request->getParsedBody();
+
+        $playerId = $parsedBody['player_id'];
 
         $apiResponse = $this->apiClient->post("/v1/admin/groups/{$groupId}/player/{$playerId}/score", [
             'gameId' => $parsedBody['game_id'],
@@ -53,10 +64,11 @@ class AdminSubmitScoreForGroupAction extends AbstractAction
             return $this->view->render($this->response, 'admin/group/submit-score.twig', [
                 'errors' => $data['errors'],
                 'groupId' => $groupId,
-                'playerId' => $playerId,
+                'memberId' => $memberId,
+                'member' => $member,
                 'group' => $group,
-                'player' => $player,
-                'games' => $games,
+                'players' => $players,
+                'games' => $games
             ]);
         }
 
