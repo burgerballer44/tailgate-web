@@ -26,7 +26,7 @@ module.exports = {
             preset: 'default',
         }),
         purgecss({
-            content: ['src/views/**/*.twig'],
+            content: ['src/Views/**/*.twig'],
             extractors: [{
                 extractor: TailwindExtractor,
                 extensions: ["js", "php", "twig"]
