@@ -36,6 +36,8 @@ class UpdateMemberAction extends AbstractAction
             ));;
         }
 
+        $parsedBody = $this->request->getParsedBody();
+
         $apiResponse = $this->apiClient->patch("/v1/groups/{$groupId}/member/{$memberId}", [
             'groupId' => $groupId,
             'memberId' => $memberId,
