@@ -37,24 +37,24 @@ class DefaultScoring implements ScoringInterface
                 $scorePrediction = $scores->where('playerId', $player['playerId'])->where('gameId', $game['gameId'])->first();
 
                 // get the date and time of the game
-                $storeScore = true;
+                $storeScore = false;
                 $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D) g:i A', $game['startDate'] . " " . $game['startTime']);
                 if ($gameDateTime instanceof \DateTimeImmutable) {
                     $today = (new \DateTime('now'))->format('Y-m-d H:i:s');
                     $gameStart = $gameDateTime->format('Y-m-d H:i:s');
-                    if ($today < $gameStart) {
-                        $storeScore = false;
+                    if ($today >= $gameStart) {
+                        $storeScore = true;
                     }
                 } 
 
                 // if creating the date time object fails then the game time is probably 'TBA' or something like that so just use the game date
                 $gameDateTime = $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D)', $game['startDate']);
 
-                if ($gameDateTime instanceof \DateTimeImmutable) {
+                if (!$storeScore && $gameDateTime instanceof \DateTimeImmutable) {
                     $today = (new \DateTime('now'))->format('Y-m-d');
                     $gameStart = $gameDateTime->format('Y-m-d');
-                    if ($today <= $gameStart) {
-                        $storeScore = false;
+                    if ($today >= $gameStart) {
+                        $storeScore = true;
                     }
                 }
 
