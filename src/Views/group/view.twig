@@ -155,7 +155,7 @@
                         <div class="my-4">
                             <a class='button' href={{ url_for('update-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> Update Score </a>
                             <a class='button' onclick="if (!confirm('Are you sure?')) return false;" href={{ url_for('delete-score', { 'groupId': score.groupId, 'scoreId': score.scoreId }) }}> Delete Score </a>
-                            {{ score.homeDesignation }} {{ score.homeMascot }} - {{ score.homeTeamPrediction }}  {{ score.awayDesignation }} {{ score.awayMascot }} - {{ score.awayTeamPrediction }}  
+                            <span class="mr-4">{{ score.username }}</span> {{ score.homeDesignation }} {{ score.homeMascot }} - {{ score.homeTeamPrediction }}  {{ score.awayDesignation }} {{ score.awayMascot }} - {{ score.awayTeamPrediction }}  
                         </div>
                     {% endfor %}
                 {% endif %}
