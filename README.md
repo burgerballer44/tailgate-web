@@ -2,13 +2,11 @@
 
 ## Composer
 
-Install the dependencies by running `composer install`.
-
+Install the dependencies by running `composer install`. Run `composer install --no-dev` for production environments.
 
 ## Environment
 
-Create a .env file by copying and the .env.example file. Update the values accordingly in the new .env file.
-
+Create a .env file by copying and the .env.example file. Update the values accordingly in the new .env file. The client_id and client_secret should be from the API client configuration.
 
 ## NPM
 
