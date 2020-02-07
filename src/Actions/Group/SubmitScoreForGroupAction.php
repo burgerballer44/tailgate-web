@@ -47,8 +47,23 @@ class SubmitScoreForGroupAction extends AbstractAction
             return [$game['gameId'] => "{$game['homeDesignation']} {$game['homeMascot']} vs {$game['awayDesignation']} {$game['awayMascot']} {$game['startDate']} / {$game['startTime']}"];
         })->toArray();
 
+        $teamsInGames = collect($data['data'])->flatMap(function($game) {
+            return [$game['gameId'] => [
+                'homeTeam' => "{$game['homeDesignation']} {$game['homeMascot']}",
+                'awayTeam' => "{$game['awayDesignation']} {$game['awayMascot']}",
+            ]];
+        })->toArray();
+
         if ('GET' == $this->request->getMethod()) {
-            return $this->view->render($this->response, 'group/submit-score.twig', compact('groupId', 'memberId', 'member', 'group', 'players', 'games'));
+            return $this->view->render($this->response, 'group/submit-score.twig', compact(
+                'groupId',
+                'memberId',
+                'member',
+                'group',
+                'players',
+                'games',
+                'teamsInGames',
+            ));
         }
 
         $parsedBody = $this->request->getParsedBody();
@@ -70,7 +85,8 @@ class SubmitScoreForGroupAction extends AbstractAction
                 'member' => $member,
                 'group' => $group,
                 'players' => $players,
-                'games' => $games
+                'games' => $games,
+                'teamsInGames' => $teamsInGames
             ]);
         }
 

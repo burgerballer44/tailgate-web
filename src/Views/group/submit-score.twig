@@ -18,14 +18,24 @@
     {{ dropdownField('game_id', 'Game', null, games, 'Select a game')|raw }}
     {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
 
-    {{ textField('home_team_prediction', 'Home Team Prediction', 'number', '', 'required')|raw }}
-    {% if errors.homeTeamPrediction is defined %} {{ displayErrors('homeTeamPrediction', errors)|raw }} {% endif %}
+    <div class="score_div">
+        {{ textField('home_team_prediction', 'Home Team Prediction', 'number', '', 'required')|raw }}
+        {% if errors.homeTeamPrediction is defined %} {{ displayErrors('homeTeamPrediction', errors)|raw }} {% endif %}
 
-    {{ textField('away_team_prediction', 'AwayTeam Prediction', 'number', '', 'required')|raw }}
-    {% if errors.awayTeamPrediction is defined %} {{ displayErrors('awayTeamPrediction', errors)|raw }} {% endif %}
+        {{ textField('away_team_prediction', 'Away Team Prediction', 'number', '', 'required')|raw }}
+        {% if errors.awayTeamPrediction is defined %} {{ displayErrors('awayTeamPrediction', errors)|raw }} {% endif %}
+    </div>
 
     {{ submitButton('Submit Score')|raw }}
 </form>
 {# end submit-score form #}
 
+{% endblock %}
+
+{% block javascript %}
+    {{ parent() }}
+    <script type="text/javascript">
+        const teamsInGames = {{ teamsInGames | json_encode | raw }};
+    </script>
+    <script src="{{ url_for('home') }}js/submit-score.js"></script>
 {% endblock %}
