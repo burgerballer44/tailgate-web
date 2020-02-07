@@ -42,7 +42,7 @@ return function (ContainerBuilder $containerBuilder) {
             // mailgun for mail
             'mailgun_api_key' => getenv('MAILGUN_API_KEY'),
             'mailgun_domain' => getenv('MAILGUN_DOMAIN'),
-            'mailgun_test_mode' => DEV_MODE, // true means the mail gets sent to mailgun but NOT sent to user
+            'mailgun_test_mode' => filter_var(getenv('SEND_TEST_EMAILS'), FILTER_VALIDATE_BOOLEAN), // true means the mail gets sent to mailgun but NOT sent to user
         ]
     ]);
 };
