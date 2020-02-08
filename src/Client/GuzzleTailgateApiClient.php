@@ -19,22 +19,19 @@ class GuzzleTailgateApiClient implements TailgateApiClientInterface
     protected $responseFactory;
     protected $flash;
     protected $logger;
-    public $config;
 
     public function __construct(
         Client $client,
         SessionHelperInterface $session,
         ResponseFactoryInterface $responseFactory,
         Messages $flash,
-        LoggerInterface $logger,
-        array $config
+        LoggerInterface $logger
     ) {
         $this->client = $client;
         $this->session = $session;
         $this->responseFactory = $responseFactory;
         $this->flash = $flash;
         $this->logger = $logger;
-        $this->config = $config;
     }
 
     public function get(string $path, array $queryStringArray = []) : ApiResponseInterface

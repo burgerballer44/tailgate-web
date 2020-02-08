@@ -3,11 +3,31 @@
 namespace TailgateWeb\Actions\Home;
 
 use Psr\Http\Message\ResponseInterface;
+use Slim\Flash\Messages;
+use Slim\Views\Twig;
 use TailgateWeb\Actions\AbstractAction;
+use TailgateWeb\Client\ApiCredentials;
+use TailgateWeb\Client\TailgateApiClientInterface;
+use TailgateWeb\Mailer\MailerInterface;
+use TailgateWeb\Session\SessionHelperInterface;
 
 // sign in form
 class SignInAction extends AbstractAction
 {   
+    private $credentials;
+
+    public function __construct(
+        TailgateApiClientInterface $apiClient,
+        SessionHelperInterface $session,
+        MailerInterface $mailer,
+        Twig $view,
+        Messages $flash,
+        ApiCredentials $credentials
+    ) {
+        parent::__construct($apiClient, $session, $mailer, $view, $flash);
+        $this->credentials = $credentials;
+    }
+
     public function action() : ResponseInterface
     {
         if ('GET' == $this->request->getMethod()) {
@@ -18,8 +38,8 @@ class SignInAction extends AbstractAction
 
         $apiResponse = $this->apiClient->post("/token", [
             'grant_type' => 'password',
-            'client_id' => $this->apiClient->config['clientId'],
-            'client_secret' => $this->apiClient->config['clientSecret'],
+            'client_id' => $this->credentials->getClientId(),
+            'client_secret' => $this->credentials->getClientSecret(),
             'username' => $parsedBody['email'],
             'password' => $parsedBody['password'],
         ]);

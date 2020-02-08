@@ -15,6 +15,7 @@ use Slim\Factory\AppFactory;
 use Slim\Flash\Messages;
 use Slim\Interfaces\RouteParserInterface;
 use Slim\Views\Twig;
+use TailgateWeb\Client\ApiCredentials;
 use TailgateWeb\Client\GuzzleTailgateApiClient;
 use TailgateWeb\Client\TailgateApiClientInterface;
 use TailgateWeb\Extensions\CsrfExtension;
@@ -164,11 +165,14 @@ return function (ContainerBuilder $containerBuilder) {
                 $container->get(SessionHelperInterface::class),
                 $container->get(ResponseFactoryInterface::class),
                 $container->get(Messages::class),
-                $container->get(LoggerInterface::class),
-                [
-                    'clientId' => $container->get('settings')['client_id'],
-                    'clientSecret' => $container->get('settings')['client_secret'],
-                ]
+                $container->get(LoggerInterface::class)
+            );
+        },
+
+        ApiCredentials::class => function (ContainerInterface $container) {
+            return new ApiCredentials(
+                $container->get('settings')['client_id'],
+                $container->get('settings')['client_secret']
             );
         },
 
