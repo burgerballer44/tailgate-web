@@ -17,6 +17,19 @@ class UpdateGameScoreAction extends AbstractAction
             $data = $apiResponse->getData();
             $season = $data['data'];
             $game = collect($season['games'])->firstWhere('gameId', $gameId);
+
+            // convert game date and game time into something useable by the form
+            $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D) g:i A', $game['startDate'] . " " . $game['startTime']);
+            if ($gameDateTime instanceof \DateTimeImmutable) {
+                $game['startDate'] = $gameDateTime->format('Y-m-d');
+                $game['startTime'] = $gameDateTime->format('H:i');
+            } 
+            // if creating the date time object fails then the game time is probably 'TBA' or something like that so just use the game date
+            $gameDateTime = $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D)', $game['startDate']);
+            if ($gameDateTime instanceof \DateTimeImmutable) {
+                $game['startDate'] = $gameDateTime->format('Y-m-d');
+            }
+
             return $this->view->render($this->response, 'admin/season/update-game-score.twig', compact('seasonId', 'gameId', 'game'));
         }
 
