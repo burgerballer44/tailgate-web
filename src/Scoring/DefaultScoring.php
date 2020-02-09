@@ -100,11 +100,12 @@ class DefaultScoring implements ScoringInterface
                 }
 
                 // if a user fails to submit a score then they get the highest point difference plus 7
-                // it also means they did not choose the winning team
-                if (null == $playerPrediction['home'] || null == $playerPrediction['home'] ) {
+                // it also means they did not choose the winning team??? or no team... right? so just return?
+                if (null == $playerPrediction['home'] || null == $playerPrediction['away']) {
                     $choseCorrectTeam = false;
                     $points += $highestPointDifference;
                     $points += 7;
+                    return $points;
                 }
 
                 // if a user selects the wrong team then 7 points

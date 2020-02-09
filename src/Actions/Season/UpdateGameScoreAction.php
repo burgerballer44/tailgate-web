@@ -12,33 +12,37 @@ class UpdateGameScoreAction extends AbstractAction
     {            
         extract($this->args);
 
-        if ('GET' == $this->request->getMethod()) {
-            $apiResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
-            $data = $apiResponse->getData();
-            $season = $data['data'];
-            $game = collect($season['games'])->firstWhere('gameId', $gameId);
-
-            // convert game date and game time into something useable by the form
-            $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D) g:i A', $game['startDate'] . " " . $game['startTime']);
-            if ($gameDateTime instanceof \DateTimeImmutable) {
-                $game['startDate'] = $gameDateTime->format('Y-m-d');
-                $game['startTime'] = $gameDateTime->format('H:i');
-            } 
-            // if creating the date time object fails then the game time is probably 'TBA' or something like that so just use the game date
-            $gameDateTime = $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D)', $game['startDate']);
-            if ($gameDateTime instanceof \DateTimeImmutable) {
-                $game['startDate'] = $gameDateTime->format('Y-m-d');
-            }
-
-            return $this->view->render($this->response, 'admin/season/update-game-score.twig', compact('seasonId', 'gameId', 'game'));
-        }
-
-        $parsedBody = $this->request->getParsedBody();
-
         $apiResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
         $data = $apiResponse->getData();
         $season = $data['data'];
         $game = collect($season['games'])->firstWhere('gameId', $gameId);
+
+        // convert game date and game time into something useable by the form
+        $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D) g:i A', $game['startDate'] . " " . $game['startTime']);
+        if ($gameDateTime instanceof \DateTimeImmutable) {
+            $game['startDate'] = $gameDateTime->format('Y-m-d');
+            $game['startTime'] = $gameDateTime->format('H:i');
+        } 
+        // if creating the date time object fails then the game time is probably 'TBA' or something like that so just use the game date
+        $gameDateTime = $gameDateTime = \DateTimeImmutable::createFromFormat('M j, Y (D)', $game['startDate']);
+        if ($gameDateTime instanceof \DateTimeImmutable) {
+            $game['startDate'] = $gameDateTime->format('Y-m-d');
+        }
+
+        $homeTeam = "Home Team - {$game['homeDesignation']} {$game['homeMascot']}";
+        $awayTeam = "Away Team - {$game['awayDesignation']} {$game['awayMascot']}";
+
+        if ('GET' == $this->request->getMethod()) {
+            return $this->view->render($this->response, 'admin/season/update-game-score.twig', compact(
+                'seasonId',
+                'gameId',
+                'game',
+                'homeTeam',
+                'awayTeam',
+            ));
+        }
+
+        $parsedBody = $this->request->getParsedBody();
 
         $apiResponse = $this->apiClient->patch("/v1/admin/seasons/{$seasonId}/game/{$gameId}/score", [
             'seasonId' => $seasonId,
@@ -57,6 +61,8 @@ class UpdateGameScoreAction extends AbstractAction
                 'seasonId' => $seasonId,
                 'gameId' => $gameId,
                 'game' => $game,
+                'homeTeam' => $homeTeam,
+                'awayTeam' => $awayTeam,
             ]);
         }
 

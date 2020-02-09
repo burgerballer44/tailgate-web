@@ -13,10 +13,10 @@
     {% if errors.seasonId is defined %} {{ displayErrors('seasonId', errors)|raw }} {% endif %}
     {% if errors.gameId is defined %} {{ displayErrors('gameId', errors)|raw }} {% endif %}
 
-    {{ textField('home_team_score', 'Home Team Score', 'number', '', '', game.homeTeamScore)|raw }}
+    {{ textField('home_team_score', homeTeam, 'number', '', '', game.homeTeamScore)|raw }}
     {% if errors.homeTeamScore is defined %} {{ displayErrors('homeTeamScore', errors)|raw }} {% endif %}
 
-    {{ textField('away_team_score', 'AwayTeam Score', 'number', '', '', game.awayTeamScore)|raw }}
+    {{ textField('away_team_score', awayTeam, 'number', '', '', game.awayTeamScore)|raw }}
     {% if errors.awayTeamScore is defined %} {{ displayErrors('awayTeamScore', errors)|raw }} {% endif %}
 
     {{ textField('start_date', 'Game Day', 'text', 'when does the game start', 'required', game.startDate)|raw }}
