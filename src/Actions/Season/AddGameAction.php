@@ -12,14 +12,15 @@ class AddGameAction extends AbstractAction
     {            
         extract($this->args);
 
-        // get all teams
-        $apiResponse = $this->apiClient->get("/v1/teams");
+        // get season
+        $apiResponse = $this->apiClient->get("/v1/seasons/{$seasonId}");
         $data = $apiResponse->getData();
+        $season = $data['data'];
 
-        if ($apiResponse->hasErrors()) {            
-            return $this->view->render($this->response, 'admin/team/index.twig', ['errors' => $data['errors']]);
-        }
-
+        // get teams that are available by the sport
+        $sport = $season['sport'];
+        $apiResponse = $this->apiClient->get("/v1/teams/sport", ['sport' => $sport]);
+        $data = $apiResponse->getData();
         $teams = collect($data['data'])->flatMap(function($team){
             return [$team['teamId'] => "{$team['designation']} {$team['mascot']}"];
         })->toArray();

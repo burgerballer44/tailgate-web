@@ -11,10 +11,14 @@
     {{ textField('designation', 'Designation', 'text', 'where is this team', 'required')|raw }}
     {% if errors.designation is defined %} {{ displayErrors('designation', errors)|raw }} {% endif %}
 
-    {{ textField('mascot', 'Mascot', 'text', 'what is mascot', 'required')|raw }}
+    {{ textField('mascot', 'Mascot', 'text', 'what is themascot', 'required')|raw }}
     {% if errors.mascot is defined %} {{ displayErrors('mascot', errors)|raw }} {% endif %}
 
+    {{ dropdownField('sport', 'Sport', null, sports, 'Select sport')|raw }}
+    {% if errors.sport is defined %} {{ displayErrors('sport', errors)|raw }} {% endif %}
+
     {{ submitButton('Add Team')|raw }}
+    
 </form>
 {# end add-team form #}
 

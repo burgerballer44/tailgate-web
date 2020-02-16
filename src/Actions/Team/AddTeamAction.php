@@ -9,21 +9,27 @@ use TailgateWeb\Actions\AbstractAction;
 class AddTeamAction extends AbstractAction
 {   
     public function action() : ResponseInterface
-    {            
+    {   
+        $sports = ['Football' => 'Football', 'Basketball' => 'Basketball'];
+
         if ('GET' == $this->request->getMethod()) {
-            return $this->view->render($this->response, 'admin/team/add.twig');
+            return $this->view->render($this->response, 'admin/team/add.twig', compact('sports'));
         }
 
         $parsedBody = $this->request->getParsedBody();
 
         $apiResponse = $this->apiClient->post("/v1/admin/teams", [
             'designation' => $parsedBody['designation'],
-            'mascot' => $parsedBody['mascot']
+            'mascot' => $parsedBody['mascot'],
+            'sport' => $parsedBody['sport']
         ]);
         $data = $apiResponse->getData();
 
         if ($apiResponse->hasErrors()) {
-            return $this->view->render($this->response, 'admin/team/add.twig', ['errors' => $data['errors']]);
+            return $this->view->render($this->response, 'admin/team/add.twig', [
+                'errors' => $data['errors'],
+                'sports' => $sports,
+            ]);
         }
 
         return $this->response->withHeader('Location', '/admin/team')->withStatus(302);
