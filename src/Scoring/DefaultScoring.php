@@ -70,8 +70,18 @@ class DefaultScoring implements ScoringInterface
                 // absolute value difference from scores predicted and actual
                 // return null if the game has no score or their is no prediction
                 $difference = null;
+                $penaltyPoints = 0;
                 if ((null != $homeTeamPrediction) && (null != $awayTeamPrediction) && (null != $game['homeTeamScore']) && (null != $game['awayTeamScore'])) {
                     $difference = abs($game['homeTeamScore'] - $homeTeamPrediction) + abs($game['awayTeamScore'] - $awayTeamPrediction);
+
+                    $didHomeTeamWin = $game['homeTeamScore'] > $game['awayTeamScore'];
+                    $wasHomeTeamSelected = $homeTeamPrediction > $awayTeamPrediction;
+                    $choseCorrectTeam = $didHomeTeamWin == $wasHomeTeamSelected;
+
+                    // if a user selects the wrong team then 7 points
+                    if (!$choseCorrectTeam) {
+                        $penaltyPoints += 7;
+                    }
                 }
 
                 $carry[] = [
@@ -79,48 +89,34 @@ class DefaultScoring implements ScoringInterface
                     'home' => $homeTeamPrediction,
                     'away' => $awayTeamPrediction,
                     'difference' => $difference,
+                    'penaltyPoints' => $penaltyPoints,
+                    'final' =>  $difference + $penaltyPoints,
                 ];
                 return $carry;
             }, collect([]));
 
-            // keep track of the highest point difference since it is used in penalty points
-            $highestPointDifference = (int)collect($playerPredictionValues)->pluck('difference')->max();
+            // keep track of the highest point difference since it is used in extra penalty points
+            $highestPointDifference = (int)collect($playerPredictionValues)->pluck('final')->max();
 
-            // calculate penalty points
+            // calculate penalty for failing to submit
             $playerPredictionValues = $playerPredictionValues->zip($playerPredictionValues->map(function($playerPrediction, $playerId) use ($game, $highestPointDifference) {
                 
                 $points = 0;
 
-                $didHomeTeamWin = $game['homeTeamScore'] > $game['awayTeamScore'];
-                $wasHomeTeamSelected = $playerPrediction['home'] > $playerPrediction['away'];
-                $choseCorrectTeam = $didHomeTeamWin == $wasHomeTeamSelected;
-
-                // no final score means we should not calculate
-                if (null == $game['homeTeamScore'] || null == $game['awayTeamScore']) {
-                    return null;
-                }
-
                 // if a user fails to submit a score then they get the highest point difference plus 7
-                // it also means they did not choose the winning team??? or no team... right? so just return?
                 if (null == $playerPrediction['home'] || null == $playerPrediction['away']) {
-                    $choseCorrectTeam = false;
                     $points += $highestPointDifference;
-                    $points += 7;
-                    return $points;
-                }
-
-                // if a user selects the wrong team then 7 points
-                if (!$choseCorrectTeam) {
                     $points += 7;
                 }
 
                 return $points;
-            }))->map(function ($predictionValuesAndPenalty) {
-                list($values, $penalty) = $predictionValuesAndPenalty;
-                $complete = array_merge($values, ['penalty' => $penalty]);
-                // final points is penalty plus point difference
-                $complete['final'] = $complete['difference'] + $complete['penalty'];
-                return $complete;
+
+            }))->map(function ($predictionValuesAndExtraPenalty) {
+                list($values, $extraPenalty) = $predictionValuesAndExtraPenalty;
+                $values['penaltyPoints'] = $values['penaltyPoints'] + $extraPenalty;
+                // final points is updated penalty plus point difference
+                $values['final'] = $values['difference'] + $values['penaltyPoints'];
+                return $values;
             });
 
             // dd([$game['homeTeamScore'], $game['awayTeamScore']], $playerPredictionValues);
@@ -144,7 +140,7 @@ class DefaultScoring implements ScoringInterface
                 'homePredictions'  => collect($playerPredictionValues)->pluck('home'),
                 'awayPredictions'  => collect($playerPredictionValues)->pluck('away'),
                 'pointDifferences' => collect($playerPredictionValues)->pluck('difference'),
-                'penaltyPoints'    => collect($playerPredictionValues)->pluck('penalty'),
+                'penaltyPoints'    => collect($playerPredictionValues)->pluck('penaltyPoints'),
                 'finalPoints'      => collect($playerPredictionValues)->pluck('final'),
             ];
 
